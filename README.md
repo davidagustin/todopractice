@@ -1,3 +1,5 @@
+[![CI](https://github.com/davidagustin/todopractice/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/davidagustin/todopractice/actions/workflows/ci.yml)
+
 # Fullstack Todo Application
 
 A modern fullstack todo application built with Test-Driven Development (TDD) principles, featuring comprehensive testing, automation, and modern development practices.
@@ -595,3 +597,34 @@ The repository has been cleaned up to remove unnecessary files and improve organ
 - **Import ordering**: All imports are now properly ordered and consistent
 - **Linting fixes**: All code passes Biome linting rules
 - **Build fixes**: Frontend builds successfully without TypeScript errors 
+
+## Test & Lint Status
+
+- **Frontend**: All tests pass (81/81), high coverage, stable with Vitest and Biome.
+- **Backend**: See backend/README.md for Go test status.
+
+### Testing Tools
+- **Vitest** for unit/integration tests
+- **@testing-library/react** for component tests
+- **Biome** for linting/formatting (replaces ESLint)
+
+### Running Tests
+```sh
+cd frontend
+npm run test:coverage
+```
+
+### Running Lint
+```sh
+npm run lint
+```
+
+### Troubleshooting
+- If tests hang, check for async/await issues or infinite loops in hooks/components.
+- If you see selector errors, use more specific queries (e.g., `getByLabelText`, `getByRole`).
+- For mocking issues, ensure you use `vi.mock` and reset modules between tests if needed.
+- For coverage, see the summary after running `npm run test:coverage`.
+
+---
+
+For backend and deployment, see respective READMEs. 
