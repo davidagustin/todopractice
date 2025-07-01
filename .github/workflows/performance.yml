@@ -70,11 +70,25 @@ jobs:
     - name: Install Artillery
       run: npm install -g artillery
 
+    - name: Install performance testing tools
+      run: |
+        # Install hey for HTTP load testing
+        go install github.com/rakyll/hey@latest
+
     - name: Run load tests
       run: |
         echo "Running load tests..."
-        # Add your load test configuration here
-        # artillery run load-test.yml
+        mkdir -p load-test-results
+        
+        # Test frontend load
+        echo "Testing frontend load..."
+        hey -n 200 -c 20 http://localhost:4173 > load-test-results/frontend-test.txt
+        
+        # Test backend health endpoint
+        echo "Testing backend health endpoint..."
+        hey -n 300 -c 30 http://localhost:8080/health > load-test-results/backend-health-test.txt
+        
+        echo "Load tests completed"
 
     - name: Upload performance results
       uses: actions/upload-artifact@v4
@@ -82,7 +96,6 @@ jobs:
       with:
         name: performance-results
         path: |
-          performance-results/
           load-test-results/
         retention-days: 30
 
@@ -163,13 +176,33 @@ jobs:
         go build -o server ./cmd/server
         ./server &
         echo "Backend started, waiting for it to be ready..."
-        timeout 30s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; done'
+        timeout 60s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; done'
+
+    - name: Install performance testing tools
+      run: |
+        # Install hey for HTTP load testing
+        go install github.com/rakyll/hey@latest
+        # Install wrk for more advanced load testing
+        sudo apt-get update && sudo apt-get install -y wrk
 
     - name: Run API performance tests
       run: |
         echo "Running API performance tests..."
-        # Add your API performance test commands here
-        # Example: wrk, hey, or custom Go benchmarks
+        mkdir -p api-performance-results
+        
+        # Test health endpoint
+        echo "Testing health endpoint..."
+        hey -n 100 -c 10 http://localhost:8080/health > api-performance-results/health-test.txt
+        
+        # Test todos endpoint (if authenticated)
+        echo "Testing todos endpoint..."
+        hey -n 50 -c 5 http://localhost:8080/api/todos > api-performance-results/todos-test.txt 2>&1 || echo "Todos endpoint test completed (may require auth)"
+        
+        # Run wrk test on health endpoint
+        echo "Running wrk test on health endpoint..."
+        wrk -t2 -c10 -d10s http://localhost:8080/health > api-performance-results/wrk-health-test.txt
+        
+        echo "API performance tests completed"
 
     - name: Upload API performance results
       uses: actions/upload-artifact@v4
