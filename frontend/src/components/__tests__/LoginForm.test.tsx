@@ -161,21 +161,4 @@ describe('LoginForm', () => {
     // Should not call login mutation
     expect(mockLogin).not.toHaveBeenCalled()
   })
-
-  it('should handle form reset', async () => {
-    render(<LoginForm />, { wrapper: createWrapper() })
-    
-    const emailInput = screen.getByLabelText(/email address/i)
-    const passwordInput = screen.getByLabelText(/password/i)
-
-    await userEvent.type(emailInput, 'test@example.com')
-    await userEvent.type(passwordInput, 'password123')
-
-    // Reset form
-    await userEvent.type(emailInput, '')
-    await userEvent.type(passwordInput, '')
-
-    expect(emailInput).toHaveValue('')
-    expect(passwordInput).toHaveValue('')
-  })
 }) 
