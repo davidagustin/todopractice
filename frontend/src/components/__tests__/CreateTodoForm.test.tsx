@@ -1,4 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+/** @jsxImportSource react */
+import React from 'react'
+import type { ReactNode, ReactElement, FC } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -7,14 +9,11 @@ import CssBaseline from '@mui/material/CssBaseline'
 import CreateTodoForm from '../CreateTodoForm'
 
 // Mock the useCreateTodo hook
-const mockCreateTodo = vi.fn()
+const mockCreateTodo = jest.fn()
+const mockUseCreateTodo = jest.fn()
 
-vi.mock('../../hooks/useTodos', () => ({
-  useCreateTodo: () => ({
-    mutate: mockCreateTodo,
-    isPending: false,
-    error: null,
-  }),
+jest.mock('../../hooks/useTodos', () => ({
+  useCreateTodo: () => mockUseCreateTodo(),
 }))
 
 const theme = createTheme()
@@ -27,19 +26,28 @@ const createWrapper = () => {
     },
   })
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    </ThemeProvider>
-  )
+  function Wrapper({ children }: { children: ReactNode }): React.ReactElement {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </ThemeProvider>
+    ) as React.ReactElement;
+  }
+
+  return Wrapper;
 }
 
 describe('CreateTodoForm', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
+    mockUseCreateTodo.mockReturnValue({
+      mutate: mockCreateTodo,
+      isPending: false,
+      error: null,
+    })
   })
 
   it('should render form elements', () => {
@@ -52,11 +60,10 @@ describe('CreateTodoForm', () => {
   })
 
   it('should show validation error for empty title', async () => {
-    const user = userEvent.setup()
     render(<CreateTodoForm />, { wrapper: createWrapper() })
     
     const submitButton = screen.getByRole('button', { name: /create todo/i })
-    await user.click(submitButton)
+    await userEvent.click(submitButton)
     
     await waitFor(() => {
       expect(screen.getByText('Title is required')).toBeInTheDocument()
@@ -64,16 +71,15 @@ describe('CreateTodoForm', () => {
   })
 
   it('should show validation error for title exceeding max length', async () => {
-    const user = userEvent.setup()
     render(<CreateTodoForm />, { wrapper: createWrapper() })
     
     const titleInput = screen.getByLabelText(/title/i)
     const longTitle = 'a'.repeat(201) // Exceeds 200 character limit
     
-    await user.type(titleInput, longTitle)
+    await userEvent.type(titleInput, longTitle)
     
     const submitButton = screen.getByRole('button', { name: /create todo/i })
-    await user.click(submitButton)
+    await userEvent.click(submitButton)
     
     await waitFor(() => {
       expect(screen.getByText('Title must be less than 200 characters')).toBeInTheDocument()
@@ -81,18 +87,17 @@ describe('CreateTodoForm', () => {
   })
 
   it('should show validation error for description exceeding max length', async () => {
-    const user = userEvent.setup()
     render(<CreateTodoForm />, { wrapper: createWrapper() })
     
     const titleInput = screen.getByLabelText(/title/i)
     const descriptionInput = screen.getByLabelText(/description/i)
     const longDescription = 'a'.repeat(1001) // Exceeds 1000 character limit
     
-    await user.type(titleInput, 'Valid Title')
-    await user.type(descriptionInput, longDescription)
+    await userEvent.type(titleInput, 'Valid Title')
+    await userEvent.type(descriptionInput, longDescription)
     
     const submitButton = screen.getByRole('button', { name: /create todo/i })
-    await user.click(submitButton)
+    await userEvent.click(submitButton)
     
     await waitFor(() => {
       expect(screen.getByText('Description must be less than 1000 characters')).toBeInTheDocument()
@@ -100,16 +105,15 @@ describe('CreateTodoForm', () => {
   })
 
   it('should call createTodo with form data on valid submission', async () => {
-    const user = userEvent.setup()
     render(<CreateTodoForm />, { wrapper: createWrapper() })
     
     const titleInput = screen.getByLabelText(/title/i)
     const descriptionInput = screen.getByLabelText(/description/i)
     const submitButton = screen.getByRole('button', { name: /create todo/i })
 
-    await user.type(titleInput, 'Test Todo')
-    await user.type(descriptionInput, 'Test Description')
-    await user.click(submitButton)
+    await userEvent.type(titleInput, 'Test Todo')
+    await userEvent.type(descriptionInput, 'Test Description')
+    await userEvent.click(submitButton)
 
     await waitFor(() => {
       expect(mockCreateTodo).toHaveBeenCalledWith({
@@ -120,14 +124,13 @@ describe('CreateTodoForm', () => {
   })
 
   it('should call createTodo with only title when description is empty', async () => {
-    const user = userEvent.setup()
     render(<CreateTodoForm />, { wrapper: createWrapper() })
     
     const titleInput = screen.getByLabelText(/title/i)
     const submitButton = screen.getByRole('button', { name: /create todo/i })
 
-    await user.type(titleInput, 'Test Todo')
-    await user.click(submitButton)
+    await userEvent.type(titleInput, 'Test Todo')
+    await userEvent.click(submitButton)
 
     await waitFor(() => {
       expect(mockCreateTodo).toHaveBeenCalledWith({
@@ -138,16 +141,15 @@ describe('CreateTodoForm', () => {
   })
 
   it('should trim whitespace from title and description', async () => {
-    const user = userEvent.setup()
     render(<CreateTodoForm />, { wrapper: createWrapper() })
     
     const titleInput = screen.getByLabelText(/title/i)
     const descriptionInput = screen.getByLabelText(/description/i)
     const submitButton = screen.getByRole('button', { name: /create todo/i })
 
-    await user.type(titleInput, '  Test Todo  ')
-    await user.type(descriptionInput, '  Test Description  ')
-    await user.click(submitButton)
+    await userEvent.type(titleInput, '  Test Todo  ')
+    await userEvent.type(descriptionInput, '  Test Description  ')
+    await userEvent.click(submitButton)
 
     await waitFor(() => {
       expect(mockCreateTodo).toHaveBeenCalledWith({

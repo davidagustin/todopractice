@@ -1,4 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+/** @jsxImportSource react */
+import React from 'react'
+import type { ReactNode, ReactElement, FC } from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -9,8 +11,8 @@ import LoginForm from '../LoginForm'
 import { AuthProvider } from '../../contexts/AuthContext'
 
 // Mock the useLogin hook
-const mockLogin = vi.fn()
-vi.mock('../../hooks/useAuth', () => ({
+const mockLogin = jest.fn()
+jest.mock('../../hooks/useAuth', () => ({
   useLogin: () => ({
     mutate: mockLogin,
     isPending: false,
@@ -19,12 +21,12 @@ vi.mock('../../hooks/useAuth', () => ({
 }))
 
 // Mock react-router-dom
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom')
+jest.mock('react-router-dom', () => {
+  const actual = jest.requireActual('react-router-dom') as typeof import('react-router-dom');
   return {
     ...actual,
-    useNavigate: () => vi.fn(),
-  }
+    useNavigate: () => jest.fn(),
+  };
 })
 
 const theme = createTheme()
@@ -37,23 +39,27 @@ const createWrapper = () => {
     },
   })
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <BrowserRouter>
-            {children}
-          </BrowserRouter>
-        </AuthProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
-  )
+  function Wrapper({ children }: { children: ReactNode }): React.ReactElement {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <BrowserRouter>
+              {children}
+            </BrowserRouter>
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    ) as React.ReactElement;
+  }
+
+  return Wrapper;
 }
 
 describe('LoginForm', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
   })
 
   it('should render login form', () => {
@@ -66,16 +72,15 @@ describe('LoginForm', () => {
   })
 
   it('should call login mutation with form data on valid submission', async () => {
-    const user = userEvent.setup()
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
-    await user.type(emailInput, 'test@example.com')
-    await user.type(passwordInput, 'password123')
-    await user.click(submitButton)
+    await userEvent.type(emailInput, 'test@example.com')
+    await userEvent.type(passwordInput, 'password123')
+    await userEvent.click(submitButton)
 
     await waitFor(() => {
       expect(mockLogin).toHaveBeenCalledWith({
@@ -86,32 +91,30 @@ describe('LoginForm', () => {
   })
 
   it('should prevent form submission with invalid email format', async () => {
-    const user = userEvent.setup()
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
-    await user.type(emailInput, 'invalid-email')
-    await user.type(passwordInput, 'password123')
-    await user.click(submitButton)
+    await userEvent.type(emailInput, 'invalid-email')
+    await userEvent.type(passwordInput, 'password123')
+    await userEvent.click(submitButton)
 
     // Should not call login mutation
     expect(mockLogin).not.toHaveBeenCalled()
   })
 
   it('should show password length validation error', async () => {
-    const user = userEvent.setup()
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
     const passwordInput = screen.getByLabelText(/password/i)
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
-    await user.type(emailInput, 'test@example.com')
-    await user.type(passwordInput, '123')
-    await user.click(submitButton)
+    await userEvent.type(emailInput, 'test@example.com')
+    await userEvent.type(passwordInput, '123')
+    await userEvent.click(submitButton)
 
     // Should not call login mutation
     expect(mockLogin).not.toHaveBeenCalled()

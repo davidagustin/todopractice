@@ -33,7 +33,7 @@ const RegisterForm: React.FC = () => {
   const password = watch('password');
 
   const onSubmit = (data: RegisterRequest & { confirmPassword: string }) => {
-    const { confirmPassword: _, ...registerData } = data;
+    const { confirmPassword: _confirmPassword, ...registerData } = data;
     registerMutation.mutate(registerData);
   };
 

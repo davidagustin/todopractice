@@ -10,9 +10,12 @@ import type {
   DeleteTodoResponse,
   GetTodosResponse,
   GetProfileResponse,
-} from '../types';
+} from '../types/index';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_BASE_URL = 
+  typeof process !== 'undefined' && process.env && process.env.VITE_API_URL
+    ? process.env.VITE_API_URL
+    : 'http://localhost:8080';
 
 export class ApiError extends Error {
   status: number;

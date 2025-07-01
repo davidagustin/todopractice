@@ -1,4 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+/** @jsxImportSource react */
+import React from 'react'
+import type { ReactNode, ReactElement, FC } from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -7,11 +9,11 @@ import CssBaseline from '@mui/material/CssBaseline'
 import TodoList from '../TodoList'
 
 // Mock the hooks
-const mockUseTodos = vi.fn()
-const mockUpdateTodo = vi.fn()
-const mockDeleteTodo = vi.fn()
+const mockUseTodos = jest.fn()
+const mockUpdateTodo = jest.fn()
+const mockDeleteTodo = jest.fn()
 
-vi.mock('../../hooks/useTodos', () => ({
+jest.mock('../../hooks/useTodos', () => ({
   useTodos: () => mockUseTodos(),
   useUpdateTodo: () => ({
     mutate: mockUpdateTodo,
@@ -31,14 +33,18 @@ const createWrapper = () => {
     },
   })
 
-  return ({ children }: { children: React.ReactNode }) => (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
-    </ThemeProvider>
-  )
+  function Wrapper({ children }: { children: ReactNode }): React.ReactElement {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </ThemeProvider>
+    ) as React.ReactElement;
+  }
+
+  return Wrapper;
 }
 
 const mockTodoData = [
@@ -64,7 +70,7 @@ const mockTodoData = [
 
 describe('TodoList', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
   })
 
   it('should render loading state', () => {
@@ -140,11 +146,10 @@ describe('TodoList', () => {
       error: null,
     })
 
-    const user = userEvent.setup()
     render(<TodoList />, { wrapper: createWrapper() })
     
     const checkboxes = screen.getAllByRole('checkbox')
-    await user.click(checkboxes[0]) // Click first todo checkbox
+    await userEvent.click(checkboxes[0]) // Click first todo checkbox
     
     expect(mockUpdateTodo).toHaveBeenCalledWith({
       id: 1,
@@ -159,12 +164,11 @@ describe('TodoList', () => {
       error: null,
     })
 
-    const user = userEvent.setup()
     render(<TodoList />, { wrapper: createWrapper() })
     
     // Find edit button by its icon
     const editButtons = screen.getAllByTestId('EditIcon')
-    await user.click(editButtons[0].closest('button')!)
+    await userEvent.click(editButtons[0].closest('button')!)
     
     // Should show save and cancel buttons
     expect(screen.getByText('Save')).toBeInTheDocument()
@@ -178,12 +182,11 @@ describe('TodoList', () => {
       error: null,
     })
 
-    const user = userEvent.setup()
     render(<TodoList />, { wrapper: createWrapper() })
     
     // Find delete button by its icon
     const deleteButtons = screen.getAllByTestId('DeleteIcon')
-    await user.click(deleteButtons[0].closest('button')!)
+    await userEvent.click(deleteButtons[0].closest('button')!)
     
     // Should show delete confirmation dialog
     expect(screen.getByText('Delete Todo')).toBeInTheDocument()
@@ -197,16 +200,15 @@ describe('TodoList', () => {
       error: null,
     })
 
-    const user = userEvent.setup()
     render(<TodoList />, { wrapper: createWrapper() })
     
     // Click delete button
     const deleteButtons = screen.getAllByTestId('DeleteIcon')
-    await user.click(deleteButtons[0].closest('button')!)
+    await userEvent.click(deleteButtons[0].closest('button')!)
     
     // Click the delete button in the dialog
     const confirmDeleteButton = screen.getByRole('button', { name: 'Delete' })
-    await user.click(confirmDeleteButton)
+    await userEvent.click(confirmDeleteButton)
     
     expect(mockDeleteTodo).toHaveBeenCalledWith(1)
   })
@@ -218,16 +220,15 @@ describe('TodoList', () => {
       error: null,
     })
 
-    const user = userEvent.setup()
     render(<TodoList />, { wrapper: createWrapper() })
     
     // Click delete button
     const deleteButtons = screen.getAllByTestId('DeleteIcon')
-    await user.click(deleteButtons[0].closest('button')!)
+    await userEvent.click(deleteButtons[0].closest('button')!)
     
     // Click cancel in the dialog
     const cancelButton = screen.getByRole('button', { name: 'Cancel' })
-    await user.click(cancelButton)
+    await userEvent.click(cancelButton)
     
     expect(mockDeleteTodo).not.toHaveBeenCalled()
   })

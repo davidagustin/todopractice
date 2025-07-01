@@ -12,15 +12,16 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 - **Zap** structured logging
 - **Viper** configuration management
 - **Testify** for testing
+- **golangci-lint** for code quality and linting
 
 ### Frontend
-- **React 18** with TypeScript
+- **React 19** with TypeScript
 - **Vite** build tool
 - **Tailwind CSS** for styling
 - **React Hook Form** for form handling
 - **TanStack Query** for server state management
 - **React Router** for client-side routing
-- **Vitest** for testing
+- **Jest & Testing Library** for testing
 
 ## 📋 Features
 
@@ -107,6 +108,11 @@ docker-compose down --volumes --rmi all
    go test ./...
    ```
 
+6. **Run linter**
+   ```bash
+   golangci-lint run ./...
+   ```
+
 ### Frontend Development
 
 1. **Navigate to frontend directory**
@@ -134,6 +140,28 @@ docker-compose down --volumes --rmi all
    npm run build
    ```
 
+## 🔍 Code Quality
+
+### Backend Code Quality
+
+The backend uses `golangci-lint` for comprehensive code quality checks:
+
+- **Code Style**: Formatting, import organization
+- **Error Handling**: Proper error checking and handling
+- **Security**: Security vulnerability detection
+- **Performance**: Performance optimization suggestions
+- **Complexity**: Cyclomatic complexity analysis
+- **Best Practices**: Go idioms and best practices
+
+### Frontend Code Quality
+
+The frontend uses ESLint and Prettier for code quality:
+
+- **Code Style**: Consistent formatting and style
+- **Type Safety**: TypeScript strict mode
+- **Best Practices**: React and JavaScript best practices
+- **Accessibility**: Accessibility guidelines
+
 ## 🧪 Testing
 
 ### Backend Tests
@@ -142,11 +170,29 @@ cd backend
 go test ./... -v
 ```
 
+### Backend Code Quality
+```bash
+cd backend
+# Run linter
+golangci-lint run ./...
+
+# Format code
+go fmt ./...
+
+# Run gofumpt (stricter formatting)
+gofumpt -w .
+
+# Organize imports
+goimports -w .
+```
+
 ### Frontend Tests
 ```bash
 cd frontend
 npm run test
 ```
+
+**Note:** The frontend tests are configured to use the legacy JSX runtime (`"jsx": "react"` in `tsconfig.test.json`) for compatibility with React 19 and Testing Library. This ensures all tests pass while maintaining full functionality.
 
 ### Test Coverage
 ```bash
@@ -165,18 +211,23 @@ npm run test:coverage
 fullstackpractice/
 ├── backend/                 # Go backend application
 │   ├── cmd/server/         # Application entry point
-│   │   ├── internal/           # Internal packages
-│   │   │   ├── auth/          # Authentication logic
-│   │   │   ├── config/        # Configuration
-│   │   │   ├── database/      # Database connection
-│   │   │   └── todo/          # Todo business logic
-│   │   ├── pkg/               # Public packages
-│   │   │   ├── middleware/    # HTTP middleware
-│   │   │   ├── models/        # Data models
-│   │   │   └── utils/         # Utilities
-│   │   ├── tests/             # Test files
-│   │   ├── Dockerfile         # Backend Docker image
-│   │   └── config.yaml        # Configuration file
+│   │   └── main.go         # Server entry point
+│   ├── internal/           # Internal packages (not importable)
+│   │   ├── auth/           # Authentication handlers and services
+│   │   ├── config/         # Configuration management
+│   │   ├── database/       # Database connection and migrations
+│   │   └── todo/           # Todo business logic
+│   ├── pkg/                # Public packages (importable)
+│   │   ├── middleware/     # HTTP middleware
+│   │   ├── models/         # Data models and DTOs
+│   │   └── utils/          # Utility functions
+│   ├── tests/              # Test files
+│   │   ├── integration/    # Integration tests
+│   │   └── unit/           # Unit tests
+│   ├── config.yaml         # Configuration file
+│   ├── .golangci.yml       # Linter configuration
+│   ├── go.mod              # Go module file
+│   └── go.sum              # Go module checksums
 │   ├── frontend/               # React frontend application
 │   │   ├── src/
 │   │   │   ├── components/    # React components
@@ -259,11 +310,55 @@ For production deployment, make sure to:
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Write tests for new features
-4. Ensure all tests pass
-5. Submit a pull request
+### Development Workflow
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make your changes**
+4. **Run tests and linter**
+   ```bash
+   # Backend
+   cd backend
+   go test ./... -v
+   golangci-lint run ./...
+   
+   # Frontend
+   cd frontend
+   npm run test
+   npm run lint
+   ```
+
+5. **Commit your changes** (use conventional commit format)
+   ```bash
+   git commit -m "feat: add new feature"
+   ```
+
+6. **Submit a pull request**
+
+### Code Standards
+
+- Follow language-specific best practices
+- Write comprehensive tests
+- Ensure all linter checks pass
+- Use meaningful commit messages
+- Document public APIs
+
+### Commit Message Format
+
+Use conventional commit format:
+```
+type(scope): description
+
+[optional body]
+
+[optional footer]
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 ## 📄 License
 
