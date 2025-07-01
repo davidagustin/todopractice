@@ -6,7 +6,19 @@ import tseslint from 'typescript-eslint'
 import { globalIgnores } from 'eslint/config'
 
 export default tseslint.config([
-  globalIgnores(['dist']),
+  globalIgnores([
+    'dist',
+    'coverage',
+    'cypress',
+    '**/*.cy.ts',
+    '**/*.cy.tsx',
+    '**/cypress/**',
+    '**/__tests__/**',
+    '**/*.test.ts',
+    '**/*.test.tsx',
+    '**/*.spec.ts',
+    '**/*.spec.tsx'
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

@@ -34,9 +34,9 @@ const LoginForm: React.FC = () => {
   };
 
   // Helper to parse backend error
-  function getErrorMessage(error: any) {
-    if (!error) return null;
-    const msg = error.message || '';
+  function getErrorMessage(error: unknown) {
+    if (!error || typeof error !== 'object') return null;
+    const msg = (error as { message?: string }).message || '';
     if (msg.includes('Invalid email or password')) return 'Invalid email or password';
     if (msg.includes('validation failed')) {
       if (msg.includes('Email')) return 'Invalid email format';
@@ -99,7 +99,7 @@ const LoginForm: React.FC = () => {
                       message: 'Invalid email address'
                     }
                   }}
-                  render={({ field }) => (
+                  render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
                       {...field}
                       margin="normal"
@@ -126,7 +126,7 @@ const LoginForm: React.FC = () => {
                       message: 'Password must be at least 6 characters'
                     }
                   }}
-                  render={({ field }) => (
+                  render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
                       {...field}
                       margin="normal"

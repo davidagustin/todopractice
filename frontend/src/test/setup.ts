@@ -10,7 +10,7 @@ if (typeof globalThis.TextEncoder === 'undefined') {
       return arr;
     }
   }
-  globalThis.TextEncoder = TextEncoder as any;
+  globalThis.TextEncoder = TextEncoder as unknown as typeof globalThis.TextEncoder;
 }
 if (typeof globalThis.TextDecoder === 'undefined') {
   class TextDecoder {
@@ -20,7 +20,7 @@ if (typeof globalThis.TextDecoder === 'undefined') {
       return decodeURIComponent(escape(str));
     }
   }
-  globalThis.TextDecoder = TextDecoder as any;
+  globalThis.TextDecoder = TextDecoder as unknown as typeof globalThis.TextDecoder;
 }
 
 // Mock import.meta.env for Vite API usage in tests

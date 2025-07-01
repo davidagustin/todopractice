@@ -33,14 +33,13 @@ const RegisterForm: React.FC = () => {
   const password = watch('password');
 
   const onSubmit = (data: RegisterRequest & { confirmPassword: string }) => {
-    const { confirmPassword: _confirmPassword, ...registerData } = data;
-    registerMutation.mutate(registerData);
+    registerMutation.mutate(data);
   };
 
   // Helper to parse backend error
-  function getErrorMessage(error: any) {
-    if (!error) return null;
-    const msg = error.message || '';
+  function getErrorMessage(error: unknown) {
+    if (!error || typeof error !== 'object') return null;
+    const msg = (error as { message?: string }).message || '';
     if (msg.includes('validation failed')) {
       if (msg.includes('Email')) return 'Invalid email format';
       if (msg.includes('Password') && msg.includes('min')) return 'Password must be at least 6 characters';
@@ -104,7 +103,7 @@ const RegisterForm: React.FC = () => {
                       message: 'Name must be at least 2 characters',
                     },
                   }}
-                  render={({ field }) => (
+                  render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
                       {...field}
                       margin="normal"
@@ -131,7 +130,7 @@ const RegisterForm: React.FC = () => {
                       message: 'Invalid email address',
                     },
                   }}
-                  render={({ field }) => (
+                  render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
                       {...field}
                       margin="normal"
@@ -157,7 +156,7 @@ const RegisterForm: React.FC = () => {
                       message: 'Password must be at least 6 characters',
                     },
                   }}
-                  render={({ field }) => (
+                  render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
                       {...field}
                       margin="normal"
@@ -179,10 +178,10 @@ const RegisterForm: React.FC = () => {
                   control={control}
                   rules={{
                     required: 'Please confirm your password',
-                    validate: (value) =>
+                    validate: (value: string) =>
                       value === password || 'Passwords do not match',
                   }}
-                  render={({ field }) => (
+                  render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
                       {...field}
                       margin="normal"

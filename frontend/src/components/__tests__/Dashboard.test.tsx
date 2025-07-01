@@ -1,6 +1,6 @@
 /** @jsxImportSource react */
 import React from 'react';
-import type { ReactElement, FC, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ jest.mock('../../hooks/useAuth', () => ({
   useLogout: () => mockUseLogout,
 }));
 
-const renderWithProviders = (component: ReactElement) => {
+const renderWithProviders = (component: ReactNode) => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
