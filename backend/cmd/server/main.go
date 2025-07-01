@@ -42,9 +42,13 @@ func main() {
 	// Initialize JWT utility
 	jwtUtil := utils.NewJWTUtil(cfg)
 
+	// Initialize repositories
+	userRepo := auth.NewGORMUserRepository(db.DB)
+	todoRepo := todo.NewGORMTodoRepository(db.DB)
+
 	// Initialize services
-	authService := auth.NewService(db.DB, jwtUtil)
-	todoService := todo.NewService(db.DB)
+	authService := auth.NewService(userRepo, jwtUtil)
+	todoService := todo.NewService(todoRepo)
 
 	// Initialize handlers
 	authHandler := auth.NewHandler(authService, logger)

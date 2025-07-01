@@ -3,6 +3,7 @@ package auth
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"todoapp-backend/pkg/middleware"
 	"todoapp-backend/pkg/models"
 
@@ -45,6 +46,14 @@ func (h *Handler) Register(c *gin.Context) {
 			return
 		}
 
+		// Check if it's a validation error
+		if strings.Contains(err.Error(), "validation failed") {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Registration failed",
 		})
@@ -77,6 +86,14 @@ func (h *Handler) Login(c *gin.Context) {
 		if errors.Is(err, ErrUserNotFound) || errors.Is(err, ErrInvalidPassword) {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Invalid email or password",
+			})
+			return
+		}
+
+		// Check if it's a validation error
+		if strings.Contains(err.Error(), "validation failed") {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
 			})
 			return
 		}
