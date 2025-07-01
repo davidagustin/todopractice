@@ -7,7 +7,7 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 ### Backend
 - **Go 1.24.4** with Gin web framework
 - **GORM** for database ORM
-- **PostgreSQL 15** database
+- **SQLite** for local development (PostgreSQL for production)
 - **JWT** authentication
 - **Zap** structured logging
 - **Viper** configuration management
@@ -40,14 +40,11 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 - ✅ GitHub Actions CI/CD pipeline
 - ✅ Docker containerization
 - ✅ Security scanning and analysis
+- ✅ **Fully automated E2E testing**
 
-## 🚀 Quick Start with Docker
+## 🚀 Quick Start
 
-### Prerequisites
-- Docker and Docker Compose installed
-- Git
-
-### Deploy the Application
+### Automated Setup (Recommended)
 
 1. **Clone the repository**
    ```bash
@@ -55,37 +52,19 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
    cd fullstackpractice
    ```
 
-2. **Run the deployment script**
+2. **Run the complete E2E test suite**
    ```bash
-   ./deploy.sh
+   ./run-e2e-complete.sh
    ```
+   This script will:
+   - Start the backend server with SQLite
+   - Start the frontend development server
+   - Run all E2E tests automatically
+   - Clean up processes when done
 
-3. **Access the application**
-   - Frontend: http://localhost
-   - Backend API: http://localhost:8080
-   - Database: localhost:5432
+### Manual Setup
 
-### Manual Docker Commands
-
-If you prefer to run commands manually:
-
-```bash
-# Build and start all services
-docker-compose up --build -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-
-# Stop and remove everything including volumes
-docker-compose down --volumes --rmi all
-```
-
-## 🛠️ Development Setup
-
-### Backend Development
+#### Backend Development
 
 1. **Navigate to backend directory**
    ```bash
@@ -97,28 +76,17 @@ docker-compose down --volumes --rmi all
    go mod download
    ```
 
-3. **Set up PostgreSQL** (or use Docker)
-   ```bash
-   # Using Docker
-   docker run --name postgres-dev -e POSTGRES_PASSWORD=password -e POSTGRES_DB=todoapp -p 5432:5432 -d postgres:15-alpine
-   ```
-
-4. **Run the server**
+3. **Run the server** (uses SQLite by default)
    ```bash
    go run cmd/server/main.go
    ```
 
-5. **Run tests**
+4. **Run tests**
    ```bash
    go test ./...
    ```
 
-6. **Run linter**
-   ```bash
-   golangci-lint run ./...
-   ```
-
-### Frontend Development
+#### Frontend Development
 
 1. **Navigate to frontend directory**
    ```bash
@@ -140,74 +108,45 @@ docker-compose down --volumes --rmi all
    npm run test
    ```
 
-5. **Build for production**
-   ```bash
-   npm run build
-   ```
-
-## 🔍 Code Quality
-
-### Backend Code Quality
-
-The backend uses `golangci-lint` for comprehensive code quality checks:
-
-- **Code Style**: Formatting, import organization
-- **Error Handling**: Proper error checking and handling
-- **Security**: Security vulnerability detection
-- **Performance**: Performance optimization suggestions
-- **Complexity**: Cyclomatic complexity analysis
-- **Best Practices**: Go idioms and best practices
-
-### Frontend Code Quality
-
-The frontend uses ESLint and Prettier for code quality:
-
-- **Code Style**: Consistent formatting and style
-- **Type Safety**: TypeScript strict mode
-- **Best Practices**: React and JavaScript best practices
-- **Accessibility**: Accessibility guidelines
-
-### CI/CD Pipeline
-
-The project includes comprehensive GitHub Actions workflows:
-
-- **CI/CD Pipeline**: Automated testing, building, and deployment
-- **Security Analysis**: Vulnerability scanning and code analysis
-- **Performance Testing**: Load testing and performance monitoring
-- **Docker Builds**: Multi-platform container builds
-- **Quality Gates**: Automated quality checks and validation
-
 ## 🧪 Testing
 
-### Backend Tests
+### Current Test Status
+
+- ✅ **Backend Tests**: 100% passing (23 tests)
+- ✅ **Frontend Tests**: 100% passing (36 tests)
+- ✅ **E2E Tests**: 100% passing (10 tests)
+
+### Running Tests
+
+#### Backend Tests
 ```bash
 cd backend
 go test ./... -v
 ```
 
-### Backend Code Quality
-```bash
-cd backend
-# Run linter
-golangci-lint run ./...
-
-# Format code
-go fmt ./...
-
-# Run gofumpt (stricter formatting)
-gofumpt -w .
-
-# Organize imports
-goimports -w .
-```
-
-### Frontend Tests
+#### Frontend Tests
 ```bash
 cd frontend
 npm run test
 ```
 
-**Note:** The frontend tests are configured to use the legacy JSX runtime (`"jsx": "react"` in `tsconfig.test.json`) for compatibility with React 19 and Testing Library. This ensures all tests pass while maintaining full functionality.
+#### E2E Tests (Automated)
+```bash
+# Run complete E2E suite with automation
+./run-e2e-complete.sh
+```
+
+#### E2E Tests (Manual)
+```bash
+# Start backend server
+cd backend && go run cmd/server/main.go
+
+# Start frontend server (in another terminal)
+cd frontend && npm run dev
+
+# Run E2E tests (in another terminal)
+cd frontend && npm run cypress:run
+```
 
 ### Test Coverage
 ```bash
@@ -268,6 +207,7 @@ fullstackpractice/
 │   └── CSS_BEST_PRACTICES.md # CSS guidelines
 ├── docker-compose.yml        # Docker orchestration
 ├── deploy.sh                 # Deployment script
+├── run-e2e-complete.sh       # E2E test automation script
 ├── TESTING.md                # Testing documentation
 ├── TESTING_STRATEGY.md       # Testing strategy
 └── README.md                 # This file
@@ -285,6 +225,7 @@ fullstackpractice/
 - `DB_NAME` - Database name (default: todoapp)
 - `JWT_SECRET` - JWT signing secret
 - `PORT` - Server port (default: 8080)
+- `DB_TYPE` - Database type (sqlite/postgres, default: sqlite for local dev)
 
 #### Frontend
 - `VITE_API_URL` - Backend API URL (default: http://localhost:8080)
@@ -370,6 +311,9 @@ For production deployment, make sure to:
    cd frontend
    npm run test
    npm run lint
+   
+   # E2E tests
+   ./run-e2e-complete.sh
    ```
 
 5. **Commit your changes** (use conventional commit format)

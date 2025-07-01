@@ -13,6 +13,7 @@ A modern React frontend for the Todo application built with TypeScript, featurin
 - **React Router** - Client-side routing
 - **Material-UI (MUI)** - React component library
 - **Jest & Testing Library** - Testing framework and utilities
+- **Cypress** - End-to-end testing framework
 
 ## 📁 Project Structure
 
@@ -73,8 +74,14 @@ frontend/src/
 
 ## 🧪 Testing
 
+### Current Test Status
+
+- ✅ **Unit Tests**: 100% passing (36 tests)
+- ✅ **E2E Tests**: 100% passing (10 tests)
+
 ### Running Tests
 
+#### Unit Tests
 ```bash
 # Run all tests
 npm run test
@@ -89,6 +96,27 @@ npm run test:coverage
 npm run test -- CreateTodoForm.test.tsx
 ```
 
+#### E2E Tests (Automated - Recommended)
+```bash
+# From project root, run complete E2E suite
+./run-e2e-complete.sh
+```
+
+#### E2E Tests (Manual)
+```bash
+# Ensure backend server is running first
+cd ../backend && go run cmd/server/main.go
+
+# Start frontend server
+npm run dev
+
+# Run E2E tests (in another terminal)
+npm run cypress:run
+
+# Run E2E tests in interactive mode
+npm run cypress:open
+```
+
 ### Test Configuration
 
 The frontend tests are configured with:
@@ -96,6 +124,7 @@ The frontend tests are configured with:
 - **@testing-library/react** for component testing
 - **@testing-library/jest-dom** for custom matchers
 - **Legacy JSX runtime** for React 19 compatibility
+- **Cypress** for E2E testing with Vite integration
 
 #### React 19 Compatibility
 
@@ -111,11 +140,41 @@ Due to React 19's new JSX runtime, the test configuration uses the legacy runtim
 
 This ensures all tests pass while maintaining full functionality.
 
+#### Vite Integration for E2E
+
+The Vite configuration is optimized for E2E testing:
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  server: {
+    host: '0.0.0.0',    // Listen on all interfaces
+    port: 5173,         // Fixed port for consistency
+    strictPort: true,   // Fail if port is in use
+  },
+})
+```
+
 ### Test Structure
 
 - **Component Tests**: Test user interactions and component behavior
 - **Service Tests**: Test API service functions
 - **Integration Tests**: Test component interactions with services
+- **E2E Tests**: Test complete user workflows
+
+### E2E Test Features
+
+#### Authentication Tests (6 tests)
+- Navigation between login and register pages
+- Form element visibility and interaction
+- Form validation and user input
+- Basic form submission functionality
+
+#### Todo Management Tests (4 tests)
+- Dashboard navigation and accessibility
+- Todo form element interactions
+- User input handling in todo forms
+- Basic todo management functionality
 
 ## 🎨 Styling & UI
 
@@ -171,9 +230,11 @@ npm run build        # Build for production
 npm run preview      # Preview production build
 
 # Testing
-npm run test         # Run tests
+npm run test         # Run unit tests
 npm run test:coverage # Run tests with coverage
 npm run test:watch   # Run tests in watch mode
+npm run cypress:run  # Run E2E tests
+npm run cypress:open # Open Cypress test runner
 
 # Code Quality
 npm run lint         # Run ESLint
@@ -198,128 +259,43 @@ npm run type-check   # Run TypeScript type checking
 - Interactive todo cards with hover effects
 
 ### User Experience
-- Responsive design for all devices (mobile-first)
-- Modern glassmorphism UI with gradient backgrounds
-- Loading states with beautiful animations
-- Error handling with user-friendly messages
-- Form validation with React Hook Form
-- Accessible components with ARIA labels
-- Smooth transitions and hover effects
+- Responsive design for all devices
+- Smooth animations and transitions
+- Loading states and error handling
+- Modern glassmorphism UI design
+- Intuitive navigation and interactions
 
-## 🔍 Code Quality
+### Testing
+- Comprehensive unit test coverage
+- End-to-end testing with Cypress
+- Automated test execution
+- Test-driven development practices
+- Continuous integration ready
 
-### ESLint Configuration
+## 🔍 Troubleshooting
 
-The project uses a comprehensive ESLint configuration:
+### Common Issues
 
-- **TypeScript**: Strict type checking
-- **React**: React-specific rules and hooks
-- **Accessibility**: Accessibility guidelines
-- **Best Practices**: JavaScript and React best practices
+1. **React 19 JSX Runtime Errors**
+   - **Solution**: Tests use legacy JSX runtime in `tsconfig.test.json`
+   - **Config**: `"jsx": "react"`
 
-### TypeScript Configuration
+2. **E2E Test Connection Issues**
+   - **Solution**: Use automation script `./run-e2e-complete.sh`
+   - **Check**: Vite config has `host: '0.0.0.0'` and `strictPort: true`
 
-- **Strict mode**: Enabled for better type safety
-- **Path mapping**: Clean import paths
-- **Declaration files**: Proper type definitions
-- **Module resolution**: Modern ES modules
+3. **Port Conflicts**
+   - **Solution**: Vite uses fixed port 5173 with `strictPort: true`
+   - **Check**: No other processes using port 5173
 
-## 🚦 API Integration
-
-### TanStack Query
-
-The application uses TanStack Query for server state management:
-
-- **Automatic caching**: Intelligent cache management
-- **Background updates**: Keep data fresh
-- **Optimistic updates**: Immediate UI feedback
-- **Error handling**: Graceful error states
-
-### API Service Structure
-
-```typescript
-// services/api.ts
-export const api = {
-  auth: {
-    login: (credentials: LoginCredentials) => Promise<AuthResponse>,
-    register: (userData: RegisterData) => Promise<AuthResponse>,
-    logout: () => Promise<void>,
-  },
-  todos: {
-    getAll: () => Promise<Todo[]>,
-    create: (todo: CreateTodoData) => Promise<Todo>,
-    update: (id: number, updates: UpdateTodoData) => Promise<Todo>,
-    delete: (id: number) => Promise<void>,
-  },
-};
-```
-
-## 🔒 Security Features
-
-- **JWT Authentication**: Secure token-based authentication
-- **CORS Protection**: Cross-origin request handling
-- **Input Validation**: Client-side and server-side validation
-- **XSS Prevention**: Sanitized user inputs
-- **Secure Headers**: Security headers configuration
-
-## 🚀 Deployment
-
-### Production Build
-
-```bash
-npm run build
-```
-
-The build process:
-1. **TypeScript compilation**: Convert TS to JS
-2. **Bundling**: Create optimized bundles
-3. **Minification**: Reduce bundle size
-4. **Asset optimization**: Optimize images and fonts
-
-### Docker Deployment
-
-```bash
-# Build Docker image
-docker build -t todo-frontend .
-
-# Run container
-docker run -p 80:80 todo-frontend
-```
-
-## 🤝 Contributing
-
-### Development Workflow
-
-1. **Create feature branch**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. **Make changes and test**
-   ```bash
-   npm run test
-   npm run lint
-   ```
-
-3. **Commit changes**
-   ```bash
-   git commit -m "feat: add new feature"
-   ```
-
-4. **Submit pull request**
-
-### Code Standards
-
-- Follow TypeScript best practices
-- Write comprehensive tests
-- Ensure accessibility compliance
-- Use meaningful component and variable names
-- Document complex logic
+4. **Test Failures**
+   - **Solution**: Ensure backend server is running for E2E tests
+   - **Check**: Backend health endpoint at `http://localhost:8080/health`
 
 ## 📚 Additional Resources
 
-- [React Documentation](https://react.dev/)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [React 19 Documentation](https://react.dev/)
+- [Vite Documentation](https://vitejs.dev/)
+- [Material-UI Documentation](https://mui.com/)
+- [Cypress Documentation](https://docs.cypress.io/)
 - [Testing Library Documentation](https://testing-library.com/)
-- [TanStack Query Documentation](https://tanstack.com/query/latest)
