@@ -71,7 +71,18 @@ const RegisterForm: React.FC = () => {
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       }}
     >
-      <Container component="main" sx={{ width: '100%' }}>
+      <Container
+        component="main"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          minHeight: '100vh',
+          m: 0,
+          p: 0,
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
