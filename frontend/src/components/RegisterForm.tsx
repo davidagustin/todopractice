@@ -37,6 +37,20 @@ const RegisterForm: React.FC = () => {
     registerMutation.mutate(registerData);
   };
 
+  // Helper to parse backend error
+  function getErrorMessage(error: any) {
+    if (!error) return null;
+    const msg = error.message || '';
+    if (msg.includes('validation failed')) {
+      if (msg.includes('Email')) return 'Invalid email format';
+      if (msg.includes('Password') && msg.includes('min')) return 'Password must be at least 6 characters';
+      if (msg.includes('Name')) return 'Name is required';
+      return 'Validation error';
+    }
+    if (msg.includes('User already exists')) return 'User already exists';
+    return msg;
+  }
+
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -169,7 +183,7 @@ const RegisterForm: React.FC = () => {
 
               {registerMutation.error && (
                 <Alert severity="error" sx={{ mt: 2 }}>
-                  {registerMutation.error.message}
+                  {getErrorMessage(registerMutation.error)}
                 </Alert>
               )}
 

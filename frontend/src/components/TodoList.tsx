@@ -27,7 +27,7 @@ import {
   RadioButtonUnchecked,
   Assignment,
 } from '@mui/icons-material';
-import type { Todo, UpdateTodoRequest } from '../types';
+import type { Todo, UpdateTodoRequest } from '../types/index';
 
 interface TodoItemProps {
   todo: Todo;

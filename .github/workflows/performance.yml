@@ -55,14 +55,16 @@ jobs:
         cd backend
         go build -o server ./cmd/server
         ./server &
-        sleep 10
+        echo "Backend started, waiting for it to be ready..."
+        timeout 30s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; done'
 
     - name: Build and start frontend
       run: |
         cd frontend
         npm run build
         npm run preview &
-        sleep 15
+        echo "Frontend started, waiting for it to be ready..."
+        timeout 30s bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
 
     - name: Install Artillery
       run: npm install -g artillery
@@ -113,7 +115,8 @@ jobs:
       run: |
         cd frontend
         npm run preview &
-        sleep 10
+        echo "Frontend started, waiting for it to be ready..."
+        timeout 30s bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
 
     - name: Run Lighthouse CI
       uses: treosh/lighthouse-ci-action@v10
@@ -157,7 +160,8 @@ jobs:
         cd backend
         go build -o server ./cmd/server
         ./server &
-        sleep 10
+        echo "Backend started, waiting for it to be ready..."
+        timeout 30s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; done'
 
     - name: Run API performance tests
       run: |

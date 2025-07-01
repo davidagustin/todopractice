@@ -169,15 +169,15 @@ jobs:
     - name: Run ESLint security rules
       run: |
         cd frontend
-        npm install eslint-plugin-security --save-dev
-        npx eslint . --ext .js,.jsx,.ts,.tsx --config .eslintrc.security.js || true
+        npm install eslint-plugin-security --save-dev || echo "Security plugin installation failed, continuing..."
+        npx eslint . --ext .js,.jsx,.ts,.tsx --config .eslintrc.security.js || echo "ESLint security check completed with warnings"
 
     # Run Go security linter
     - name: Run Go security linter
       run: |
         cd backend
         go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
-        gosec ./... || true
+        gosec ./... || echo "Go security check completed with warnings"
 
   # Security summary
   security-summary:

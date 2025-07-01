@@ -47,9 +47,13 @@ func NewService(repo UserRepository, jwtUtil JWTUtilInterface) *Service {
 
 // Register creates a new user account
 func (s *Service) Register(req models.UserRegisterRequest) (*models.UserResponse, string, error) {
+	fmt.Printf("Validating request: %+v\n", req)
 	if err := s.validate.Struct(req); err != nil {
+		fmt.Printf("Validation error: %v\n", err)
+		fmt.Printf("Validation error type: %T\n", err)
 		return nil, "", fmt.Errorf("validation failed: %w", err)
 	}
+	fmt.Printf("Validation passed\n")
 
 	// Check if user already exists
 	existingUser, err := s.repo.FindByEmail(req.Email)

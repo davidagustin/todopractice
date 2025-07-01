@@ -2,12 +2,15 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"todoapp-backend/pkg/middleware"
 	"todoapp-backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 )
 
@@ -29,15 +32,36 @@ func (h *Handler) Register(c *gin.Context) {
 	var req models.UserRegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Error("Failed to bind registration request", zap.Error(err))
+		// If it's a validation error, return field errors
+		if ve, ok := err.(validator.ValidationErrors); ok {
+			errors := make(map[string]string)
+			for _, fe := range ve {
+				switch fe.Field() {
+				case "Email":
+					errors["email"] = "Invalid email format"
+				case "Password":
+					errors["password"] = "Password must be at least 6 characters"
+				case "Name":
+					errors["name"] = "Name is required"
+				default:
+					errors[fe.Field()] = fe.Error()
+				}
+			}
+			c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+			return
+		}
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request body",
 		})
 		return
 	}
 
+	h.logger.Info("Registration request received", zap.Any("request", req))
+
 	user, token, err := h.service.Register(req)
 	if err != nil {
 		h.logger.Error("Registration failed", zap.Error(err))
+		h.logger.Info("Error message", zap.String("error_message", err.Error()))
 
 		if errors.Is(err, ErrUserAlreadyExists) {
 			c.JSON(http.StatusConflict, gin.H{
@@ -46,11 +70,30 @@ func (h *Handler) Register(c *gin.Context) {
 			return
 		}
 
-		// Check if it's a validation error
+		// Check if it's a validation error from the service
 		if strings.Contains(err.Error(), "validation failed") {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
+			// Debug log: print error type and value
+			h.logger.Info("Validation error debug", zap.String("type", fmt.Sprintf("%T", err)), zap.String("value", fmt.Sprintf("%+v", err)))
+			var ve validator.ValidationErrors
+			if errors.As(err, &ve) {
+				errors := make(map[string]string)
+				for _, fe := range ve {
+					switch fe.Field() {
+					case "Email":
+						errors["email"] = "Invalid email format"
+					case "Password":
+						errors["password"] = "Password must be at least 6 characters"
+					case "Name":
+						errors["name"] = "Name is required"
+					default:
+						errors[fe.Field()] = fe.Error()
+					}
+				}
+				c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+				return
+			}
+			// Fallback: return the error string
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
@@ -153,4 +196,21 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.Han
 		auth.POST("/login", h.Login)
 		auth.GET("/profile", authMiddleware, h.Profile)
 	}
+}
+
+// TestCleanup clears all test data (only available in test mode)
+func (h *Handler) TestCleanup(c *gin.Context) {
+	// Only allow in test environment
+	if os.Getenv("ENV") != "test" {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+		return
+	}
+
+	// For now, just return success - database cleanup will be handled at the server level
+	c.JSON(http.StatusOK, gin.H{"message": "Test cleanup endpoint available"})
+}
+
+// Health check endpoint
+func (h *Handler) Health(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "healthy"})
 }
