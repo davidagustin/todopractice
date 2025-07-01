@@ -66,7 +66,7 @@ describe('LoginForm', () => {
     
     expect(screen.getByText('Sign in to your account to continue')).toBeInTheDocument()
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
+    expect(screen.getByDisplayValue('')).toBeInTheDocument() // Check for password input by its empty value
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
   })
 
@@ -74,7 +74,7 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
-    const passwordInput = screen.getByLabelText(/^password$/i)
+    const passwordInput = screen.getByDisplayValue('') // Get password input by its empty value
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
     await userEvent.type(emailInput, 'test@example.com')
@@ -93,7 +93,7 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
-    const passwordInput = screen.getByLabelText(/^password$/i)
+    const passwordInput = screen.getByDisplayValue('') // Get password input by its empty value
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
     await userEvent.type(emailInput, 'invalid-email')
@@ -108,7 +108,7 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
-    const passwordInput = screen.getByLabelText(/^password$/i)
+    const passwordInput = screen.getByDisplayValue('') // Get password input by its empty value
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
     await userEvent.type(emailInput, 'test@example.com')

@@ -24,9 +24,49 @@ const mockUseAuth = {
 
 const mockUseLogout = vi.fn();
 
+// Mock the todos hook
+const mockUseTodos = {
+  data: {
+    todos: [
+      { id: 1, title: 'Test Todo 1', completed: false },
+      { id: 2, title: 'Test Todo 2', completed: true },
+    ],
+  },
+  isLoading: false,
+  error: null,
+};
+
+// Mock the create todo hook
+const mockUseCreateTodo = {
+  mutate: vi.fn(),
+  isPending: false,
+  error: null,
+};
+
+// Mock the update todo hook
+const mockUseUpdateTodo = {
+  mutate: vi.fn(),
+  isPending: false,
+  error: null,
+};
+
+// Mock the delete todo hook
+const mockUseDeleteTodo = {
+  mutate: vi.fn(),
+  isPending: false,
+  error: null,
+};
+
 vi.mock('../../hooks/useAuth', () => ({
   useAuth: () => mockUseAuth,
   useLogout: () => mockUseLogout,
+}));
+
+vi.mock('../../hooks/useTodos', () => ({
+  useTodos: () => mockUseTodos,
+  useCreateTodo: () => mockUseCreateTodo,
+  useUpdateTodo: () => mockUseUpdateTodo,
+  useDeleteTodo: () => mockUseDeleteTodo,
 }));
 
 const renderWithProviders = (component: ReactNode) => {
@@ -34,6 +74,8 @@ const renderWithProviders = (component: ReactNode) => {
     defaultOptions: {
       queries: {
         retry: false,
+        staleTime: Infinity,
+        gcTime: Infinity,
       },
     },
   });

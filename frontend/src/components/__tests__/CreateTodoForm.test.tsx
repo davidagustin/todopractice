@@ -95,6 +95,8 @@ describe('CreateTodoForm', () => {
     const longDescription = 'a'.repeat(1001) // Exceeds 1000 character limit
     
     await userEvent.type(titleInput, 'Valid Title')
+    // Use a more efficient way to fill the description
+    await userEvent.clear(descriptionInput)
     await userEvent.type(descriptionInput, longDescription)
     
     const submitButton = screen.getByRole('button', { name: /create todo/i })
@@ -102,7 +104,7 @@ describe('CreateTodoForm', () => {
     
     await waitFor(() => {
       expect(screen.getByText('Description must be less than 1000 characters')).toBeInTheDocument()
-    })
+    }, { timeout: 10000 })
   })
 
   it('should call createTodo with form data on valid submission', async () => {

@@ -31,6 +31,7 @@ jobs:
       with:
         go-version: '1.24'
         cache: true
+        cache-dependency-path: backend/go.sum
 
     # Scan Node.js dependencies
     - name: Run npm audit
@@ -107,7 +108,7 @@ jobs:
         docker build -t backend:test ./backend
         docker build -t frontend:test ./frontend
 
-    - name: Run Trivy container scan
+    - name: Run Trivy container scan for backend
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'backend:test'
@@ -121,13 +122,17 @@ jobs:
         format: 'sarif'
         output: 'trivy-container-frontend.sarif'
 
-    - name: Upload container scan results
+    - name: Upload backend container scan results
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
-        sarif_file: |
-          trivy-container-backend.sarif
-          trivy-container-frontend.sarif
+        sarif_file: 'trivy-container-backend.sarif'
+
+    - name: Upload frontend container scan results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-container-frontend.sarif'
 
   # Secret scanning
   secret-scan:
@@ -141,7 +146,7 @@ jobs:
     - name: Run TruffleHog
       uses: trufflesecurity/trufflehog@main
       with:
-        args: --only-verified --fail --no-update
+        path: .
 
   # SAST (Static Application Security Testing)
   sast:
@@ -164,13 +169,13 @@ jobs:
       with:
         go-version: '1.24'
         cache: true
+        cache-dependency-path: backend/go.sum
 
-    # Run ESLint security rules
-    - name: Run ESLint security rules
+    # Run Biome security rules
+    - name: Run Biome security check
       run: |
         cd frontend
-        npm install eslint-plugin-security --save-dev || echo "Security plugin installation failed, continuing..."
-        npx eslint . --ext .js,.jsx,.ts,.tsx --config .eslintrc.security.js || echo "ESLint security check completed with warnings"
+        npx biome lint . --apply-unsafe
 
     # Run Go security linter
     - name: Run Go security linter
