@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { vi, beforeEach } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 
 // Polyfill TextEncoder/TextDecoder for JSDOM (Node <18)
 if (typeof globalThis.TextEncoder === 'undefined') {

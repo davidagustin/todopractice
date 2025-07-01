@@ -1,6 +1,6 @@
-import type React from 'react';
-import { AppBar, Avatar, Box, Button, Container, Paper, Toolbar, Typography } from '@mui/material';
 import { ChecklistRtlOutlined, LogoutOutlined } from '@mui/icons-material';
+import { AppBar, Avatar, Box, Button, Container, Paper, Toolbar, Typography } from '@mui/material';
+import type React from 'react';
 import { useAuth, useLogout } from '../hooks/useAuth';
 import CreateTodoForm from './CreateTodoForm';
 import TodoList from './TodoList';

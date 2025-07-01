@@ -1,13 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 import LoginForm from './components/LoginForm';
 import ProtectedRoute from './components/ProtectedRoute';
 import RegisterForm from './components/RegisterForm';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Create Material-UI theme
 const theme = createTheme({
