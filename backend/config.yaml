@@ -3,12 +3,17 @@ server:
   port: "8080"
 
 database:
-  host: "postgres"
-  port: "5432"
-  user: "todouser"
-  password: "todopassword"
-  dbname: "todoapp"
-  sslmode: "disable"
+  # For local development, using SQLite (no setup required)
+  driver: "sqlite"
+  dsn: "todoapp.db"
+  
+  # PostgreSQL configuration (for production)
+  # host: "localhost"
+  # port: "5432"
+  # user: "todouser"
+  # password: "todopassword"
+  # dbname: "todoapp"
+  # sslmode: "disable"
 
 jwt:
   secret: "your-super-secret-jwt-key-change-this-in-production"

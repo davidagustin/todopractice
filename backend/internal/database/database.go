@@ -7,6 +7,7 @@ import (
 
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -17,19 +18,37 @@ type Database struct {
 
 // NewDatabase creates a new database connection
 func NewDatabase(cfg *config.Config, logger *zap.Logger) (*Database, error) {
-	db, err := gorm.Open(postgres.Open(cfg.GetDatabaseURL()), &gorm.Config{})
+	var db *gorm.DB
+	var err error
+
+	driver := cfg.GetDatabaseDriver()
+	dsn := cfg.GetDatabaseURL()
+
+	logger.Info("Connecting to database", zap.String("driver", driver), zap.String("dsn", dsn))
+
+	switch driver {
+	case "sqlite":
+		db, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	case "postgres":
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	default:
+		return nil, fmt.Errorf("unsupported database driver: %s", driver)
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
-	// Set connection pool settings
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get underlying sql.DB: %w", err)
-	}
+	// Set connection pool settings (only for PostgreSQL)
+	if driver == "postgres" {
+		sqlDB, err := db.DB()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get underlying sql.DB: %w", err)
+		}
 
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
+		sqlDB.SetMaxIdleConns(10)
+		sqlDB.SetMaxOpenConns(100)
+	}
 
 	return &Database{
 		DB:     db,
@@ -39,7 +58,7 @@ func NewDatabase(cfg *config.Config, logger *zap.Logger) (*Database, error) {
 
 // NewTestDatabase creates a new in-memory SQLite database for testing
 func NewTestDatabase(logger *zap.Logger) (*Database, error) {
-	db, err := gorm.Open(postgres.Open("host=localhost port=5432 user=test password=test dbname=test_todoapp sslmode=disable"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to test database: %w", err)
 	}

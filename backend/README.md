@@ -7,12 +7,13 @@ A robust Go backend for the Todo application built with clean architecture princ
 - **Go 1.24.4** - Programming language
 - **Gin** - HTTP web framework
 - **GORM** - Database ORM
-- **PostgreSQL** - Primary database
+- **PostgreSQL 15** - Primary database
 - **JWT** - Authentication
 - **Zap** - Structured logging
 - **Viper** - Configuration management
 - **Testify** - Testing framework
 - **golangci-lint** - Code linting and quality checks
+- **GitHub Actions** - CI/CD pipeline integration
 
 ## 📁 Project Structure
 
@@ -119,6 +120,11 @@ go test ./... -v
 go test ./... -cover
 ```
 
+### Run Tests with Race Detection
+```bash
+go test -race ./...
+```
+
 ### Run Specific Test Packages
 ```bash
 # Unit tests
@@ -128,10 +134,14 @@ go test ./tests/unit/... -v
 go test ./tests/integration/... -v
 ```
 
-### Run Tests with Race Detection
-```bash
-go test -race ./...
-```
+### CI/CD Testing
+
+The backend includes automated testing through GitHub Actions:
+- **Unit Tests**: All unit tests run on every push/PR
+- **Integration Tests**: Database and API integration tests
+- **Security Scanning**: Vulnerability detection and analysis
+- **Code Quality**: Automated linting and formatting checks
+- **Performance Testing**: Load testing and performance monitoring
 
 ## 🔍 Code Quality
 

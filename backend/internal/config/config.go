@@ -19,6 +19,8 @@ type ServerConfig struct {
 }
 
 type DatabaseConfig struct {
+	Driver   string `mapstructure:"driver"`
+	DSN      string `mapstructure:"dsn"`
 	Host     string `mapstructure:"host"`
 	Port     string `mapstructure:"port"`
 	User     string `mapstructure:"user"`
@@ -42,7 +44,9 @@ func LoadConfig() (*Config, error) {
 	// Set default values
 	viper.SetDefault("server.port", "8080")
 	viper.SetDefault("server.host", "0.0.0.0")
-	viper.SetDefault("database.host", "postgres")
+	viper.SetDefault("database.driver", "sqlite")
+	viper.SetDefault("database.dsn", "todoapp.db")
+	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.port", "5432")
 	viper.SetDefault("database.user", "todouser")
 	viper.SetDefault("database.password", "todopassword")
@@ -73,6 +77,9 @@ func LoadConfig() (*Config, error) {
 
 // GetDatabaseURL returns the database connection URL
 func (c *Config) GetDatabaseURL() string {
+	if c.Database.Driver == "sqlite" {
+		return c.Database.DSN
+	}
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		c.Database.Host,
 		c.Database.Port,
@@ -81,4 +88,9 @@ func (c *Config) GetDatabaseURL() string {
 		c.Database.DBName,
 		c.Database.SSLMode,
 	)
+}
+
+// GetDatabaseDriver returns the database driver
+func (c *Config) GetDatabaseDriver() string {
+	return c.Database.Driver
 }

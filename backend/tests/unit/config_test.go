@@ -29,7 +29,9 @@ func TestLoadConfig_Defaults(t *testing.T) {
 	// Test default values (from config.yaml)
 	assert.Equal(t, "8080", cfg.Server.Port)
 	assert.Equal(t, "0.0.0.0", cfg.Server.Host)
-	assert.Equal(t, "postgres", cfg.Database.Host)
+	assert.Equal(t, "sqlite", cfg.Database.Driver)
+	assert.Equal(t, "todoapp.db", cfg.Database.DSN)
+	assert.Equal(t, "localhost", cfg.Database.Host)
 	assert.Equal(t, "5432", cfg.Database.Port)
 	assert.Equal(t, "todouser", cfg.Database.User)
 	assert.Equal(t, "todopassword", cfg.Database.Password)
@@ -57,18 +59,34 @@ func TestLoadConfig_EnvironmentVariables(t *testing.T) {
 }
 
 func TestConfig_GetDatabaseURL(t *testing.T) {
-	cfg := &config.Config{
-		Database: config.DatabaseConfig{
-			Host:     "localhost",
-			Port:     "5432",
-			User:     "testuser",
-			Password: "testpass",
-			DBName:   "testdb",
-			SSLMode:  "disable",
-		},
-	}
+	t.Run("PostgreSQL", func(t *testing.T) {
+		cfg := &config.Config{
+			Database: config.DatabaseConfig{
+				Driver:   "postgres",
+				Host:     "localhost",
+				Port:     "5432",
+				User:     "testuser",
+				Password: "testpass",
+				DBName:   "testdb",
+				SSLMode:  "disable",
+			},
+		}
 
-	expected := "host=localhost port=5432 user=testuser password=testpass dbname=testdb sslmode=disable"
-	actual := cfg.GetDatabaseURL()
-	assert.Equal(t, expected, actual)
+		expected := "host=localhost port=5432 user=testuser password=testpass dbname=testdb sslmode=disable"
+		actual := cfg.GetDatabaseURL()
+		assert.Equal(t, expected, actual)
+	})
+
+	t.Run("SQLite", func(t *testing.T) {
+		cfg := &config.Config{
+			Database: config.DatabaseConfig{
+				Driver: "sqlite",
+				DSN:    "test.db",
+			},
+		}
+
+		expected := "test.db"
+		actual := cfg.GetDatabaseURL()
+		assert.Equal(t, expected, actual)
+	})
 }
