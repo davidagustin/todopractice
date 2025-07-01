@@ -1,24 +1,25 @@
-/* Component Styles - Reusable component patterns */
+/* Modern Component Styles - Reusable component patterns */
 
-/* Button component */
+/* Button component with logical properties */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-lg);
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
   font-size: 1rem;
   font-weight: var(--font-weight-medium);
   line-height: 1.5;
   border: 1px solid transparent;
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   background-color: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all var(--duration-normal) var(--easing-standard);
   user-select: none;
   text-decoration: none;
-  min-height: 2.5rem;
+  min-block-size: 2.5rem;
+  contain: layout style paint;
 }
 
 .btn:hover {
@@ -27,9 +28,9 @@
   box-shadow: var(--shadow-md);
 }
 
-.btn:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+.btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .btn:active {
@@ -63,25 +64,45 @@
   border-color: var(--color-primary);
 }
 
+.btn--success {
+  background-color: var(--color-success);
+  color: white;
+  border-color: var(--color-success);
+}
+
+.btn--warning {
+  background-color: var(--color-warning);
+  color: white;
+  border-color: var(--color-warning);
+}
+
+.btn--error {
+  background-color: var(--color-error);
+  color: white;
+  border-color: var(--color-error);
+}
+
 .btn--small {
-  padding: var(--spacing-xs) var(--spacing-md);
+  padding: var(--space-xs) var(--space-md);
   font-size: 0.875rem;
-  min-height: 2rem;
+  min-block-size: 2rem;
 }
 
 .btn--large {
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: var(--space-md) var(--space-xl);
   font-size: 1.125rem;
-  min-height: 3rem;
+  min-block-size: 3rem;
 }
 
-/* Card component */
+/* Card component with logical properties */
 .card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+  transition: box-shadow var(--duration-normal) var(--easing-standard), 
+              transform var(--duration-normal) var(--easing-standard);
+  contain: layout style paint;
 }
 
 .card:hover {
@@ -90,26 +111,26 @@
 }
 
 .card__header {
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-lg);
+  border-block-end: 1px solid var(--color-border);
 }
 
 .card__body {
-  padding: var(--spacing-lg);
+  padding: var(--space-lg);
 }
 
 .card__footer {
-  padding: var(--spacing-lg);
-  border-top: 1px solid var(--color-border);
-  background-color: rgba(0, 0, 0, 0.02);
+  padding: var(--space-lg);
+  border-block-start: 1px solid var(--color-border);
+  background-color: oklch(0% 0 0 / 0.02);
 }
 
-/* Form components */
+/* Form components with logical properties */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
+  gap: var(--space-sm);
+  margin-block-end: var(--space-lg);
 }
 
 .form-label {
@@ -119,50 +140,52 @@
 }
 
 .form-input {
-  padding: var(--spacing-sm);
+  padding: var(--space-sm);
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   background-color: var(--color-surface);
   color: var(--color-text);
   font-size: 1rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--duration-fast) var(--easing-standard), 
+              box-shadow var(--duration-fast) var(--easing-standard);
+  contain: layout style paint;
 }
 
-.form-input:focus {
+.form-input:focus-visible {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+  box-shadow: var(--focus-ring);
 }
 
 .form-input--error {
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
 
-.form-input--error:focus {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+.form-input--error:focus-visible {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px oklch(60% 0.15 25 / 0.1);
 }
 
 .form-error {
-  color: #ef4444;
+  color: var(--color-error);
   font-size: 0.875rem;
-  margin-top: var(--spacing-xs);
+  margin-block-start: var(--space-xs);
 }
 
 .form-help {
   color: var(--color-text-muted);
   font-size: 0.875rem;
-  margin-top: var(--spacing-xs);
+  margin-block-start: var(--space-xs);
 }
 
-/* Badge component */
+/* Badge component with logical properties */
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: var(--space-xs) var(--space-sm);
   font-size: 0.75rem;
   font-weight: var(--font-weight-medium);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--radius-sm);
   background-color: var(--color-surface);
   color: var(--color-text);
   border: 1px solid var(--color-border);
@@ -175,69 +198,76 @@
 }
 
 .badge--success {
-  background-color: #10b981;
+  background-color: var(--color-success);
   color: white;
-  border-color: #10b981;
+  border-color: var(--color-success);
 }
 
 .badge--warning {
-  background-color: #f59e0b;
+  background-color: var(--color-warning);
   color: white;
-  border-color: #f59e0b;
+  border-color: var(--color-warning);
 }
 
 .badge--error {
-  background-color: #ef4444;
+  background-color: var(--color-error);
   color: white;
-  border-color: #ef4444;
+  border-color: var(--color-error);
 }
 
-/* Alert component */
+.badge--info {
+  background-color: var(--color-info);
+  color: white;
+  border-color: var(--color-info);
+}
+
+/* Alert component with logical properties */
 .alert {
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-md);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
-  margin-bottom: var(--spacing-lg);
+  margin-block-end: var(--space-lg);
+  contain: layout style paint;
 }
 
 .alert--info {
-  background-color: rgba(59, 130, 246, 0.1);
-  border-color: rgba(59, 130, 246, 0.2);
-  color: #3b82f6;
+  background-color: oklch(95% 0.02 220 / 0.1);
+  border-color: var(--color-info);
+  color: var(--color-info);
 }
 
 .alert--success {
-  background-color: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.2);
-  color: #10b981;
+  background-color: oklch(95% 0.02 140 / 0.1);
+  border-color: var(--color-success);
+  color: var(--color-success);
 }
 
 .alert--warning {
-  background-color: rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
+  background-color: oklch(95% 0.02 80 / 0.1);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
 }
 
 .alert--error {
-  background-color: rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  background-color: oklch(95% 0.02 25 / 0.1);
+  border-color: var(--color-error);
+  color: var(--color-error);
 }
 
-/* Loading spinner */
+/* Spinner component with logical properties */
 .spinner {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
+  inline-size: 1rem;
+  block-size: 1rem;
   border: 2px solid var(--color-border);
+  border-block-start-color: var(--color-primary);
   border-radius: 50%;
-  border-top-color: var(--color-primary);
-  animation: spin 1s ease-in-out infinite;
+  animation: spin 1s linear infinite;
+  contain: layout style paint;
 }
 
 .spinner--large {
-  width: 2rem;
-  height: 2rem;
+  inline-size: 2rem;
+  block-size: 2rem;
   border-width: 3px;
 }
 
@@ -247,55 +277,51 @@
   }
 }
 
-/* Modal component */
+/* Modal component with logical properties */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: oklch(0% 0 0 / 0.5);
   z-index: var(--z-modal);
-  padding: var(--spacing-md);
+  contain: layout style paint;
 }
 
 .modal__content {
   background-color: var(--color-surface);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg);
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-inline-size: 90vw;
+  max-block-size: 90vh;
+  overflow: auto;
+  contain: layout style paint;
 }
 
 .modal__header {
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  padding: var(--space-lg);
+  border-block-end: 1px solid var(--color-border);
+  font-weight: var(--font-weight-semibold);
 }
 
 .modal__body {
-  padding: var(--spacing-lg);
+  padding: var(--space-lg);
 }
 
 .modal__footer {
-  padding: var(--spacing-lg);
-  border-top: 1px solid var(--color-border);
+  padding: var(--space-lg);
+  border-block-start: 1px solid var(--color-border);
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--space-sm);
   justify-content: flex-end;
 }
 
-/* Tooltip component */
+/* Tooltip component with logical properties */
 .tooltip {
   position: relative;
   display: inline-block;
+  contain: layout style paint;
 }
 
 .tooltip__content {
@@ -303,18 +329,28 @@
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--color-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-md);
+  padding: var(--space-sm) var(--space-md);
+  background-color: oklch(0% 0 0 / 0.9);
+  color: white;
   font-size: 0.875rem;
+  border-radius: var(--radius-sm);
   white-space: nowrap;
-  z-index: var(--z-tooltip);
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  transition: opacity var(--duration-fast) var(--easing-standard),
+              visibility var(--duration-fast) var(--easing-standard);
+  z-index: var(--z-tooltip);
+  contain: layout style paint;
+}
+
+.tooltip__content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-block-start-color: oklch(0% 0 0 / 0.9);
 }
 
 .tooltip:hover .tooltip__content {
@@ -322,17 +358,86 @@
   visibility: visible;
 }
 
-/* Responsive adjustments */
+/* Responsive design with logical properties */
 @media (max-width: 768px) {
   .btn {
-    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.875rem;
   }
   
   .modal {
-    padding: var(--spacing-sm);
+    padding: var(--space-md);
   }
   
   .modal__content {
-    max-width: none;
+    max-inline-size: 100%;
+    max-block-size: 100%;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 2px;
+  }
+  
+  .card {
+    border-width: 2px;
+  }
+  
+  .form-input {
+    border-width: 2px;
+  }
+  
+  .alert {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+  
+  .card {
+    transition: none;
+  }
+  
+  .form-input {
+    transition: none;
+  }
+  
+  .spinner {
+    animation: none;
+  }
+  
+  .tooltip__content {
+    transition: none;
+  }
+}
+
+/* Container queries for component-based responsive design */
+@container (min-width: 640px) {
+  .btn {
+    padding: var(--space-sm) var(--space-lg);
+    font-size: 1rem;
+  }
+  
+  .card__header,
+  .card__body,
+  .card__footer {
+    padding: var(--space-xl);
+  }
+}
+
+@container (min-width: 768px) {
+  .modal__content {
+    max-inline-size: 600px;
+  }
+  
+  .tooltip__content {
+    font-size: 1rem;
+    padding: var(--space-md) var(--space-lg);
   }
 } 

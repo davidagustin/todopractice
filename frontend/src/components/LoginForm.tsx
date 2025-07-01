@@ -69,7 +69,7 @@ const LoginForm: React.FC = () => {
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       }}
     >
-      <Container component="main" maxWidth="sm">
+      <Container component="main" sx={{ width: '100%' }}>
         <Box
           sx={{
             display: 'flex',
@@ -87,6 +87,7 @@ const LoginForm: React.FC = () => {
               borderRadius: 3,
               background: 'rgba(255, 255, 255, 0.95)',
               backdropFilter: 'blur(10px)',
+              mx: 'auto',
             }}
           >
             <Box

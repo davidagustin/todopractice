@@ -48,8 +48,6 @@ const CreateTodoForm: React.FC = () => {
         backdropFilter: 'blur(10px)',
         border: '1px solid rgba(255, 255, 255, 0.2)',
         width: '100%',
-        maxWidth: { xs: '100%', sm: 480 },
-        mx: 'auto',
       }}
     >
       <Typography

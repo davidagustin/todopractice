@@ -81,16 +81,16 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
         }}
       >
         <CardContent>
-          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'flex-start' }, gap: { xs: 1, sm: 2 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: { xs: 1, sm: 2 } }}>
             <Checkbox
               checked={todo.completed}
               onChange={toggleCompleted}
               icon={<RadioButtonUnchecked />}
               checkedIcon={<CheckCircle />}
-              sx={{ mt: { xs: 0, sm: -1 } }}
+              sx={{ mt: 0, flexShrink: 0 }}
             />
 
-            <Box sx={{ flex: 1 }}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
               {isEditing ? (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 2 } }}>
                   <TextField
@@ -123,6 +123,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                       color: todo.completed ? 'text.secondary' : 'text.primary',
                       mb: 1,
                       fontSize: { xs: '1rem', sm: '1.2rem' },
+                      wordBreak: 'break-word',
                     }}
                   >
                     {todo.title}
@@ -135,6 +136,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                         color: todo.completed ? 'text.disabled' : 'text.secondary',
                         mb: 1,
                         fontSize: { xs: '0.95rem', sm: '1rem' },
+                        wordBreak: 'break-word',
                       }}
                     >
                       {todo.description}

@@ -20,60 +20,70 @@ const Dashboard: React.FC = () => {
           backdropFilter: 'blur(10px)',
         }}
       >
-        <Toolbar sx={{ px: { xs: 1, sm: 2, md: 3 }, minHeight: { xs: 56, sm: 64 } }}>
-          <ChecklistRtlOutlined sx={{ mr: { xs: 1, sm: 2 }, fontSize: { xs: 22, sm: 28 } }} />
-          <Typography
-            variant="h5"
-            component="div"
-            sx={{
-              flexGrow: 1,
-              fontWeight: 'bold',
-              fontSize: { xs: '1.1rem', sm: '1.5rem' },
-              whiteSpace: { xs: 'normal', sm: 'nowrap' },
-            }}
-          >
-            Todo App
-          </Typography>
-          {user && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: 'secondary.main', fontSize: { xs: 16, sm: 20 } }}>
-                  {user.name.charAt(0).toUpperCase()}
-                </Avatar>
-                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                  <Typography variant="body2" sx={{ color: 'white' }}>
-                    {user.name}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                    {user.email}
-                  </Typography>
+        <Container maxWidth="lg" sx={{ px: { xs: 1, sm: 2, md: 3 } }}>
+          <Toolbar sx={{ px: 0, minHeight: { xs: 56, sm: 64 } }}>
+            <ChecklistRtlOutlined sx={{ mr: { xs: 1, sm: 2 }, fontSize: { xs: 22, sm: 28 } }} />
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                flexGrow: 1,
+                fontWeight: 'bold',
+                fontSize: { xs: '1.1rem', sm: '1.5rem' },
+                whiteSpace: { xs: 'normal', sm: 'nowrap' },
+              }}
+            >
+              Todo App
+            </Typography>
+            {user && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: 'secondary.main', fontSize: { xs: 16, sm: 20 } }}>
+                    {user.name.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                    <Typography variant="body2" sx={{ color: 'white' }}>
+                      {user.name}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
+                      {user.email}
+                    </Typography>
+                  </Box>
                 </Box>
+                <Button
+                  color="inherit"
+                  onClick={logout}
+                  startIcon={<LogoutOutlined />}
+                  variant="outlined"
+                  sx={{
+                    borderColor: 'rgba(255,255,255,0.3)',
+                    fontSize: { xs: '0.8rem', sm: '1rem' },
+                    px: { xs: 1, sm: 2 },
+                    minWidth: { xs: 32, sm: 64 },
+                    '&:hover': {
+                      borderColor: 'rgba(255,255,255,0.5)',
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                    },
+                  }}
+                >
+                  <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>Logout</Box>
+                </Button>
               </Box>
-              <Button
-                color="inherit"
-                onClick={logout}
-                startIcon={<LogoutOutlined />}
-                variant="outlined"
-                sx={{
-                  borderColor: 'rgba(255,255,255,0.3)',
-                  fontSize: { xs: '0.8rem', sm: '1rem' },
-                  px: { xs: 1, sm: 2 },
-                  minWidth: { xs: 32, sm: 64 },
-                  '&:hover': {
-                    borderColor: 'rgba(255,255,255,0.5)',
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                  },
-                }}
-              >
-                <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>Logout</Box>
-              </Button>
-            </Box>
-          )}
-        </Toolbar>
+            )}
+          </Toolbar>
+        </Container>
       </AppBar>
 
-      {/* Welcome Message */}
-      <Container maxWidth="xl" sx={{ mt: { xs: 2, sm: 4 }, mb: { xs: 2, sm: 4 }, px: { xs: 1, sm: 2, md: 3 } }}>
+      {/* Centered Main Content */}
+      <Box
+        sx={{
+          width: '100%',
+          mt: { xs: 2, sm: 4 },
+          mb: { xs: 2, sm: 4 },
+          px: { xs: 1, sm: 2, md: 3 },
+        }}
+      >
+        {/* Welcome Message */}
         {user && (
           <Paper
             sx={{
@@ -101,25 +111,23 @@ const Dashboard: React.FC = () => {
             display: 'flex',
             flexDirection: { xs: 'column', lg: 'row' },
             gap: { xs: 2, sm: 3, md: 4 },
-            alignItems: 'stretch',
+            alignItems: 'flex-start',
+            width: '100%',
           }}
         >
           {/* Create Todo Form */}
           <Box
             sx={{
-              flex: { xs: '1', lg: '0 0 420px' },
+              flex: { xs: '1', lg: '0 0 400px' },
               width: '100%',
               mb: { xs: 2, lg: 0 },
-              position: { lg: 'sticky' },
-              top: { lg: 24 },
-              zIndex: { lg: 2 },
             }}
           >
             <CreateTodoForm />
           </Box>
 
           {/* Todo List */}
-          <Box sx={{ flex: 1, width: '100%' }}>
+          <Box sx={{ flex: 1, width: '100%', minWidth: 0 }}>
             <Paper
               sx={{
                 p: { xs: 1.5, sm: 2, md: 4 },
@@ -151,7 +159,7 @@ const Dashboard: React.FC = () => {
             </Paper>
           </Box>
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 };

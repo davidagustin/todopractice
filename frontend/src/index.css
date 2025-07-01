@@ -6,48 +6,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Custom Properties for consistent theming */
+/* Modern CSS Custom Properties with logical properties and modern color functions */
 :root {
-  /* Color palette */
-  --color-primary: #646cff;
-  --color-primary-hover: #535bf2;
-  --color-secondary: #747bff;
-  --color-background: #242424;
-  --color-surface: #1a1a1a;
-  --color-text: rgba(255, 255, 255, 0.87);
-  --color-text-muted: rgba(255, 255, 255, 0.6);
-  --color-border: rgba(255, 255, 255, 0.1);
+  /* Color palette using modern color functions */
+  --color-primary: oklch(55% 0.15 250);
+  --color-primary-hover: oklch(50% 0.15 250);
+  --color-secondary: oklch(60% 0.12 250);
+  --color-background: oklch(98% 0.005 250);
+  --color-surface: oklch(96% 0.005 250);
+  --color-text: oklch(25% 0.005 250);
+  --color-text-muted: oklch(45% 0.005 250);
+  --color-border: oklch(85% 0.005 250 / 0.2);
   
-  /* Typography */
+  /* Semantic color tokens */
+  --color-success: oklch(65% 0.15 140);
+  --color-warning: oklch(75% 0.15 80);
+  --color-error: oklch(60% 0.15 25);
+  --color-info: oklch(65% 0.15 220);
+  
+  /* Typography with logical properties */
   --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
   --font-size-base: 16px;
   --line-height-base: 1.5;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
-  --font-weight-bold: 600;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
   
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 3rem;
+  /* Spacing with logical properties */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
   
-  /* Border radius */
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
+  /* Border radius with logical properties */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
   
-  /* Transitions */
-  --transition-fast: 0.15s ease-in-out;
-  --transition-normal: 0.25s ease-in-out;
-  --transition-slow: 0.3s ease-in-out;
+  /* Transitions with logical properties */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 350ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-emphasized: cubic-bezier(0.4, 0, 0.6, 1);
   
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  /* Shadows with modern values */
+  --shadow-sm: 0 1px 2px 0 oklch(0% 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px oklch(0% 0 0 / 0.1), 0 2px 4px -1px oklch(0% 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px oklch(0% 0 0 / 0.1), 0 4px 6px -2px oklch(0% 0 0 / 0.05);
+  --shadow-xl: 0 20px 25px -5px oklch(0% 0 0 / 0.1), 0 10px 10px -5px oklch(0% 0 0 / 0.04);
   
   /* Z-index scale */
   --z-dropdown: 1000;
@@ -57,32 +71,167 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+  
+  /* Container queries */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  
+  /* Focus ring */
+  --focus-ring: 0 0 0 2px oklch(55% 0.15 250 / 0.5);
+  --focus-ring-offset: 2px;
 }
 
-/* Light theme overrides */
-@media (prefers-color-scheme: light) {
+/* Dark theme with modern color functions */
+@media (prefers-color-scheme: dark) {
   :root {
-    --color-background: #ffffff;
-    --color-surface: #f9f9f9;
-    --color-text: #213547;
-    --color-text-muted: #6b7280;
-    --color-border: rgba(0, 0, 0, 0.1);
+    --color-background: oklch(8% 0.005 250);
+    --color-surface: oklch(12% 0.005 250);
+    --color-text: oklch(95% 0.005 250);
+    --color-text-muted: oklch(65% 0.005 250);
+    --color-border: oklch(20% 0.005 250 / 0.2);
   }
 }
 
-/* Base styles */
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border: oklch(0% 0 0 / 0.8);
+    --shadow-sm: 0 1px 2px 0 oklch(0% 0 0 / 0.8);
+    --shadow-md: 0 4px 6px -1px oklch(0% 0 0 / 0.8);
+    --shadow-lg: 0 10px 15px -3px oklch(0% 0 0 / 0.8);
+  }
+}
+
+/* Modern CSS Reset with logical properties */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Remove default margin and padding */
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
 }
 
 html {
   font-size: var(--font-size-base);
   scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
 }
 
 body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-block-size: 100vh;
+  inline-size: 100vw;
   margin: 0;
   padding: 0;
   font-family: var(--font-family-base);
@@ -98,64 +247,80 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   
-  /* Better accessibility */
-  -webkit-text-size-adjust: 100%;
-  -ms-text-size-adjust: 100%;
+  /* Performance optimizations */
+  contain: layout style paint;
 }
 
-/* Typography */
+/* Typography with logical properties */
 h1, h2, h3, h4, h5, h6 {
-  margin: 0 0 var(--spacing-md) 0;
+  margin-block-end: var(--space-md);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
+  color: var(--color-text);
 }
 
 h1 {
   font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.02em;
 }
 
 h2 {
   font-size: clamp(1.5rem, 4vw, 2.4rem);
+  letter-spacing: -0.01em;
 }
 
 h3 {
   font-size: clamp(1.25rem, 3vw, 1.8rem);
 }
 
-p {
-  margin: 0 0 var(--spacing-md) 0;
+h4 {
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
 }
 
-/* Links */
+h5 {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+h6 {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+}
+
+p {
+  margin-block-end: var(--space-md);
+  line-height: var(--line-height-base);
+}
+
+/* Links with logical properties */
 a {
   color: var(--color-primary);
   text-decoration: none;
   font-weight: var(--font-weight-medium);
-  transition: color var(--transition-fast);
+  transition: color var(--duration-fast) var(--easing-standard);
 }
 
 a:hover {
   color: var(--color-primary-hover);
 }
 
-a:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+a:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
-/* Buttons */
+/* Buttons with logical properties */
 button {
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: var(--space-sm) var(--space-lg);
   font-size: 1rem;
   font-weight: var(--font-weight-medium);
   font-family: inherit;
   background-color: var(--color-surface);
   color: var(--color-text);
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all var(--duration-normal) var(--easing-standard);
   user-select: none;
+  contain: layout style paint;
 }
 
 button:hover {
@@ -164,9 +329,9 @@ button:hover {
   box-shadow: var(--shadow-md);
 }
 
-button:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 button:active {
@@ -179,30 +344,34 @@ button:disabled {
   transform: none;
 }
 
-/* Form elements */
+/* Form elements with logical properties */
 input, textarea, select {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
   border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
   background-color: var(--color-surface);
   color: var(--color-text);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: border-color var(--duration-fast) var(--easing-standard), 
+              box-shadow var(--duration-fast) var(--easing-standard);
+  contain: layout style paint;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus-visible, 
+textarea:focus-visible, 
+select:focus-visible {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.1);
+  box-shadow: var(--focus-ring);
 }
 
-/* Utility classes */
+/* Screen reader only content */
 .sr-only {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  inline-size: 1px;
+  block-size: 1px;
   padding: 0;
   margin: -1px;
   overflow: hidden;
@@ -211,9 +380,10 @@ input:focus, textarea:focus, select:focus {
   border: 0;
 }
 
+/* Focus visible utility */
 .focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* Reduced motion support */
@@ -226,14 +396,9 @@ input:focus, textarea:focus, select:focus {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  :root {
-    --color-primary: #0000ff;
-    --color-text: #000000;
-    --color-background: #ffffff;
+  
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -252,5 +417,40 @@ input:focus, textarea:focus, select:focus {
   
   a[href]:after {
     content: " (" attr(href) ")";
+  }
+  
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+  
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+  
+  thead {
+    display: table-header-group;
+  }
+  
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+  
+  img {
+    max-inline-size: 100% !important;
+  }
+  
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+  
+  h2,
+  h3 {
+    page-break-after: avoid;
   }
 }
