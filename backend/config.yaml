@@ -1,0 +1,15 @@
+server:
+  host: "0.0.0.0"
+  port: "8080"
+
+database:
+  host: "postgres"
+  port: "5432"
+  user: "todouser"
+  password: "todopassword"
+  dbname: "todoapp"
+  sslmode: "disable"
+
+jwt:
+  secret: "your-super-secret-jwt-key-change-this-in-production"
+  expiry_hour: 24 
