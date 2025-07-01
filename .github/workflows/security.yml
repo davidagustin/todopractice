@@ -187,8 +187,9 @@ jobs:
     - name: Run Go security linter
       run: |
         cd backend
-        go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
-        gosec ./... || echo "Go security check completed with warnings"
+        # Use govulncheck for Go security analysis (maintained by Go team)
+        go install golang.org/x/vuln/cmd/govulncheck@latest
+        govulncheck ./... || echo "Go vulnerability check completed with warnings"
 
   # Security summary
   security-summary:
