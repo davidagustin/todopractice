@@ -1,14 +1,15 @@
-import { authApi, todoApi, ApiError } from '../api'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { ApiError, authApi, todoApi } from '../api'
 
 // Mock fetch globally
-;(globalThis as typeof globalThis & { fetch: jest.Mock }).fetch = jest.fn()
+;(globalThis as typeof globalThis & { fetch: any }).fetch = vi.fn()
 
 // Mock localStorage
 const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn(),
 }
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
@@ -16,7 +17,7 @@ Object.defineProperty(window, 'localStorage', {
 
 describe('API Service', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     localStorageMock.clear()
   })
 
@@ -29,7 +30,7 @@ describe('API Service', () => {
           token: 'mock-token'
         }
 
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: true,
           json: async () => mockResponse,
         } as Response)
@@ -56,7 +57,7 @@ describe('API Service', () => {
       })
 
       it('should throw ApiError on failed login', async () => {
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: false,
           status: 401,
           json: async () => ({ error: 'Invalid credentials' }),
@@ -76,7 +77,7 @@ describe('API Service', () => {
           token: 'mock-token'
         }
 
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: true,
           json: async () => mockResponse,
         } as Response)
@@ -113,7 +114,7 @@ describe('API Service', () => {
           user: { id: 1, email: 'test@example.com', name: 'Test User' }
         }
 
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: true,
           json: async () => mockResponse,
         } as Response)
@@ -155,7 +156,7 @@ describe('API Service', () => {
           ]
         }
 
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: true,
           json: async () => mockResponse,
         } as Response)
@@ -190,7 +191,7 @@ describe('API Service', () => {
           }
         }
 
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: true,
           json: async () => mockResponse,
         } as Response)
@@ -219,7 +220,7 @@ describe('API Service', () => {
     })
 
     describe('update', () => {
-      it('should update a todo', async () => {
+      it('should update an existing todo', async () => {
         const mockResponse = {
           message: 'Todo updated successfully',
           todo: {
@@ -233,13 +234,14 @@ describe('API Service', () => {
           }
         }
 
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: true,
           json: async () => mockResponse,
         } as Response)
 
         const result = await todoApi.update(1, {
           title: 'Updated Todo',
+          description: 'Updated Description',
           completed: true
         })
 
@@ -253,6 +255,7 @@ describe('API Service', () => {
             },
             body: JSON.stringify({
               title: 'Updated Todo',
+              description: 'Updated Description',
               completed: true
             }),
           }
@@ -267,7 +270,7 @@ describe('API Service', () => {
           message: 'Todo deleted successfully'
         }
 
-        jest.mocked(fetch).mockResolvedValueOnce({
+        vi.mocked(fetch).mockResolvedValueOnce({
           ok: true,
           json: async () => mockResponse,
         } as Response)

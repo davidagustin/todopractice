@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Dashboard from '../Dashboard';
 
 // Mock the auth hooks
@@ -16,14 +17,14 @@ const mockUser = {
 const mockUseAuth = {
   user: mockUser,
   token: 'mock-token',
-  login: jest.fn(),
-  logout: jest.fn(),
+  login: vi.fn(),
+  logout: vi.fn(),
   isLoading: false,
 };
 
-const mockUseLogout = jest.fn();
+const mockUseLogout = vi.fn();
 
-jest.mock('../../hooks/useAuth', () => ({
+vi.mock('../../hooks/useAuth', () => ({
   useAuth: () => mockUseAuth,
   useLogout: () => mockUseLogout,
 }));
@@ -52,7 +53,7 @@ const renderWithProviders = (component: ReactNode) => {
 
 describe('Dashboard', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders dashboard with user information', () => {

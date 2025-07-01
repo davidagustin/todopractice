@@ -2,13 +2,14 @@ package database
 
 import (
 	"fmt"
-	"todoapp-backend/internal/config"
-	"todoapp-backend/pkg/models"
 
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"todoapp-backend/internal/config"
+	"todoapp-backend/pkg/models"
 )
 
 type Database struct {

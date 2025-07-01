@@ -3,9 +3,10 @@ package middleware
 import (
 	"net/http"
 	"strings"
-	"todoapp-backend/pkg/utils"
 
 	"github.com/gin-gonic/gin"
+
+	"todoapp-backend/pkg/utils"
 )
 
 // AuthMiddleware creates a JWT authentication middleware

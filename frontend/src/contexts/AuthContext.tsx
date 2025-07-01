@@ -1,6 +1,7 @@
-import React, { createContext, useEffect, useState } from 'react';
-import type { User } from '../types/index';
+import type React from 'react';
+import { createContext, useEffect, useState } from 'react';
 import { authApi } from '../services/api';
+import type { User } from '../types/index';
 
 interface AuthContextType {
   user: User | null;
@@ -63,4 +64,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}; 
+};

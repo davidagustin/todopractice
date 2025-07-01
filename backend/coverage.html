@@ -1,0 +1,1574 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>server: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">todoapp-backend/cmd/server/main.go (0.0%)</option>
+				
+				<option value="file1">todoapp-backend/internal/auth/handler.go (0.0%)</option>
+				
+				<option value="file2">todoapp-backend/internal/auth/repository.go (0.0%)</option>
+				
+				<option value="file3">todoapp-backend/internal/auth/service.go (0.0%)</option>
+				
+				<option value="file4">todoapp-backend/internal/config/config.go (0.0%)</option>
+				
+				<option value="file5">todoapp-backend/internal/database/database.go (0.0%)</option>
+				
+				<option value="file6">todoapp-backend/internal/todo/handler.go (0.0%)</option>
+				
+				<option value="file7">todoapp-backend/internal/todo/repository.go (0.0%)</option>
+				
+				<option value="file8">todoapp-backend/internal/todo/service.go (0.0%)</option>
+				
+				<option value="file9">todoapp-backend/pkg/middleware/auth.go (0.0%)</option>
+				
+				<option value="file10">todoapp-backend/pkg/models/todo.go (0.0%)</option>
+				
+				<option value="file11">todoapp-backend/pkg/models/user.go (0.0%)</option>
+				
+				<option value="file12">todoapp-backend/pkg/utils/jwt.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "log"
+
+        "github.com/gin-gonic/gin"
+        "go.uber.org/zap"
+
+        "todoapp-backend/internal/auth"
+        "todoapp-backend/internal/config"
+        "todoapp-backend/internal/database"
+        "todoapp-backend/internal/todo"
+        "todoapp-backend/pkg/middleware"
+        "todoapp-backend/pkg/utils"
+)
+
+func main() <span class="cov0" title="0">{
+        // Initialize logger
+        logger, err := zap.NewProduction()
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Failed to initialize logger: %v", err)
+        }</span>
+        <span class="cov0" title="0">defer logger.Sync()
+
+        // Load configuration
+        cfg, err := config.LoadConfig()
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Failed to load configuration", zap.Error(err))
+        }</span>
+
+        // Initialize database
+        <span class="cov0" title="0">db, err := database.NewDatabase(cfg, logger)
+        if err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Failed to initialize database", zap.Error(err))
+        }</span>
+        <span class="cov0" title="0">defer db.Close()
+
+        // Run migrations
+        if err := db.Migrate(); err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Failed to run database migrations", zap.Error(err))
+        }</span>
+
+        // Initialize JWT utility
+        <span class="cov0" title="0">jwtUtil := utils.NewJWTUtil(cfg)
+
+        // Initialize repositories
+        userRepo := auth.NewGORMUserRepository(db.DB)
+        todoRepo := todo.NewGORMTodoRepository(db.DB)
+
+        // Initialize services
+        authService := auth.NewService(userRepo, jwtUtil)
+        todoService := todo.NewService(todoRepo)
+
+        // Initialize handlers
+        authHandler := auth.NewHandler(authService, logger)
+        todoHandler := todo.NewHandler(todoService, logger)
+
+        // Initialize Gin router
+        router := gin.Default()
+
+        // Add CORS middleware
+        router.Use(func(c *gin.Context) </span><span class="cov0" title="0">{
+                c.Header("Access-Control-Allow-Origin", "*")
+                c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization")
+
+                if c.Request.Method == "OPTIONS" </span><span class="cov0" title="0">{
+                        c.AbortWithStatus(204)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.Next()</span>
+        })
+
+        // Health check endpoint
+        <span class="cov0" title="0">router.GET("/health", func(c *gin.Context) </span><span class="cov0" title="0">{
+                if err := db.Health(); err != nil </span><span class="cov0" title="0">{
+                        logger.Error("Database health check failed", zap.Error(err))
+                        c.JSON(500, gin.H{
+                                "status": "unhealthy",
+                                "error":  "Database connection failed",
+                        })
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.JSON(200, gin.H{
+                        "status": "healthy",
+                })</span>
+        })
+
+        // API routes
+        <span class="cov0" title="0">api := router.Group("/api/v1")
+
+        // Auth middleware
+        authMiddleware := middleware.AuthMiddleware(jwtUtil)
+
+        // Register routes
+        authHandler.RegisterRoutes(api, authMiddleware)
+        todoHandler.RegisterRoutes(api, authMiddleware)
+
+        // Start server
+        addr := cfg.Server.Host + ":" + cfg.Server.Port
+        logger.Info("Starting server", zap.String("address", addr))
+
+        if err := router.Run(addr); err != nil </span><span class="cov0" title="0">{
+                logger.Fatal("Failed to start server", zap.Error(err))
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package auth
+
+import (
+        "errors"
+        "fmt"
+        "net/http"
+        "os"
+        "strings"
+
+        "github.com/gin-gonic/gin"
+        "github.com/go-playground/validator/v10"
+        "go.uber.org/zap"
+
+        "todoapp-backend/pkg/middleware"
+        "todoapp-backend/pkg/models"
+)
+
+type Handler struct {
+        service *Service
+        logger  *zap.Logger
+}
+
+// NewHandler creates a new auth handler
+func NewHandler(service *Service, logger *zap.Logger) *Handler <span class="cov0" title="0">{
+        return &amp;Handler{
+                service: service,
+                logger:  logger,
+        }
+}</span>
+
+// Register handles user registration
+func (h *Handler) Register(c *gin.Context) <span class="cov0" title="0">{
+        var req models.UserRegisterRequest
+        if err := c.ShouldBindJSON(&amp;req); err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to bind registration request", zap.Error(err))
+                // If it's a validation error, return field errors
+                if ve, ok := err.(validator.ValidationErrors); ok </span><span class="cov0" title="0">{
+                        errors := make(map[string]string)
+                        for _, fe := range ve </span><span class="cov0" title="0">{
+                                switch fe.Field() </span>{
+                                case "Email":<span class="cov0" title="0">
+                                        errors["email"] = "Invalid email format"</span>
+                                case "Password":<span class="cov0" title="0">
+                                        errors["password"] = "Password must be at least 6 characters"</span>
+                                case "Name":<span class="cov0" title="0">
+                                        errors["name"] = "Name is required"</span>
+                                default:<span class="cov0" title="0">
+                                        errors[fe.Field()] = fe.Error()</span>
+                                }
+                        }
+                        <span class="cov0" title="0">c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+                        return</span>
+                }
+                <span class="cov0" title="0">c.JSON(http.StatusBadRequest, gin.H{
+                        "error": "Invalid request body",
+                })
+                return</span>
+        }
+
+        <span class="cov0" title="0">h.logger.Info("Registration request received", zap.Any("request", req))
+
+        user, token, err := h.service.Register(req)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Registration failed", zap.Error(err))
+                h.logger.Info("Error message", zap.String("error_message", err.Error()))
+
+                if errors.Is(err, ErrUserAlreadyExists) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusConflict, gin.H{
+                                "error": "User already exists",
+                        })
+                        return
+                }</span>
+
+                // Check if it's a validation error from the service
+                <span class="cov0" title="0">if strings.Contains(err.Error(), "validation failed") </span><span class="cov0" title="0">{
+                        // Debug log: print error type and value
+                        h.logger.Info("Validation error debug", zap.String("type", fmt.Sprintf("%T", err)), zap.String("value", fmt.Sprintf("%+v", err)))
+                        var ve validator.ValidationErrors
+                        if errors.As(err, &amp;ve) </span><span class="cov0" title="0">{
+                                errors := make(map[string]string)
+                                for _, fe := range ve </span><span class="cov0" title="0">{
+                                        switch fe.Field() </span>{
+                                        case "Email":<span class="cov0" title="0">
+                                                errors["email"] = "Invalid email format"</span>
+                                        case "Password":<span class="cov0" title="0">
+                                                errors["password"] = "Password must be at least 6 characters"</span>
+                                        case "Name":<span class="cov0" title="0">
+                                                errors["name"] = "Name is required"</span>
+                                        default:<span class="cov0" title="0">
+                                                errors[fe.Field()] = fe.Error()</span>
+                                        }
+                                }
+                                <span class="cov0" title="0">c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+                                return</span>
+                        }
+                        // Fallback: return the error string
+                        <span class="cov0" title="0">c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                        return</span>
+                }
+
+                <span class="cov0" title="0">c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Registration failed",
+                })
+                return</span>
+        }
+
+        <span class="cov0" title="0">h.logger.Info("User registered successfully", zap.Uint("user_id", user.ID))
+        c.JSON(http.StatusCreated, gin.H{
+                "message": "User registered successfully",
+                "user":    user,
+                "token":   token,
+        })</span>
+}
+
+// Login handles user login
+func (h *Handler) Login(c *gin.Context) <span class="cov0" title="0">{
+        var req models.UserLoginRequest
+        if err := c.ShouldBindJSON(&amp;req); err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to bind login request", zap.Error(err))
+                c.JSON(http.StatusBadRequest, gin.H{
+                        "error": "Invalid request body",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">user, token, err := h.service.Login(req)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Login failed", zap.Error(err))
+
+                if errors.Is(err, ErrUserNotFound) || errors.Is(err, ErrInvalidPassword) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusUnauthorized, gin.H{
+                                "error": "Invalid email or password",
+                        })
+                        return
+                }</span>
+
+                // Check if it's a validation error
+                <span class="cov0" title="0">if strings.Contains(err.Error(), "validation failed") </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusBadRequest, gin.H{
+                                "error": err.Error(),
+                        })
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Login failed",
+                })
+                return</span>
+        }
+
+        <span class="cov0" title="0">h.logger.Info("User logged in successfully", zap.Uint("user_id", user.ID))
+        c.JSON(http.StatusOK, gin.H{
+                "message": "Login successful",
+                "user":    user,
+                "token":   token,
+        })</span>
+}
+
+// Profile handles getting user profile
+func (h *Handler) Profile(c *gin.Context) <span class="cov0" title="0">{
+        userID, exists := middleware.GetUserID(c)
+        if !exists </span><span class="cov0" title="0">{
+                h.logger.Error("User ID not found in context")
+                c.JSON(http.StatusUnauthorized, gin.H{
+                        "error": "Unauthorized",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">user, err := h.service.GetUserByID(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to get user profile", zap.Error(err))
+
+                if errors.Is(err, ErrUserNotFound) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusNotFound, gin.H{
+                                "error": "User not found",
+                        })
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Failed to get profile",
+                })
+                return</span>
+        }
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+                "user": user,
+        })</span>
+}
+
+// RegisterRoutes registers auth routes
+func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.HandlerFunc) <span class="cov0" title="0">{
+        auth := router.Group("/auth")
+        </span><span class="cov0" title="0">{
+                auth.POST("/register", h.Register)
+                auth.POST("/login", h.Login)
+                auth.GET("/profile", authMiddleware, h.Profile)
+        }</span>
+}
+
+// TestCleanup clears all test data (only available in test mode)
+func (h *Handler) TestCleanup(c *gin.Context) <span class="cov0" title="0">{
+        // Only allow in test environment
+        if os.Getenv("ENV") != "test" </span><span class="cov0" title="0">{
+                c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+                return
+        }</span>
+
+        // For now, just return success - database cleanup will be handled at the server level
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{"message": "Test cleanup endpoint available"})</span>
+}
+
+// Health check endpoint
+func (h *Handler) Health(c *gin.Context) <span class="cov0" title="0">{
+        c.JSON(http.StatusOK, gin.H{"status": "healthy"})
+}</span>
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package auth
+
+import (
+        "gorm.io/gorm"
+
+        "todoapp-backend/pkg/models"
+)
+
+// GORMUserRepository implements UserRepository using GORM
+type GORMUserRepository struct {
+        db *gorm.DB
+}
+
+// NewGORMUserRepository creates a new GORM-backed user repository
+func NewGORMUserRepository(db *gorm.DB) UserRepository <span class="cov0" title="0">{
+        return &amp;GORMUserRepository{db: db}
+}</span>
+
+// Create implements UserRepository.Create
+func (r *GORMUserRepository) Create(user *models.User) error <span class="cov0" title="0">{
+        return r.db.Create(user).Error
+}</span>
+
+// FindByEmail implements UserRepository.FindByEmail
+func (r *GORMUserRepository) FindByEmail(email string) (*models.User, error) <span class="cov0" title="0">{
+        var user models.User
+        err := r.db.Where("email = ?", email).First(&amp;user).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if err == gorm.ErrRecordNotFound </span><span class="cov0" title="0">{
+                        return nil, ErrUserNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+
+// FindByID implements UserRepository.FindByID
+func (r *GORMUserRepository) FindByID(id uint) (*models.User, error) <span class="cov0" title="0">{
+        var user models.User
+        err := r.db.First(&amp;user, id).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if err == gorm.ErrRecordNotFound </span><span class="cov0" title="0">{
+                        return nil, ErrUserNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return &amp;user, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package auth
+
+import (
+        "errors"
+        "fmt"
+
+        "github.com/go-playground/validator/v10"
+
+        "todoapp-backend/pkg/models"
+        "todoapp-backend/pkg/utils"
+)
+
+var (
+        ErrUserNotFound      = errors.New("user not found")
+        ErrInvalidPassword   = errors.New("invalid password")
+        ErrUserAlreadyExists = errors.New("user already exists")
+)
+
+// UserRepository abstracts user DB operations
+// (for testability and decoupling from GORM)
+type UserRepository interface {
+        FindByEmail(email string) (*models.User, error)
+        Create(user *models.User) error
+        FindByID(id uint) (*models.User, error)
+}
+
+// JWTUtil interface for mocking
+type JWTUtilInterface interface {
+        GenerateToken(userID uint, email string) (string, error)
+        ValidateToken(tokenString string) (*utils.JWTClaims, error)
+        RefreshToken(tokenString string) (string, error)
+}
+
+type Service struct {
+        repo     UserRepository
+        jwtUtil  JWTUtilInterface
+        validate *validator.Validate
+}
+
+// NewService creates a new auth service
+func NewService(repo UserRepository, jwtUtil JWTUtilInterface) *Service <span class="cov0" title="0">{
+        return &amp;Service{
+                repo:     repo,
+                jwtUtil:  jwtUtil,
+                validate: validator.New(),
+        }
+}</span>
+
+// Register creates a new user account
+func (s *Service) Register(req models.UserRegisterRequest) (*models.UserResponse, string, error) <span class="cov0" title="0">{
+        fmt.Printf("Validating request: %+v\n", req)
+        if err := s.validate.Struct(req); err != nil </span><span class="cov0" title="0">{
+                fmt.Printf("Validation error: %v\n", err)
+                fmt.Printf("Validation error type: %T\n", err)
+                return nil, "", fmt.Errorf("validation failed: %w", err)
+        }</span>
+        <span class="cov0" title="0">fmt.Printf("Validation passed\n")
+
+        // Check if user already exists
+        existingUser, err := s.repo.FindByEmail(req.Email)
+        if err == nil &amp;&amp; existingUser != nil </span><span class="cov0" title="0">{
+                return nil, "", ErrUserAlreadyExists
+        }</span> else<span class="cov0" title="0"> if err != nil &amp;&amp; !errors.Is(err, ErrUserNotFound) </span><span class="cov0" title="0">{
+                return nil, "", fmt.Errorf("failed to check existing user: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">user := &amp;models.User{
+                Email:    req.Email,
+                Password: req.Password,
+                Name:     req.Name,
+        }
+        if err := user.HashPassword(); err != nil </span><span class="cov0" title="0">{
+                return nil, "", fmt.Errorf("failed to hash password: %w", err)
+        }</span>
+        <span class="cov0" title="0">if err := s.repo.Create(user); err != nil </span><span class="cov0" title="0">{
+                return nil, "", fmt.Errorf("failed to create user: %w", err)
+        }</span>
+        <span class="cov0" title="0">token, err := s.jwtUtil.GenerateToken(user.ID, user.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, "", fmt.Errorf("failed to generate token: %w", err)
+        }</span>
+        <span class="cov0" title="0">userResponse := user.ToResponse()
+        return &amp;userResponse, token, nil</span>
+}
+
+// Login authenticates a user and returns a JWT token
+func (s *Service) Login(req models.UserLoginRequest) (*models.UserResponse, string, error) <span class="cov0" title="0">{
+        if err := s.validate.Struct(req); err != nil </span><span class="cov0" title="0">{
+                return nil, "", fmt.Errorf("validation failed: %w", err)
+        }</span>
+        <span class="cov0" title="0">user, err := s.repo.FindByEmail(req.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, ErrUserNotFound) </span><span class="cov0" title="0">{
+                        return nil, "", ErrUserNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, "", fmt.Errorf("failed to find user: %w", err)</span>
+        }
+        <span class="cov0" title="0">if !user.CheckPassword(req.Password) </span><span class="cov0" title="0">{
+                return nil, "", ErrInvalidPassword
+        }</span>
+        <span class="cov0" title="0">token, err := s.jwtUtil.GenerateToken(user.ID, user.Email)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, "", fmt.Errorf("failed to generate token: %w", err)
+        }</span>
+        <span class="cov0" title="0">userResponse := user.ToResponse()
+        return &amp;userResponse, token, nil</span>
+}
+
+// GetUserByID retrieves a user by ID
+func (s *Service) GetUserByID(userID uint) (*models.UserResponse, error) <span class="cov0" title="0">{
+        user, err := s.repo.FindByID(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, ErrUserNotFound) </span><span class="cov0" title="0">{
+                        return nil, ErrUserNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, fmt.Errorf("failed to find user: %w", err)</span>
+        }
+        <span class="cov0" title="0">userResponse := user.ToResponse()
+        return &amp;userResponse, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package config
+
+import (
+        "fmt"
+        "strings"
+
+        "github.com/spf13/viper"
+)
+
+type Config struct {
+        Server   ServerConfig   `mapstructure:"server"`
+        Database DatabaseConfig `mapstructure:"database"`
+        JWT      JWTConfig      `mapstructure:"jwt"`
+}
+
+type ServerConfig struct {
+        Port string `mapstructure:"port"`
+        Host string `mapstructure:"host"`
+}
+
+type DatabaseConfig struct {
+        Driver   string `mapstructure:"driver"`
+        DSN      string `mapstructure:"dsn"`
+        Host     string `mapstructure:"host"`
+        Port     string `mapstructure:"port"`
+        User     string `mapstructure:"user"`
+        Password string `mapstructure:"password"`
+        DBName   string `mapstructure:"dbname"`
+        SSLMode  string `mapstructure:"sslmode"`
+}
+
+type JWTConfig struct {
+        Secret     string `mapstructure:"secret"`
+        ExpiryHour int    `mapstructure:"expiry_hour"`
+}
+
+// LoadConfig loads configuration from environment variables and config files
+func LoadConfig() (*Config, error) <span class="cov0" title="0">{
+        viper.SetConfigName("config")
+        viper.SetConfigType("yaml")
+        viper.AddConfigPath(".")
+        viper.AddConfigPath("./config")
+
+        // Set default values
+        viper.SetDefault("server.port", "8080")
+        viper.SetDefault("server.host", "0.0.0.0")
+        viper.SetDefault("database.driver", "sqlite")
+        viper.SetDefault("database.dsn", "todoapp.db")
+        viper.SetDefault("database.host", "localhost")
+        viper.SetDefault("database.port", "5432")
+        viper.SetDefault("database.user", "todouser")
+        viper.SetDefault("database.password", "todopassword")
+        viper.SetDefault("database.dbname", "todoapp")
+        viper.SetDefault("database.sslmode", "disable")
+        viper.SetDefault("jwt.secret", "your-secret-key")
+        viper.SetDefault("jwt.expiry_hour", 24)
+
+        // Enable environment variable support
+        viper.AutomaticEnv()
+        viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+        // Try to read config file
+        if err := viper.ReadInConfig(); err != nil </span><span class="cov0" title="0">{
+                if _, ok := err.(viper.ConfigFileNotFoundError); !ok </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("error reading config file: %w", err)
+                }</span>
+                // Config file not found, will use defaults and env vars
+        }
+
+        <span class="cov0" title="0">var config Config
+        if err := viper.Unmarshal(&amp;config); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("error unmarshaling config: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return &amp;config, nil</span>
+}
+
+// GetDatabaseURL returns the database connection URL
+func (c *Config) GetDatabaseURL() string <span class="cov0" title="0">{
+        if c.Database.Driver == "sqlite" </span><span class="cov0" title="0">{
+                return c.Database.DSN
+        }</span>
+        <span class="cov0" title="0">return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+                c.Database.Host,
+                c.Database.Port,
+                c.Database.User,
+                c.Database.Password,
+                c.Database.DBName,
+                c.Database.SSLMode,
+        )</span>
+}
+
+// GetDatabaseDriver returns the database driver
+func (c *Config) GetDatabaseDriver() string <span class="cov0" title="0">{
+        return c.Database.Driver
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package database
+
+import (
+        "fmt"
+
+        "go.uber.org/zap"
+        "gorm.io/driver/postgres"
+        "gorm.io/driver/sqlite"
+        "gorm.io/gorm"
+
+        "todoapp-backend/internal/config"
+        "todoapp-backend/pkg/models"
+)
+
+type Database struct {
+        DB     *gorm.DB
+        logger *zap.Logger
+}
+
+// NewDatabase creates a new database connection
+func NewDatabase(cfg *config.Config, logger *zap.Logger) (*Database, error) <span class="cov0" title="0">{
+        var db *gorm.DB
+        var err error
+
+        driver := cfg.GetDatabaseDriver()
+        dsn := cfg.GetDatabaseURL()
+
+        logger.Info("Connecting to database", zap.String("driver", driver), zap.String("dsn", dsn))
+
+        switch driver </span>{
+        case "sqlite":<span class="cov0" title="0">
+                db, err = gorm.Open(sqlite.Open(dsn), &amp;gorm.Config{})</span>
+        case "postgres":<span class="cov0" title="0">
+                db, err = gorm.Open(postgres.Open(dsn), &amp;gorm.Config{})</span>
+        default:<span class="cov0" title="0">
+                return nil, fmt.Errorf("unsupported database driver: %s", driver)</span>
+        }
+
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to connect to database: %w", err)
+        }</span>
+
+        // Set connection pool settings (only for PostgreSQL)
+        <span class="cov0" title="0">if driver == "postgres" </span><span class="cov0" title="0">{
+                sqlDB, err := db.DB()
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("failed to get underlying sql.DB: %w", err)
+                }</span>
+
+                <span class="cov0" title="0">sqlDB.SetMaxIdleConns(10)
+                sqlDB.SetMaxOpenConns(100)</span>
+        }
+
+        <span class="cov0" title="0">return &amp;Database{
+                DB:     db,
+                logger: logger,
+        }, nil</span>
+}
+
+// NewTestDatabase creates a new in-memory SQLite database for testing
+func NewTestDatabase(logger *zap.Logger) (*Database, error) <span class="cov0" title="0">{
+        db, err := gorm.Open(sqlite.Open(":memory:"), &amp;gorm.Config{})
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to connect to test database: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">return &amp;Database{
+                DB:     db,
+                logger: logger,
+        }, nil</span>
+}
+
+// Migrate runs database migrations
+func (d *Database) Migrate() error <span class="cov0" title="0">{
+        d.logger.Info("Running database migrations")
+
+        err := d.DB.AutoMigrate(
+                &amp;models.User{},
+                &amp;models.Todo{},
+        )
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to run migrations: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">d.logger.Info("Database migrations completed successfully")
+        return nil</span>
+}
+
+// Close closes the database connection
+func (d *Database) Close() error <span class="cov0" title="0">{
+        sqlDB, err := d.DB.DB()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to get underlying sql.DB: %w", err)
+        }</span>
+        <span class="cov0" title="0">return sqlDB.Close()</span>
+}
+
+// Health checks if the database connection is healthy
+func (d *Database) Health() error <span class="cov0" title="0">{
+        sqlDB, err := d.DB.DB()
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to get underlying sql.DB: %w", err)
+        }</span>
+        <span class="cov0" title="0">return sqlDB.Ping()</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package todo
+
+import (
+        "errors"
+        "net/http"
+        "strconv"
+
+        "github.com/gin-gonic/gin"
+        "go.uber.org/zap"
+
+        "todoapp-backend/pkg/middleware"
+        "todoapp-backend/pkg/models"
+)
+
+type Handler struct {
+        service *Service
+        logger  *zap.Logger
+}
+
+// NewHandler creates a new todo handler
+func NewHandler(service *Service, logger *zap.Logger) *Handler <span class="cov0" title="0">{
+        return &amp;Handler{
+                service: service,
+                logger:  logger,
+        }
+}</span>
+
+// Create handles creating a new todo
+func (h *Handler) Create(c *gin.Context) <span class="cov0" title="0">{
+        userID, exists := middleware.GetUserID(c)
+        if !exists </span><span class="cov0" title="0">{
+                h.logger.Error("User ID not found in context")
+                c.JSON(http.StatusUnauthorized, gin.H{
+                        "error": "Unauthorized",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">var req models.TodoCreateRequest
+        if err := c.ShouldBindJSON(&amp;req); err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to bind create todo request", zap.Error(err))
+                c.JSON(http.StatusBadRequest, gin.H{
+                        "error": "Invalid request body",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">todo, err := h.service.Create(userID, req)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to create todo", zap.Error(err))
+                c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Failed to create todo",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">h.logger.Info("Todo created successfully", zap.Uint("todo_id", todo.ID))
+        c.JSON(http.StatusCreated, gin.H{
+                "message": "Todo created successfully",
+                "todo":    todo,
+        })</span>
+}
+
+// GetAll handles getting all todos for a user
+func (h *Handler) GetAll(c *gin.Context) <span class="cov0" title="0">{
+        userID, exists := middleware.GetUserID(c)
+        if !exists </span><span class="cov0" title="0">{
+                h.logger.Error("User ID not found in context")
+                c.JSON(http.StatusUnauthorized, gin.H{
+                        "error": "Unauthorized",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">todos, err := h.service.GetAll(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to get todos", zap.Error(err))
+                c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Failed to get todos",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+                "todos": todos,
+        })</span>
+}
+
+// GetByID handles getting a specific todo by ID
+func (h *Handler) GetByID(c *gin.Context) <span class="cov0" title="0">{
+        userID, exists := middleware.GetUserID(c)
+        if !exists </span><span class="cov0" title="0">{
+                h.logger.Error("User ID not found in context")
+                c.JSON(http.StatusUnauthorized, gin.H{
+                        "error": "Unauthorized",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">todoIDStr := c.Param("id")
+        todoID, err := strconv.ParseUint(todoIDStr, 10, 32)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Invalid todo ID", zap.String("id", todoIDStr))
+                c.JSON(http.StatusBadRequest, gin.H{
+                        "error": "Invalid todo ID",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">todo, err := h.service.GetByID(userID, uint(todoID))
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to get todo", zap.Error(err))
+
+                if errors.Is(err, ErrTodoNotFound) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusNotFound, gin.H{
+                                "error": "Todo not found",
+                        })
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Failed to get todo",
+                })
+                return</span>
+        }
+
+        <span class="cov0" title="0">c.JSON(http.StatusOK, gin.H{
+                "todo": todo,
+        })</span>
+}
+
+// Update handles updating a todo
+func (h *Handler) Update(c *gin.Context) <span class="cov0" title="0">{
+        userID, exists := middleware.GetUserID(c)
+        if !exists </span><span class="cov0" title="0">{
+                h.logger.Error("User ID not found in context")
+                c.JSON(http.StatusUnauthorized, gin.H{
+                        "error": "Unauthorized",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">todoIDStr := c.Param("id")
+        todoID, err := strconv.ParseUint(todoIDStr, 10, 32)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Invalid todo ID", zap.String("id", todoIDStr))
+                c.JSON(http.StatusBadRequest, gin.H{
+                        "error": "Invalid todo ID",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">var req models.TodoUpdateRequest
+        if err := c.ShouldBindJSON(&amp;req); err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to bind update todo request", zap.Error(err))
+                c.JSON(http.StatusBadRequest, gin.H{
+                        "error": "Invalid request body",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">todo, err := h.service.Update(userID, uint(todoID), req)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to update todo", zap.Error(err))
+
+                if errors.Is(err, ErrTodoNotFound) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusNotFound, gin.H{
+                                "error": "Todo not found",
+                        })
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Failed to update todo",
+                })
+                return</span>
+        }
+
+        <span class="cov0" title="0">h.logger.Info("Todo updated successfully", zap.Uint("todo_id", todo.ID))
+        c.JSON(http.StatusOK, gin.H{
+                "message": "Todo updated successfully",
+                "todo":    todo,
+        })</span>
+}
+
+// Delete handles deleting a todo
+func (h *Handler) Delete(c *gin.Context) <span class="cov0" title="0">{
+        userID, exists := middleware.GetUserID(c)
+        if !exists </span><span class="cov0" title="0">{
+                h.logger.Error("User ID not found in context")
+                c.JSON(http.StatusUnauthorized, gin.H{
+                        "error": "Unauthorized",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">todoIDStr := c.Param("id")
+        todoID, err := strconv.ParseUint(todoIDStr, 10, 32)
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Invalid todo ID", zap.String("id", todoIDStr))
+                c.JSON(http.StatusBadRequest, gin.H{
+                        "error": "Invalid todo ID",
+                })
+                return
+        }</span>
+
+        <span class="cov0" title="0">err = h.service.Delete(userID, uint(todoID))
+        if err != nil </span><span class="cov0" title="0">{
+                h.logger.Error("Failed to delete todo", zap.Error(err))
+
+                if errors.Is(err, ErrTodoNotFound) </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusNotFound, gin.H{
+                                "error": "Todo not found",
+                        })
+                        return
+                }</span>
+
+                <span class="cov0" title="0">c.JSON(http.StatusInternalServerError, gin.H{
+                        "error": "Failed to delete todo",
+                })
+                return</span>
+        }
+
+        <span class="cov0" title="0">h.logger.Info("Todo deleted successfully", zap.Uint("todo_id", uint(todoID)))
+        c.JSON(http.StatusOK, gin.H{
+                "message": "Todo deleted successfully",
+        })</span>
+}
+
+// RegisterRoutes registers todo routes
+func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.HandlerFunc) <span class="cov0" title="0">{
+        todos := router.Group("/todos")
+        todos.Use(authMiddleware)
+        </span><span class="cov0" title="0">{
+                todos.POST("", h.Create)
+                todos.GET("", h.GetAll)
+                todos.GET("/:id", h.GetByID)
+                todos.PUT("/:id", h.Update)
+                todos.DELETE("/:id", h.Delete)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package todo
+
+import (
+        "gorm.io/gorm"
+
+        "todoapp-backend/pkg/models"
+)
+
+// GORMTodoRepository implements TodoRepository using GORM
+type GORMTodoRepository struct {
+        db *gorm.DB
+}
+
+// NewGORMTodoRepository creates a new GORM-backed todo repository
+func NewGORMTodoRepository(db *gorm.DB) TodoRepository <span class="cov0" title="0">{
+        return &amp;GORMTodoRepository{db: db}
+}</span>
+
+// Create implements TodoRepository.Create
+func (r *GORMTodoRepository) Create(todo *models.Todo) error <span class="cov0" title="0">{
+        return r.db.Create(todo).Error
+}</span>
+
+// FindByID implements TodoRepository.FindByID
+func (r *GORMTodoRepository) FindByID(userID, todoID uint) (*models.Todo, error) <span class="cov0" title="0">{
+        var todo models.Todo
+        err := r.db.Where("id = ? AND user_id = ?", todoID, userID).First(&amp;todo).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if err == gorm.ErrRecordNotFound </span><span class="cov0" title="0">{
+                        return nil, ErrTodoNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return &amp;todo, nil</span>
+}
+
+// FindAll implements TodoRepository.FindAll
+func (r *GORMTodoRepository) FindAll(userID uint) ([]models.Todo, error) <span class="cov0" title="0">{
+        var todos []models.Todo
+        err := r.db.Where("user_id = ?", userID).Find(&amp;todos).Error
+        return todos, err
+}</span>
+
+// Update implements TodoRepository.Update
+func (r *GORMTodoRepository) Update(todo *models.Todo, updates map[string]interface{}) error <span class="cov0" title="0">{
+        return r.db.Model(todo).Updates(updates).Error
+}</span>
+
+// Delete implements TodoRepository.Delete
+func (r *GORMTodoRepository) Delete(userID, todoID uint) (bool, error) <span class="cov0" title="0">{
+        result := r.db.Where("id = ? AND user_id = ?", todoID, userID).Delete(&amp;models.Todo{})
+        return result.RowsAffected &gt; 0, result.Error
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package todo
+
+import (
+        "errors"
+        "fmt"
+
+        "github.com/go-playground/validator/v10"
+        "gorm.io/gorm"
+
+        "todoapp-backend/pkg/models"
+)
+
+var (
+        ErrTodoNotFound = errors.New("todo not found")
+        ErrUnauthorized = errors.New("unauthorized access to todo")
+)
+
+// TodoRepository abstracts todo DB operations
+// (for testability and decoupling from GORM)
+type TodoRepository interface {
+        Create(todo *models.Todo) error
+        FindByID(userID, todoID uint) (*models.Todo, error)
+        FindAll(userID uint) ([]models.Todo, error)
+        Update(todo *models.Todo, updates map[string]interface{}) error
+        Delete(userID, todoID uint) (bool, error)
+}
+
+type Service struct {
+        repo     TodoRepository
+        validate *validator.Validate
+}
+
+// NewService creates a new todo service
+func NewService(repo TodoRepository) *Service <span class="cov0" title="0">{
+        return &amp;Service{
+                repo:     repo,
+                validate: validator.New(),
+        }
+}</span>
+
+// Create creates a new todo
+func (s *Service) Create(userID uint, req models.TodoCreateRequest) (*models.TodoResponse, error) <span class="cov0" title="0">{
+        if err := s.validate.Struct(req); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("validation failed: %w", err)
+        }</span>
+        <span class="cov0" title="0">todo := &amp;models.Todo{
+                Title:       req.Title,
+                Description: req.Description,
+                UserID:      userID,
+                Completed:   false,
+        }
+        if err := s.repo.Create(todo); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to create todo: %w", err)
+        }</span>
+        <span class="cov0" title="0">response := todo.ToResponse()
+        return &amp;response, nil</span>
+}
+
+// GetByID retrieves a todo by ID
+func (s *Service) GetByID(userID, todoID uint) (*models.TodoResponse, error) <span class="cov0" title="0">{
+        todo, err := s.repo.FindByID(userID, todoID)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, ErrTodoNotFound) </span><span class="cov0" title="0">{
+                        return nil, ErrTodoNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, fmt.Errorf("failed to get todo: %w", err)</span>
+        }
+        <span class="cov0" title="0">response := todo.ToResponse()
+        return &amp;response, nil</span>
+}
+
+// GetAll retrieves all todos for a user
+func (s *Service) GetAll(userID uint) ([]models.TodoResponse, error) <span class="cov0" title="0">{
+        todos, err := s.repo.FindAll(userID)
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to get todos: %w", err)
+        }</span>
+        <span class="cov0" title="0">responses := make([]models.TodoResponse, len(todos))
+        for i, todo := range todos </span><span class="cov0" title="0">{
+                responses[i] = todo.ToResponse()
+        }</span>
+        <span class="cov0" title="0">return responses, nil</span>
+}
+
+// Update updates a todo
+func (s *Service) Update(userID, todoID uint, req models.TodoUpdateRequest) (*models.TodoResponse, error) <span class="cov0" title="0">{
+        if err := s.validate.Struct(req); err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("validation failed: %w", err)
+        }</span>
+        <span class="cov0" title="0">todo, err := s.repo.FindByID(userID, todoID)
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, ErrTodoNotFound) </span><span class="cov0" title="0">{
+                        return nil, ErrTodoNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, fmt.Errorf("failed to find todo: %w", err)</span>
+        }
+        <span class="cov0" title="0">updates := make(map[string]interface{})
+        if req.Title != nil </span><span class="cov0" title="0">{
+                updates["title"] = *req.Title
+        }</span>
+        <span class="cov0" title="0">if req.Description != nil </span><span class="cov0" title="0">{
+                updates["description"] = *req.Description
+        }</span>
+        <span class="cov0" title="0">if req.Completed != nil </span><span class="cov0" title="0">{
+                updates["completed"] = *req.Completed
+        }</span>
+        <span class="cov0" title="0">if len(updates) &gt; 0 </span><span class="cov0" title="0">{
+                if err := s.repo.Update(todo, updates); err != nil </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("failed to update todo: %w", err)
+                }</span>
+        }
+        <span class="cov0" title="0">response := todo.ToResponse()
+        return &amp;response, nil</span>
+}
+
+// Delete deletes a todo
+func (s *Service) Delete(userID, todoID uint) error <span class="cov0" title="0">{
+        deleted, err := s.repo.Delete(userID, todoID)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("failed to delete todo: %w", err)
+        }</span>
+        <span class="cov0" title="0">if !deleted </span><span class="cov0" title="0">{
+                return ErrTodoNotFound
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+// GORM-backed implementation
+type gormTodoRepo struct {
+        db *gorm.DB
+}
+
+func NewGormTodoRepo(db *gorm.DB) TodoRepository <span class="cov0" title="0">{
+        return &amp;gormTodoRepo{db: db}
+}</span>
+
+func (r *gormTodoRepo) Create(todo *models.Todo) error <span class="cov0" title="0">{
+        return r.db.Create(todo).Error
+}</span>
+
+func (r *gormTodoRepo) FindByID(userID, todoID uint) (*models.Todo, error) <span class="cov0" title="0">{
+        var todo models.Todo
+        err := r.db.Where("id = ? AND user_id = ?", todoID, userID).First(&amp;todo).Error
+        if err != nil </span><span class="cov0" title="0">{
+                if errors.Is(err, gorm.ErrRecordNotFound) </span><span class="cov0" title="0">{
+                        return nil, ErrTodoNotFound
+                }</span>
+                <span class="cov0" title="0">return nil, err</span>
+        }
+        <span class="cov0" title="0">return &amp;todo, nil</span>
+}
+
+func (r *gormTodoRepo) FindAll(userID uint) ([]models.Todo, error) <span class="cov0" title="0">{
+        var todos []models.Todo
+        err := r.db.Where("user_id = ?", userID).Order("created_at DESC").Find(&amp;todos).Error
+        if err != nil </span><span class="cov0" title="0">{
+                return nil, err
+        }</span>
+        <span class="cov0" title="0">return todos, nil</span>
+}
+
+func (r *gormTodoRepo) Update(todo *models.Todo, updates map[string]interface{}) error <span class="cov0" title="0">{
+        return r.db.Model(todo).Updates(updates).Error
+}</span>
+
+func (r *gormTodoRepo) Delete(userID, todoID uint) (bool, error) <span class="cov0" title="0">{
+        result := r.db.Where("id = ? AND user_id = ?", todoID, userID).Delete(&amp;models.Todo{})
+        if result.Error != nil </span><span class="cov0" title="0">{
+                return false, result.Error
+        }</span>
+        <span class="cov0" title="0">if result.RowsAffected == 0 </span><span class="cov0" title="0">{
+                return false, nil
+        }</span>
+        <span class="cov0" title="0">return true, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package middleware
+
+import (
+        "net/http"
+        "strings"
+
+        "github.com/gin-gonic/gin"
+
+        "todoapp-backend/pkg/utils"
+)
+
+// AuthMiddleware creates a JWT authentication middleware
+func AuthMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc <span class="cov0" title="0">{
+        return func(c *gin.Context) </span><span class="cov0" title="0">{
+                authHeader := c.GetHeader("Authorization")
+                if authHeader == "" </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusUnauthorized, gin.H{
+                                "error": "Authorization header is required",
+                        })
+                        c.Abort()
+                        return
+                }</span>
+
+                // Check if the header starts with "Bearer "
+                <span class="cov0" title="0">parts := strings.SplitN(authHeader, " ", 2)
+                if len(parts) != 2 || parts[0] != "Bearer" </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusUnauthorized, gin.H{
+                                "error": "Authorization header format must be Bearer {token}",
+                        })
+                        c.Abort()
+                        return
+                }</span>
+
+                <span class="cov0" title="0">token := parts[1]
+                claims, err := jwtUtil.ValidateToken(token)
+                if err != nil </span><span class="cov0" title="0">{
+                        c.JSON(http.StatusUnauthorized, gin.H{
+                                "error": "Invalid or expired token",
+                        })
+                        c.Abort()
+                        return
+                }</span>
+
+                // Set user information in context for use in handlers
+                <span class="cov0" title="0">c.Set("user_id", claims.UserID)
+                c.Set("user_email", claims.Email)
+                c.Next()</span>
+        }
+}
+
+// GetUserID extracts user ID from the Gin context
+func GetUserID(c *gin.Context) (uint, bool) <span class="cov0" title="0">{
+        userID, exists := c.Get("user_id")
+        if !exists </span><span class="cov0" title="0">{
+                return 0, false
+        }</span>
+
+        <span class="cov0" title="0">id, ok := userID.(uint)
+        return id, ok</span>
+}
+
+// GetUserEmail extracts user email from the Gin context
+func GetUserEmail(c *gin.Context) (string, bool) <span class="cov0" title="0">{
+        email, exists := c.Get("user_email")
+        if !exists </span><span class="cov0" title="0">{
+                return "", false
+        }</span>
+
+        <span class="cov0" title="0">emailStr, ok := email.(string)
+        return emailStr, ok</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package models
+
+import (
+        "time"
+
+        "gorm.io/gorm"
+)
+
+type Todo struct {
+        ID          uint           `json:"id" gorm:"primaryKey"`
+        Title       string         `json:"title" gorm:"not null" validate:"required,min=1,max=255"`
+        Description string         `json:"description" gorm:"type:text"`
+        Completed   bool           `json:"completed" gorm:"default:false"`
+        UserID      uint           `json:"user_id" gorm:"not null"`
+        User        User           `json:"user,omitempty" gorm:"foreignKey:UserID"`
+        CreatedAt   time.Time      `json:"created_at"`
+        UpdatedAt   time.Time      `json:"updated_at"`
+        DeletedAt   gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
+}
+
+type TodoCreateRequest struct {
+        Title       string `json:"title" validate:"required,min=1,max=255"`
+        Description string `json:"description"`
+}
+
+type TodoUpdateRequest struct {
+        Title       *string `json:"title,omitempty" validate:"omitempty,min=1,max=255"`
+        Description *string `json:"description,omitempty"`
+        Completed   *bool   `json:"completed,omitempty"`
+}
+
+type TodoResponse struct {
+        ID          uint      `json:"id"`
+        Title       string    `json:"title"`
+        Description string    `json:"description"`
+        Completed   bool      `json:"completed"`
+        UserID      uint      `json:"user_id"`
+        CreatedAt   time.Time `json:"created_at"`
+        UpdatedAt   time.Time `json:"updated_at"`
+}
+
+// ToResponse converts Todo to TodoResponse
+func (t *Todo) ToResponse() TodoResponse <span class="cov0" title="0">{
+        return TodoResponse{
+                ID:          t.ID,
+                Title:       t.Title,
+                Description: t.Description,
+                Completed:   t.Completed,
+                UserID:      t.UserID,
+                CreatedAt:   t.CreatedAt,
+                UpdatedAt:   t.UpdatedAt,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package models
+
+import (
+        "time"
+
+        "golang.org/x/crypto/bcrypt"
+        "gorm.io/gorm"
+)
+
+type User struct {
+        ID        uint           `json:"id" gorm:"primaryKey"`
+        Email     string         `json:"email" gorm:"uniqueIndex;not null" validate:"required,email"`
+        Password  string         `json:"-" gorm:"not null" validate:"required,min=6"`
+        Name      string         `json:"name" gorm:"not null" validate:"required,min=2"`
+        CreatedAt time.Time      `json:"created_at"`
+        UpdatedAt time.Time      `json:"updated_at"`
+        DeletedAt gorm.DeletedAt `json:"deleted_at,omitempty" gorm:"index"`
+        Todos     []Todo         `json:"todos,omitempty" gorm:"foreignKey:UserID"`
+}
+
+type UserRegisterRequest struct {
+        Email    string `json:"email" validate:"required,email"`
+        Password string `json:"password" validate:"required,min=6"`
+        Name     string `json:"name" validate:"required,min=2"`
+}
+
+type UserLoginRequest struct {
+        Email    string `json:"email" validate:"required,email"`
+        Password string `json:"password" validate:"required"`
+}
+
+type UserResponse struct {
+        ID    uint   `json:"id"`
+        Email string `json:"email"`
+        Name  string `json:"name"`
+}
+
+// HashPassword hashes the user's password
+func (u *User) HashPassword() error <span class="cov0" title="0">{
+        hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+        if err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">u.Password = string(hashedPassword)
+        return nil</span>
+}
+
+// CheckPassword compares the provided password with the hashed password
+func (u *User) CheckPassword(password string) bool <span class="cov0" title="0">{
+        err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+        return err == nil
+}</span>
+
+// ToResponse converts User to UserResponse
+func (u *User) ToResponse() UserResponse <span class="cov0" title="0">{
+        return UserResponse{
+                ID:    u.ID,
+                Email: u.Email,
+                Name:  u.Name,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package utils
+
+import (
+        "fmt"
+        "time"
+
+        "github.com/golang-jwt/jwt/v4"
+
+        "todoapp-backend/internal/config"
+)
+
+type JWTClaims struct {
+        UserID uint   `json:"user_id"`
+        Email  string `json:"email"`
+        jwt.RegisteredClaims
+}
+
+type JWTUtil struct {
+        config *config.Config
+}
+
+// NewJWTUtil creates a new JWT utility instance
+func NewJWTUtil(cfg *config.Config) *JWTUtil <span class="cov0" title="0">{
+        return &amp;JWTUtil{
+                config: cfg,
+        }
+}</span>
+
+// GenerateToken generates a new JWT token for the given user
+func (j *JWTUtil) GenerateToken(userID uint, email string) (string, error) <span class="cov0" title="0">{
+        claims := JWTClaims{
+                UserID: userID,
+                Email:  email,
+                RegisteredClaims: jwt.RegisteredClaims{
+                        ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * time.Duration(j.config.JWT.ExpiryHour))),
+                        IssuedAt:  jwt.NewNumericDate(time.Now()),
+                        Subject:   fmt.Sprintf("%d", userID),
+                },
+        }
+
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+        return token.SignedString([]byte(j.config.JWT.Secret))
+}</span>
+
+// ValidateToken validates a JWT token and returns the claims
+func (j *JWTUtil) ValidateToken(tokenString string) (*JWTClaims, error) <span class="cov0" title="0">{
+        token, err := jwt.ParseWithClaims(tokenString, &amp;JWTClaims{}, func(token *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
+                        return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+                }</span>
+                <span class="cov0" title="0">return []byte(j.config.JWT.Secret), nil</span>
+        })
+
+        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("failed to parse token: %w", err)
+        }</span>
+
+        <span class="cov0" title="0">claims, ok := token.Claims.(*JWTClaims)
+        if !ok || !token.Valid </span><span class="cov0" title="0">{
+                return nil, fmt.Errorf("invalid token")
+        }</span>
+
+        <span class="cov0" title="0">return claims, nil</span>
+}
+
+// RefreshToken generates a new token for an existing valid token
+func (j *JWTUtil) RefreshToken(tokenString string) (string, error) <span class="cov0" title="0">{
+        claims, err := j.ValidateToken(tokenString)
+        if err != nil </span><span class="cov0" title="0">{
+                return "", fmt.Errorf("failed to validate token for refresh: %w", err)
+        }</span>
+
+        // Generate new token with updated expiry
+        <span class="cov0" title="0">return j.GenerateToken(claims.UserID, claims.Email)</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

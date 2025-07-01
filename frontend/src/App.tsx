@@ -4,10 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './contexts/AuthContext';
-import LoginForm from './components/LoginForm';
-import RegisterForm from './components/RegisterForm';
 import Dashboard from './components/Dashboard';
+import LoginForm from './components/LoginForm';
 import ProtectedRoute from './components/ProtectedRoute';
+import RegisterForm from './components/RegisterForm';
 
 // Create Material-UI theme
 const theme = createTheme({

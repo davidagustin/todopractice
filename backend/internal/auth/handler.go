@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"todoapp-backend/pkg/middleware"
-	"todoapp-backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
+
+	"todoapp-backend/pkg/middleware"
+	"todoapp-backend/pkg/models"
 )
 
 type Handler struct {

@@ -11,7 +11,7 @@ export const useTodos = () => {
 
 export const useCreateTodo = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: todoApi.create,
     onSuccess: () => {
@@ -22,10 +22,9 @@ export const useCreateTodo = () => {
 
 export const useUpdateTodo = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateTodoRequest }) => 
-      todoApi.update(id, data),
+    mutationFn: ({ id, data }: { id: number; data: UpdateTodoRequest }) => todoApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
@@ -34,11 +33,11 @@ export const useUpdateTodo = () => {
 
 export const useDeleteTodo = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: todoApi.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
-}; 
+};

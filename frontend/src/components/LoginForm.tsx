@@ -1,15 +1,15 @@
-import React from 'react';
+import type React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
   Container,
   Paper,
   TextField,
-  Button,
   Typography,
-  Box,
-  Alert,
-  CircularProgress,
 } from '@mui/material';
 import { useLogin } from '../hooks/useAuth';
 
@@ -19,7 +19,11 @@ interface FormData {
 }
 
 const LoginForm: React.FC = () => {
-  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
     mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {
@@ -35,12 +39,20 @@ const LoginForm: React.FC = () => {
 
   // Helper to parse backend error
   function getErrorMessage(error: unknown) {
-    if (!error || typeof error !== 'object') return null;
+    if (!error || typeof error !== 'object') {
+      return null;
+    }
     const msg = (error as { message?: string }).message || '';
-    if (msg.includes('Invalid email or password')) return 'Invalid email or password';
+    if (msg.includes('Invalid email or password')) {
+      return 'Invalid email or password';
+    }
     if (msg.includes('validation failed')) {
-      if (msg.includes('Email')) return 'Invalid email format';
-      if (msg.includes('Password') && msg.includes('min')) return 'Password must be at least 6 characters';
+      if (msg.includes('Email')) {
+        return 'Invalid email format';
+      }
+      if (msg.includes('Password') && msg.includes('min')) {
+        return 'Password must be at least 6 characters';
+      }
       return 'Validation error';
     }
     return msg;
@@ -66,9 +78,9 @@ const LoginForm: React.FC = () => {
             width: '100%',
           }}
         >
-          <Paper 
-            elevation={8} 
-            sx={{ 
+          <Paper
+            elevation={8}
+            sx={{
               padding: { xs: 3, sm: 4, md: 5 },
               width: '100%',
               maxWidth: 500,
@@ -87,7 +99,7 @@ const LoginForm: React.FC = () => {
               <Typography component="h1" variant="h4" gutterBottom>
                 Sign in to your account
               </Typography>
-              
+
               <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1, width: '100%' }}>
                 <Controller
                   name="email"
@@ -96,8 +108,8 @@ const LoginForm: React.FC = () => {
                     required: 'Email is required',
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address'
-                    }
+                      message: 'Invalid email address',
+                    },
                   }}
                   render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
@@ -115,7 +127,7 @@ const LoginForm: React.FC = () => {
                     />
                   )}
                 />
-                
+
                 <Controller
                   name="password"
                   control={control}
@@ -123,8 +135,8 @@ const LoginForm: React.FC = () => {
                     required: 'Password is required',
                     minLength: {
                       value: 6,
-                      message: 'Password must be at least 6 characters'
-                    }
+                      message: 'Password must be at least 6 characters',
+                    },
                   }}
                   render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
@@ -159,7 +171,7 @@ const LoginForm: React.FC = () => {
                 >
                   {isPending ? 'Signing in...' : 'Sign in'}
                 </Button>
-                
+
                 <Box textAlign="center">
                   <Link to="/register" style={{ textDecoration: 'none' }}>
                     <Typography variant="body2" color="primary">
@@ -176,4 +188,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm; 
+export default LoginForm;

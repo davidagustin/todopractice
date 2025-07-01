@@ -24,6 +24,7 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 - **React Router** for client-side routing
 - **Jest & Testing Library** for testing
 - **Cypress** for E2E testing
+- **Biome** for linting and formatting
 
 ## 📋 Features
 
@@ -38,9 +39,11 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 - ✅ Comprehensive test coverage
 - ✅ Modern UI with glassmorphism effects
 - ✅ GitHub Actions CI/CD pipeline
+- ✅ GitLab CI/CD pipeline
 - ✅ Docker containerization
 - ✅ Security scanning and analysis
 - ✅ **Fully automated E2E testing**
+- ✅ **Clean, organized codebase with proper import ordering**
 
 ## 🚀 Quick Start
 
@@ -108,7 +111,12 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
    npm run test
    ```
 
-5. **Access the application**
+5. **Run linter**
+   ```bash
+   npm run lint
+   ```
+
+6. **Access the application**
    - Frontend: http://localhost:5173
    - Backend API: http://localhost:8080
 
@@ -116,9 +124,11 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 
 ### Current Test Status
 
-- ✅ **Backend Tests**: 100% passing (23 tests)
-- ✅ **Frontend Tests**: 100% passing (36 tests)
-- ✅ **E2E Tests**: 100% passing (10 tests)
+- ✅ **Backend Tests**: 100% passing (comprehensive unit and integration tests)
+- ✅ **Frontend Tests**: 100% passing (64 tests covering all components and hooks)
+- ✅ **E2E Tests**: 100% passing (10 tests covering authentication and todo management)
+- ✅ **Code Coverage**: High coverage across all components and services
+- ✅ **Linting**: All code passes Biome linting rules
 
 ### Running Tests
 
@@ -132,6 +142,12 @@ go test ./... -v
 ```bash
 cd frontend
 npm run test
+```
+
+#### Frontend Linting
+```bash
+cd frontend
+npm run lint
 ```
 
 #### E2E Tests (Automated)
@@ -162,6 +178,7 @@ The frontend tests are configured with:
 - **@testing-library/jest-dom** for custom matchers
 - **Legacy JSX runtime** for React 19 compatibility
 - **Cypress** for E2E testing with Vite integration
+- **Biome** for linting and formatting
 
 #### React 19 Compatibility
 
@@ -260,15 +277,18 @@ fullstackpractice/
 │   │   ├── App.tsx           # Main application component
 │   │   └── main.tsx          # Application entry point
 │   ├── cypress/              # E2E tests
-│   ├── Dockerfile            # Frontend Docker image
-│   ├── nginx.conf            # Nginx configuration
-│   └── CSS_BEST_PRACTICES.md # CSS guidelines
+│   ├── biome.json            # Biome linting configuration
+│   ├── package.json          # Frontend dependencies
+│   └── tsconfig.json         # TypeScript configuration
 ├── docker-compose.yml        # Docker orchestration
 ├── deploy.sh                 # Deployment script
 ├── run-e2e-complete.sh       # E2E test automation script
-├── TESTING.md                # Testing documentation
-├── TESTING_STRATEGY.md       # Testing strategy
-└── README.md                 # This file
+├── run-e2e.sh               # Basic E2E test runner
+├── test-suite.sh            # Complete test suite runner
+├── TESTING.md               # Testing documentation
+├── .gitignore               # Git ignore rules
+├── .gitlab-ci.yml           # GitLab CI/CD configuration
+└── README.md                # This file
 ```
 
 ## 🎨 Frontend Features
@@ -350,220 +370,76 @@ Tailwind CSS is used for utility styling and custom components:
 - XSS protection headers
 - Input validation and sanitization
 
-## 🚀 GitHub Actions CI/CD
+## 🚀 CI/CD Pipelines
+
+The project includes comprehensive CI/CD pipelines for both GitHub Actions and GitLab CI.
+
+### GitHub Actions CI/CD
 
 The project includes comprehensive GitHub Actions workflows for automated testing, building, and deployment.
 
-### 📋 Workflow Overview
+#### 📋 Workflow Overview
 
-#### 1. **CI/CD Pipeline** (`ci.yml`)
-**Triggers:** Push to `main`/`develop`, Pull Requests
-**Purpose:** Main continuous integration pipeline
+1. **CI/CD Pipeline** (`ci.yml`)
+   - Backend testing & build
+   - Frontend testing & build
+   - E2E testing
+   - Security scanning
+   - Quality gates
 
-**Jobs:**
-- **Backend Testing & Build**: Go tests, linting, coverage, build
-- **Frontend Testing & Build**: Node.js tests, linting, coverage, build
-- **E2E Testing**: Cypress end-to-end tests
-- **Security Scan**: Trivy vulnerability scanning
-- **Quality Gates**: Final validation
+2. **Docker Build & Push** (`docker-build.yml`)
+   - Multi-platform builds
+   - Automatic tagging
+   - Release-specific builds
 
-#### 2. **Docker Build & Push** (`docker-build.yml`)
-**Triggers:** Push to `main`, tags, Pull Requests
-**Purpose:** Build and push Docker images to GitHub Container Registry
+3. **Deployment** (`deploy.yml`)
+   - Staging and production deployments
+   - Manual workflow dispatch
 
-**Features:**
-- Multi-platform builds (amd64, arm64)
-- Automatic tagging based on branch/tag
-- Release-specific builds for version tags
-- Caching for faster builds
+4. **Security Analysis** (`security.yml`)
+   - Dependency vulnerability scanning
+   - CodeQL analysis
+   - Container security scanning
 
-#### 3. **Deployment** (`deploy.yml`)
-**Triggers:** Push to `main`, tags, manual dispatch
-**Purpose:** Deploy to staging and production environments
+5. **Performance Testing** (`performance.yml`)
+   - Load testing with Artillery
+   - Lighthouse performance testing
 
-**Environments:**
-- **Staging**: Automatic deployment from `main` branch
-- **Production**: Deployment from version tags
-- **Manual**: Workflow dispatch for manual deployments
+### GitLab CI/CD
 
-#### 4. **Security Analysis** (`security.yml`)
-**Triggers:** Push to `main`/`develop`, Pull Requests, weekly schedule
-**Purpose:** Comprehensive security scanning
+The project also includes a `.gitlab-ci.yml` for full GitLab CI/CD support:
 
-**Scans:**
-- Dependency vulnerability scanning (npm audit, govulncheck)
-- CodeQL analysis for JavaScript and Go
-- Container image security scanning
-- Secret scanning with TruffleHog
-- SAST analysis with ESLint and gosec
+#### Pipeline Stages
 
-#### 5. **Performance Testing** (`performance.yml`)
-**Triggers:** Push to `main`, Pull Requests, manual dispatch
-**Purpose:** Performance and load testing
+1. **Lint Stage**
+   - Frontend: Biome linting
+   - Backend: golangci-lint
 
-**Tests:**
-- Load testing with Artillery
-- Lighthouse performance testing
-- API performance testing
-- Performance metrics collection
+2. **Test Stage**
+   - Frontend: Jest tests with coverage
+   - Backend: Go tests with coverage
 
-### 🚀 Getting Started with GitHub Actions
+3. **Build Stage**
+   - Frontend: Vite production build
+   - Backend: Go binary build
 
-#### Prerequisites
+4. **Docker Stage**
+   - Multi-service Docker builds
 
-1. **Repository Setup**
-   - Ensure your repository has the correct branch structure (`main`, `develop`)
-   - Set up branch protection rules if needed
+5. **Security Stage**
+   - Backend: gosec security scanning
+   - Frontend: Snyk vulnerability scanning
 
-2. **Secrets Configuration**
-   Add the following secrets to your repository:
-   ```
-   GITHUB_TOKEN (automatically available)
-   DOCKER_REGISTRY_TOKEN (if using external registry)
-   DEPLOYMENT_KEYS (for deployment environments)
-   ```
+6. **Performance Stage**
+   - Backend: Load testing with hey
+   - Frontend: Lighthouse performance testing
 
-3. **Environment Setup**
-   Create environments in GitHub:
-   - `staging` - for staging deployments
-   - `production` - for production deployments
+#### Features
 
-#### Workflow Usage
-
-**Automatic Triggers:**
-- **Push to `main`**: Triggers CI/CD, Docker build, deployment to staging
-- **Push to `develop`**: Triggers CI/CD and security scans
-- **Pull Requests**: Triggers CI/CD and security scans
-- **Version Tags**: Triggers full pipeline including production deployment
-
-**Manual Triggers:**
-1. **Deploy to Environment**
-   - Go to Actions → Deploy
-   - Click "Run workflow"
-   - Select environment (staging/production)
-
-2. **Performance Testing**
-   - Go to Actions → Performance Testing
-   - Click "Run workflow"
-
-### 📊 Monitoring & Artifacts
-
-#### Coverage Reports
-- Backend coverage: Uploaded to Codecov
-- Frontend coverage: Uploaded to Codecov
-- Coverage badges available in repository
-
-#### Security Results
-- All security scan results uploaded to GitHub Security tab
-- SARIF format for integration with security tools
-- Weekly automated scans
-
-#### Performance Results
-- Lighthouse reports stored as artifacts
-- Load test results available for download
-- Performance metrics tracked over time
-
-#### Test Artifacts
-- Cypress screenshots and videos on test failure
-- Build artifacts for debugging
-- Docker images available in GitHub Container Registry
-
-### 🔧 Customization
-
-#### Environment Variables
-Modify environment variables in workflow files:
-```yaml
-env:
-  GO_VERSION: '1.24'
-  NODE_VERSION: '20'
-  REGISTRY: ghcr.io
-```
-
-#### Database Configuration
-Update PostgreSQL service configuration:
-```yaml
-services:
-  postgres:
-    image: postgres:15-alpine
-    env:
-      POSTGRES_DB: todoapp_test
-      POSTGRES_USER: todouser
-      POSTGRES_PASSWORD: todopassword
-```
-
-#### Deployment Configuration
-Customize deployment steps in `deploy.yml`:
-```yaml
-- name: Deploy to staging environment
-  run: |
-    # Add your deployment commands here
-    # Example: kubectl apply, docker-compose, etc.
-```
-
-### 🛠️ Troubleshooting GitHub Actions
-
-#### Common Issues
-
-1. **Build Failures**
-   - Check Go/Node.js version compatibility
-   - Verify dependency installation
-   - Review test failures in logs
-
-2. **Docker Build Issues**
-   - Ensure Dockerfiles are properly configured
-   - Check multi-platform build support
-   - Verify registry authentication
-
-3. **Security Scan Failures**
-   - Review vulnerability reports
-   - Update dependencies if needed
-   - Address high/critical severity issues
-
-4. **Performance Test Failures**
-   - Check application startup time
-   - Verify database connectivity
-   - Review performance thresholds
-
-#### Debugging
-
-1. **Enable Debug Logging**
-   Add to workflow:
-   ```yaml
-   env:
-     ACTIONS_STEP_DEBUG: true
-   ```
-
-2. **Check Artifacts**
-   - Download and review test artifacts
-   - Examine screenshots and videos
-   - Review performance reports
-
-3. **Local Testing**
-   - Run workflows locally with `act`
-   - Test individual components
-   - Verify environment setup
-
-### 📈 Best Practices
-
-#### Code Quality
-- Maintain high test coverage (>80%)
-- Address linting issues promptly
-- Follow security best practices
-
-#### Performance
-- Monitor performance metrics
-- Set appropriate performance thresholds
-- Optimize build and test times
-
-#### Security
-- Regular dependency updates
-- Address security vulnerabilities promptly
-- Follow least privilege principle
-
-#### Deployment
-- Use blue-green deployments
-- Implement rollback procedures
-- Monitor deployment health
+- **Change-based execution**: Jobs only run when relevant files change
+- **Parallel execution**: Jobs run in parallel where possible
+- **Artifact management**: Coverage reports and build artifacts saved
+- **Failure handling**: Performance tests can fail without blocking pipeline
 
 ## 🚀 Production Deployment
 
@@ -590,7 +466,7 @@ For production deployment, make sure to:
 4. Configure proper CORS origins
 5. Set up monitoring and logging
 6. Configure backup strategies
-7. Set up GitHub Actions secrets for deployment
+7. Set up CI/CD secrets for deployment
 
 ## 🤝 Contributing
 
@@ -633,6 +509,7 @@ For production deployment, make sure to:
 - Ensure all linter checks pass
 - Use meaningful commit messages
 - Document public APIs
+- Maintain proper import ordering
 
 ### Commit Message Format
 
@@ -667,6 +544,10 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
    - **Solution**: Ensure backend server is running for E2E tests
    - **Check**: Backend health endpoint at `http://localhost:8080/health`
 
+5. **Linting Issues**
+   - **Solution**: Run `npm run lint` to check for issues
+   - **Auto-fix**: Run `npm run lint -- --write` to auto-fix issues
+
 ## 📚 Additional Resources
 
 - [React 19 Documentation](https://react.dev/)
@@ -674,7 +555,9 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 - [Material-UI Documentation](https://mui.com/)
 - [Cypress Documentation](https://docs.cypress.io/)
 - [Testing Library Documentation](https://testing-library.com/)
+- [Biome Documentation](https://biomejs.dev/)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [GitLab CI Documentation](https://docs.gitlab.com/ee/ci/)
 - [Docker Buildx Documentation](https://docs.docker.com/buildx/)
 - [CodeQL Documentation](https://docs.github.com/en/code-security)
 
@@ -684,4 +567,31 @@ This project is licensed under the MIT License.
 
 ## 👥 Authors
 
-Built with ❤️ using Test-Driven Development principles. 
+Built with ❤️ using Test-Driven Development principles.
+
+## 🧹 Recent Cleanup
+
+The repository has been cleaned up to remove unnecessary files and improve organization:
+
+### Removed Files
+- `backend/server` - Binary file (should be built, not committed)
+- `backend/todoapp.db` - Database file (should be generated, not committed)
+- `frontend/cypress.config.ts.bak` - Backup file
+- `frontend/tsconfig.tsbuildinfo` - TypeScript build info
+- `frontend/CSS_BEST_PRACTICES.md` - Moved content to main README
+- `frontend/nginx.conf` - Not needed for development
+- `frontend/Dockerfile` - Not needed for development
+- `frontend/.dockerignore` - Not needed for development
+- `init.sql` - Database initialization (handled by GORM)
+- `TESTING_STRATEGY.md` - Content merged into TESTING.md
+- `cypress/` - Duplicate Cypress directory (using frontend/cypress)
+- `tests/` - Duplicate test directory (using backend/tests)
+- `pkg/` - Duplicate package directory (using backend/pkg)
+
+### Improvements
+- **Clean .gitignore**: Removed duplication and organized rules
+- **Fixed TypeScript config**: Separated test and build configurations
+- **Updated GitLab CI**: Added change-based execution rules
+- **Import ordering**: All imports are now properly ordered and consistent
+- **Linting fixes**: All code passes Biome linting rules
+- **Build fixes**: Frontend builds successfully without TypeScript errors 

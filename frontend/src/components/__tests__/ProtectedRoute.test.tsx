@@ -1,16 +1,16 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import ProtectedRoute from '../ProtectedRoute';
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 
 // Mock the useAuth hook
-jest.mock('../../hooks/useAuth', () => ({
-  useAuth: jest.fn(),
-}));
+vi.mock('../../hooks/useAuth', () => ({
+  useAuth: vi.fn(),
+}))
 
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth'
+import ProtectedRoute from '../ProtectedRoute'
 
-const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+const mockUseAuth = useAuth as vi.MockedFunction<typeof useAuth>;
 
 describe('ProtectedRoute Component', () => {
   const TestComponent = () => <div data-testid="protected-content">Protected Content</div>;
@@ -24,8 +24,8 @@ describe('ProtectedRoute Component', () => {
       user: { id: 1, email: 'test@example.com', name: 'Test User' },
       token: 'mock-token',
       isLoading: false,
-      login: jest.fn(),
-      logout: jest.fn(),
+      login: vi.fn(),
+      logout: vi.fn(),
     });
 
     render(
@@ -44,8 +44,8 @@ describe('ProtectedRoute Component', () => {
       user: null,
       token: null,
       isLoading: true,
-      login: jest.fn(),
-      logout: jest.fn(),
+      login: vi.fn(),
+      logout: vi.fn(),
     });
 
     render(
@@ -65,8 +65,8 @@ describe('ProtectedRoute Component', () => {
       user: null,
       token: null,
       isLoading: false,
-      login: jest.fn(),
-      logout: jest.fn(),
+      login: vi.fn(),
+      logout: vi.fn(),
     });
 
     const { container } = render(

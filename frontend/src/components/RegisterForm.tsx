@@ -1,15 +1,15 @@
-import React from 'react';
+import type React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import {
+  Alert,
+  Box,
+  Button,
+  CircularProgress,
   Container,
   Paper,
   TextField,
-  Button,
   Typography,
-  Box,
-  Alert,
-  CircularProgress,
 } from '@mui/material';
 import { useRegister } from '../hooks/useAuth';
 import type { RegisterRequest } from '../types';
@@ -38,15 +38,25 @@ const RegisterForm: React.FC = () => {
 
   // Helper to parse backend error
   function getErrorMessage(error: unknown) {
-    if (!error || typeof error !== 'object') return null;
+    if (!error || typeof error !== 'object') {
+      return null;
+    }
     const msg = (error as { message?: string }).message || '';
     if (msg.includes('validation failed')) {
-      if (msg.includes('Email')) return 'Invalid email format';
-      if (msg.includes('Password') && msg.includes('min')) return 'Password must be at least 6 characters';
-      if (msg.includes('Name')) return 'Name is required';
+      if (msg.includes('Email')) {
+        return 'Invalid email format';
+      }
+      if (msg.includes('Password') && msg.includes('min')) {
+        return 'Password must be at least 6 characters';
+      }
+      if (msg.includes('Name')) {
+        return 'Name is required';
+      }
       return 'Validation error';
     }
-    if (msg.includes('User already exists')) return 'User already exists';
+    if (msg.includes('User already exists')) {
+      return 'User already exists';
+    }
     return msg;
   }
 
@@ -70,9 +80,9 @@ const RegisterForm: React.FC = () => {
             width: '100%',
           }}
         >
-          <Paper 
-            elevation={8} 
-            sx={{ 
+          <Paper
+            elevation={8}
+            sx={{
               padding: { xs: 3, sm: 4, md: 5 },
               width: '100%',
               maxWidth: 500,
@@ -91,7 +101,7 @@ const RegisterForm: React.FC = () => {
               <Typography component="h1" variant="h4" gutterBottom>
                 Create your account
               </Typography>
-              
+
               <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1, width: '100%' }}>
                 <Controller
                   name="name"
@@ -119,7 +129,7 @@ const RegisterForm: React.FC = () => {
                     />
                   )}
                 />
-                
+
                 <Controller
                   name="email"
                   control={control}
@@ -145,7 +155,7 @@ const RegisterForm: React.FC = () => {
                     />
                   )}
                 />
-                
+
                 <Controller
                   name="password"
                   control={control}
@@ -172,14 +182,13 @@ const RegisterForm: React.FC = () => {
                     />
                   )}
                 />
-                
+
                 <Controller
                   name="confirmPassword"
                   control={control}
                   rules={{
                     required: 'Please confirm your password',
-                    validate: (value: string) =>
-                      value === password || 'Passwords do not match',
+                    validate: (value: string) => value === password || 'Passwords do not match',
                   }}
                   render={({ field }: { field: Record<string, unknown> }) => (
                     <TextField
@@ -214,7 +223,7 @@ const RegisterForm: React.FC = () => {
                 >
                   {registerMutation.isPending ? 'Creating account...' : 'Sign up'}
                 </Button>
-                
+
                 <Box textAlign="center">
                   <Link to="/login" style={{ textDecoration: 'none' }}>
                     <Typography variant="body2" color="primary">
@@ -231,4 +240,4 @@ const RegisterForm: React.FC = () => {
   );
 };
 
-export default RegisterForm; 
+export default RegisterForm;

@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -30,7 +27,7 @@ export default {
           700: '#5f6368',
           800: '#3c4043',
           900: '#202124',
-        }
+        },
       },
       fontFamily: {
         sans: [
@@ -41,40 +38,40 @@ export default {
           'Roboto',
           '"Helvetica Neue"',
           'Arial',
-          'sans-serif'
+          'sans-serif',
         ],
       },
       spacing: {
-        'xs': '0.25rem',
-        'sm': '0.5rem',
-        'md': '1rem',
-        'lg': '1.5rem',
-        'xl': '2rem',
+        xs: '0.25rem',
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem',
+        xl: '2rem',
         '2xl': '3rem',
       },
       borderRadius: {
-        'sm': '4px',
-        'md': '8px',
-        'lg': '12px',
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
       },
       boxShadow: {
-        'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-        'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+        md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
       },
       transitionDuration: {
-        'fast': '0.15s',
-        'normal': '0.25s',
-        'slow': '0.3s',
+        fast: '0.15s',
+        normal: '0.25s',
+        slow: '0.3s',
       },
       zIndex: {
-        'dropdown': '1000',
-        'sticky': '1020',
-        'fixed': '1030',
+        dropdown: '1000',
+        sticky: '1020',
+        fixed: '1030',
         'modal-backdrop': '1040',
-        'modal': '1050',
-        'popover': '1060',
-        'tooltip': '1070',
+        modal: '1050',
+        popover: '1060',
+        tooltip: '1070',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',
@@ -104,7 +101,7 @@ export default {
   },
   plugins: [
     // Custom plugin for better focus styles
-    function({ addUtilities }) {
+    ({ addUtilities }) => {
       const newUtilities = {
         '.focus-visible-ring': {
           '&:focus-visible': {
@@ -123,8 +120,8 @@ export default {
           whiteSpace: 'nowrap',
           border: '0',
         },
-      }
-      addUtilities(newUtilities)
-    }
+      };
+      addUtilities(newUtilities);
+    },
   ],
-} 
+};

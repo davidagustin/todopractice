@@ -1,19 +1,9 @@
-import React from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { useLogout } from '../hooks/useAuth';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Container,
-  Paper,
-  Box,
-  Avatar,
-} from '@mui/material';
-import { LogoutOutlined, ChecklistRtlOutlined } from '@mui/icons-material';
-import TodoList from './TodoList';
+import type React from 'react';
+import { AppBar, Avatar, Box, Button, Container, Paper, Toolbar, Typography } from '@mui/material';
+import { ChecklistRtlOutlined, LogoutOutlined } from '@mui/icons-material';
+import { useAuth, useLogout } from '../hooks/useAuth';
 import CreateTodoForm from './CreateTodoForm';
+import TodoList from './TodoList';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -22,12 +12,12 @@ const Dashboard: React.FC = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       {/* Header */}
-      <AppBar 
-        position="static" 
+      <AppBar
+        position="static"
         elevation={3}
         sx={{
           background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
-          backdropFilter: 'blur(10px)'
+          backdropFilter: 'blur(10px)',
         }}
       >
         <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
@@ -55,12 +45,12 @@ const Dashboard: React.FC = () => {
                 onClick={logout}
                 startIcon={<LogoutOutlined />}
                 variant="outlined"
-                sx={{ 
+                sx={{
                   borderColor: 'rgba(255,255,255,0.3)',
                   '&:hover': {
                     borderColor: 'rgba(255,255,255,0.5)',
-                    backgroundColor: 'rgba(255,255,255,0.1)'
-                  }
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                  },
                 }}
               >
                 Logout
@@ -73,14 +63,14 @@ const Dashboard: React.FC = () => {
       {/* Welcome Message */}
       <Container maxWidth="xl" sx={{ mt: 4, mb: 4, px: { xs: 2, sm: 3 } }}>
         {user && (
-          <Paper 
-            sx={{ 
-              p: { xs: 2, sm: 3 }, 
-              mb: 4, 
+          <Paper
+            sx={{
+              p: { xs: 2, sm: 3 },
+              mb: 4,
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
               borderRadius: 3,
-              boxShadow: 3
+              boxShadow: 3,
             }}
           >
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
@@ -93,44 +83,48 @@ const Dashboard: React.FC = () => {
         )}
 
         {/* Main Content */}
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', lg: 'row' }, 
-          gap: { xs: 3, md: 4 },
-          alignItems: 'flex-start'
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', lg: 'row' },
+            gap: { xs: 3, md: 4 },
+            alignItems: 'flex-start',
+          }}
+        >
           {/* Create Todo Form */}
-          <Box sx={{ 
-            flex: { xs: '1', lg: '0 0 420px' },
-            width: '100%',
-            position: { lg: 'sticky' },
-            top: { lg: 24 }
-          }}>
+          <Box
+            sx={{
+              flex: { xs: '1', lg: '0 0 420px' },
+              width: '100%',
+              position: { lg: 'sticky' },
+              top: { lg: 24 },
+            }}
+          >
             <CreateTodoForm />
           </Box>
 
           {/* Todo List */}
           <Box sx={{ flex: 1, width: '100%' }}>
-            <Paper 
-              sx={{ 
-                p: { xs: 2, sm: 3, md: 4 }, 
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 3, md: 4 },
                 minHeight: '500px',
                 borderRadius: 3,
                 boxShadow: 2,
                 background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(10px)',
               }}
             >
-              <Typography 
-                variant="h4" 
-                gutterBottom 
-                sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
+              <Typography
+                variant="h4"
+                gutterBottom
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 1,
                   fontWeight: 'bold',
                   color: 'primary.main',
-                  mb: 3
+                  mb: 3,
                 }}
               >
                 <ChecklistRtlOutlined />
@@ -145,4 +139,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

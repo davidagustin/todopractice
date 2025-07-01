@@ -3,10 +3,11 @@ package auth
 import (
 	"errors"
 	"fmt"
-	"todoapp-backend/pkg/models"
-	"todoapp-backend/pkg/utils"
 
 	"github.com/go-playground/validator/v10"
+
+	"todoapp-backend/pkg/models"
+	"todoapp-backend/pkg/utils"
 )
 
 var (

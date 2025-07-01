@@ -1,9 +1,9 @@
 package todo
 
 import (
-	"todoapp-backend/pkg/models"
-
 	"gorm.io/gorm"
+
+	"todoapp-backend/pkg/models"
 )
 
 // GORMTodoRepository implements TodoRepository using GORM

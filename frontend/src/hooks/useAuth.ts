@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { authApi } from '../services/api';
 import { AuthContext } from '../contexts/AuthContext';
+import { authApi } from '../services/api';
 import type { LoginRequest, RegisterRequest } from '../types';
 
 export const useAuth = () => {
@@ -51,4 +51,4 @@ export const useLogout = () => {
     logout();
     navigate('/login');
   };
-}; 
+};

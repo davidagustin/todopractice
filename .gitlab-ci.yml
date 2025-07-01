@@ -1,0 +1,178 @@
+stages:
+  - lint
+  - test
+  - build
+  - docker
+  - security
+  - performance
+
+variables:
+  DOCKER_DRIVER: overlay2
+  NODE_ENV: test
+
+# Lint Frontend
+lint-frontend:
+  stage: lint
+  image: node:20
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run lint
+  rules:
+    - changes:
+        - frontend/**/*
+
+# Lint Backend
+lint-backend:
+  stage: lint
+  image: golang:1.24
+  before_script:
+    - cd backend
+    - go mod download
+    - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+  script:
+    - golangci-lint run --timeout=5m
+  rules:
+    - changes:
+        - backend/**/*
+
+# Test Frontend
+frontend-test:
+  stage: test
+  image: node:20
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm test -- --coverage --watchAll=false --passWithNoTests
+  artifacts:
+    paths:
+      - frontend/coverage
+    expire_in: 1 week
+  rules:
+    - changes:
+        - frontend/**/*
+
+# Test Backend
+backend-test:
+  stage: test
+  image: golang:1.24
+  before_script:
+    - cd backend
+    - go mod download
+  script:
+    - go test ./... -v -cover
+  rules:
+    - changes:
+        - backend/**/*
+
+# Build Frontend
+frontend-build:
+  stage: build
+  image: node:20
+  before_script:
+    - cd frontend
+    - npm ci
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist
+    expire_in: 1 week
+  rules:
+    - changes:
+        - frontend/**/*
+
+# Build Backend
+backend-build:
+  stage: build
+  image: golang:1.24
+  before_script:
+    - cd backend
+    - go mod download
+  script:
+    - go build ./...
+  rules:
+    - changes:
+        - backend/**/*
+
+# Docker Build
+docker-build:
+  stage: docker
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker info
+  script:
+    - docker build -t fullstack-todo-backend ./backend
+    - docker build -t fullstack-todo-frontend ./frontend
+  rules:
+    - changes:
+        - backend/**/*
+        - frontend/**/*
+        - docker-compose.yml
+        - Dockerfile*
+
+# Security Scan (Backend)
+security-backend:
+  stage: security
+  image: golang:1.24
+  before_script:
+    - cd backend
+    - go mod download
+    - go install github.com/securego/gosec/v2/cmd/gosec@latest
+  script:
+    - gosec ./...
+  rules:
+    - changes:
+        - backend/**/*
+
+# Security Scan (Frontend)
+security-frontend:
+  stage: security
+  image: node:20
+  before_script:
+    - cd frontend
+    - npm ci
+    - npm install --save-dev snyk
+  script:
+    - npx snyk test
+  rules:
+    - changes:
+        - frontend/**/*
+
+# Performance (Backend)
+performance-backend:
+  stage: performance
+  image: golang:1.24
+  before_script:
+    - cd backend
+    - go mod download
+    - go install github.com/rakyll/hey@latest
+  script:
+    - hey -n 100 -c 10 http://localhost:8080/api/v1/todos || true
+  allow_failure: true
+  rules:
+    - changes:
+        - backend/**/*
+
+# Performance (Frontend)
+performance-frontend:
+  stage: performance
+  image: node:20
+  before_script:
+    - cd frontend
+    - npm ci
+    - npm install -g lighthouse
+  script:
+    - lighthouse http://localhost:5173 --output html --output-path=./lighthouse-report.html || true
+  artifacts:
+    paths:
+      - frontend/lighthouse-report.html
+    expire_in: 1 week
+  allow_failure: true
+  rules:
+    - changes:
+        - frontend/**/* 

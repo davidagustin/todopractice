@@ -6,13 +6,14 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import CreateTodoForm from '../CreateTodoForm'
 
 // Mock the useCreateTodo hook
-const mockCreateTodo = jest.fn()
-const mockUseCreateTodo = jest.fn()
+const mockCreateTodo = vi.fn()
+const mockUseCreateTodo = vi.fn()
 
-jest.mock('../../hooks/useTodos', () => ({
+vi.mock('../../hooks/useTodos', () => ({
   useCreateTodo: () => mockUseCreateTodo(),
 }))
 
@@ -42,7 +43,7 @@ const createWrapper = () => {
 
 describe('CreateTodoForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    vi.clearAllMocks()
     mockUseCreateTodo.mockReturnValue({
       mutate: mockCreateTodo,
       isPending: false,

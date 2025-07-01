@@ -4,11 +4,12 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"todoapp-backend/pkg/middleware"
-	"todoapp-backend/pkg/models"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
+
+	"todoapp-backend/pkg/middleware"
+	"todoapp-backend/pkg/models"
 )
 
 type Handler struct {

@@ -3,9 +3,10 @@ package utils
 import (
 	"fmt"
 	"time"
-	"todoapp-backend/internal/config"
 
 	"github.com/golang-jwt/jwt/v4"
+
+	"todoapp-backend/internal/config"
 )
 
 type JWTClaims struct {

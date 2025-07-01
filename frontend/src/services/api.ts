@@ -1,25 +1,25 @@
 import type {
-  LoginRequest,
-  RegisterRequest,
   CreateTodoRequest,
-  UpdateTodoRequest,
-  LoginResponse,
-  RegisterResponse,
   CreateTodoResponse,
-  UpdateTodoResponse,
   DeleteTodoResponse,
-  GetTodosResponse,
   GetProfileResponse,
+  GetTodosResponse,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+  UpdateTodoRequest,
+  UpdateTodoResponse,
 } from '../types/index';
 
-const API_BASE_URL = 
+const API_BASE_URL =
   typeof process !== 'undefined' && process.env && process.env.VITE_API_URL
     ? process.env.VITE_API_URL
     : 'http://localhost:8080';
 
 export class ApiError extends Error {
   status: number;
-  
+
   constructor(status: number, message: string) {
     super(message);
     this.name = 'ApiError';
@@ -32,10 +32,7 @@ const getAuthHeaders = (): Record<string, string> => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-const apiRequest = async <T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> => {
+const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
   const url = `${API_BASE_URL}/api/v1${endpoint}`;
   const response = await fetch(url, {
     ...options,
@@ -53,10 +50,7 @@ const apiRequest = async <T>(
   return response.json();
 };
 
-const authenticatedRequest = async <T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<T> => {
+const authenticatedRequest = async <T>(endpoint: string, options: RequestInit = {}): Promise<T> => {
   return apiRequest<T>(endpoint, {
     ...options,
     headers: {
@@ -80,14 +74,12 @@ export const authApi = {
       body: JSON.stringify(data),
     }),
 
-  getProfile: (): Promise<GetProfileResponse> =>
-    authenticatedRequest('/auth/profile'),
+  getProfile: (): Promise<GetProfileResponse> => authenticatedRequest('/auth/profile'),
 };
 
 // Todo API
 export const todoApi = {
-  getAll: (): Promise<GetTodosResponse> =>
-    authenticatedRequest('/todos'),
+  getAll: (): Promise<GetTodosResponse> => authenticatedRequest('/todos'),
 
   create: (data: CreateTodoRequest): Promise<CreateTodoResponse> =>
     authenticatedRequest('/todos', {
@@ -105,4 +97,4 @@ export const todoApi = {
     authenticatedRequest(`/todos/${id}`, {
       method: 'DELETE',
     }),
-}; 
+};

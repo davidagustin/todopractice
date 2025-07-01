@@ -5,43 +5,35 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Build outputs
 dist/
 dist-ssr/
 build/
 *.local
-
-# Frontend specific
-frontend/dist/
-frontend/coverage/
-frontend/.env
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
-frontend/tsconfig.tsbuildinfo
-frontend/cypress.config.ts.bak
-
-# Backend specific
-backend/server
-backend/tmp/
-backend/.env
-backend/.env.local
-backend/.env.development.local
-backend/.env.test.local
-backend/.env.production.local
-backend/todoapp.db
-
-# Go specific
 *.exe
-*.exe~
 *.dll
 *.so
 *.dylib
 *.test
 *.out
 go.work
+
+# Frontend specific
+frontend/dist/
+frontend/coverage/
+frontend/.env*
+frontend/tsconfig.tsbuildinfo
+frontend/cypress.config.ts.bak
+
+# Backend specific
+backend/server
+backend/tmp/
+backend/.env*
+backend/todoapp.db
 
 # Database
 *.db
@@ -50,7 +42,7 @@ go.work
 init.sql
 
 # Logs
-logs
+logs/
 *.log
 *.log.*
 
@@ -63,6 +55,7 @@ pids
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov
+clover.xml
 
 # nyc test coverage
 .nyc_output
@@ -103,7 +96,6 @@ jspm_packages/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
@@ -116,6 +108,9 @@ public
 # Temporary folders
 tmp/
 temp/
+*.tmp
+*.temp
+*.cache
 
 # Editor directories and files
 .vscode/*
@@ -136,6 +131,9 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
+.AppleDouble
+.LSOverride
+Icon
 
 # Windows
 *.suo
@@ -150,12 +148,6 @@ Thumbs.db
 # macOS
 .AppleDouble
 .LSOverride
-
-# Icon must end with two \r
-Icon
-
-# Thumbnails
-._*
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
@@ -188,107 +180,12 @@ cypress/videos/
 cypress/screenshots/
 cypress/downloads/
 
-# Test coverage
-coverage/
-*.lcov
-clover.xml
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
 # TypeScript build info
 *.tsbuildinfo
-
-# Jest coverage
-coverage/
-*.lcov
-
-# Cypress test artifacts
-cypress/screenshots/
-cypress/videos/
-cypress/downloads/
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-init.sql
-
-# Log files
-*.log
-logs/
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.temp
 
 # Backup files
 *.bak
 *.backup
 *.orig
 *.rej
-*~
-
-# Test artifacts (loose test files)
-*.test.tsx
-*.test.ts
-*.spec.tsx
-*.spec.ts
-
-# Build artifacts
-*.exe
-*.dll
-*.so
-*.dylib
-server
-
-# Package manager files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Temporary and cache files
-.cache/
-.temp/
-.tmp/
-*.tmp
-*.temp
-*.cache
-
-# Backup and version control files
-*.bak
-*.backup
-*.orig
-*.rej
-*~
-
-# Local configuration files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local 
+*~ 

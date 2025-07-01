@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"todoapp-backend/pkg/models"
-
 	"gorm.io/gorm"
+
+	"todoapp-backend/pkg/models"
 )
 
 // GORMUserRepository implements UserRepository using GORM

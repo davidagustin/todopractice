@@ -14,7 +14,7 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -27,25 +27,25 @@ declare global {
        * Custom command to login a user
        * @example cy.login('test@example.com', 'password123')
        */
-      login(email: string, password: string): Chainable<void>
-      
+      login(email: string, password: string): Chainable<void>;
+
       /**
        * Custom command to register a user
        * @example cy.register('test@example.com', 'password123', 'Test User')
        */
-      register(email: string, password: string, name: string): Chainable<void>
-      
+      register(email: string, password: string, name: string): Chainable<void>;
+
       /**
        * Custom command to create a todo
        * @example cy.createTodo('Test Todo', 'Test Description')
        */
-      createTodo(title: string, description?: string): Chainable<void>
-      
+      createTodo(title: string, description?: string): Chainable<void>;
+
       /**
        * Custom command to clear all todos
        * @example cy.clearTodos()
        */
-      clearTodos(): Chainable<void>
+      clearTodos(): Chainable<void>;
     }
   }
 }
@@ -57,16 +57,16 @@ before(() => {
     method: 'GET',
     url: 'http://localhost:8080/health',
     failOnStatusCode: false,
-    timeout: 10000
+    timeout: 10000,
   }).then((response) => {
     if (response.status !== 200) {
-      cy.log('⚠️ Backend server not running. Some tests may fail.')
-      cy.log('Please start the backend server with: cd backend && go run cmd/server/main.go')
+      cy.log('⚠️ Backend server not running. Some tests may fail.');
+      cy.log('Please start the backend server with: cd backend && go run cmd/server/main.go');
     } else {
-      cy.log('✅ Backend server is running')
+      cy.log('✅ Backend server is running');
     }
-  })
-})
+  });
+});
 
 // Global beforeEach hook
 beforeEach(() => {
@@ -74,9 +74,9 @@ beforeEach(() => {
   cy.request({
     method: 'DELETE',
     url: 'http://localhost:8080/api/test/cleanup',
-    failOnStatusCode: false
-  })
-})
+    failOnStatusCode: false,
+  });
+});
 
 // Global afterEach hook
 afterEach(() => {
@@ -84,25 +84,25 @@ afterEach(() => {
   cy.request({
     method: 'DELETE',
     url: 'http://localhost:8080/api/test/cleanup',
-    failOnStatusCode: false
-  })
-})
+    failOnStatusCode: false,
+  });
+});
 
 // Configure Cypress behavior
 Cypress.on('uncaught:exception', (err, runnable) => {
   // Returning false here prevents Cypress from failing the test
   // for uncaught exceptions that are expected in some scenarios
   if (err.message.includes('ResizeObserver loop limit exceeded')) {
-    return false
+    return false;
   }
-  return true
-})
+  return true;
+});
 
 // Configure viewport for consistent testing
-Cypress.config('viewportWidth', 1280)
-Cypress.config('viewportHeight', 720)
+Cypress.config('viewportWidth', 1280);
+Cypress.config('viewportHeight', 720);
 
 // Configure default timeout
-Cypress.config('defaultCommandTimeout', 10000)
-Cypress.config('requestTimeout', 10000)
-Cypress.config('responseTimeout', 10000) 
+Cypress.config('defaultCommandTimeout', 10000);
+Cypress.config('requestTimeout', 10000);
+Cypress.config('responseTimeout', 10000);

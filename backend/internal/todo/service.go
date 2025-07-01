@@ -3,10 +3,11 @@ package todo
 import (
 	"errors"
 	"fmt"
-	"todoapp-backend/pkg/models"
 
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
+
+	"todoapp-backend/pkg/models"
 )
 
 var (

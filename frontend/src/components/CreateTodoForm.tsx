@@ -1,14 +1,6 @@
-import React from 'react';
+import type React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import {
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
+import { Alert, Box, Button, CircularProgress, Paper, TextField, Typography } from '@mui/material';
 import { AddTask } from '@mui/icons-material';
 import { useCreateTodo } from '../hooks/useTodos';
 
@@ -18,7 +10,12 @@ interface FormData {
 }
 
 const CreateTodoForm: React.FC = () => {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FormData>({
     defaultValues: {
       title: '',
       description: '',
@@ -27,44 +24,47 @@ const CreateTodoForm: React.FC = () => {
   const { mutate: createTodo, isPending, error } = useCreateTodo();
 
   const onSubmit = (data: FormData) => {
-    createTodo({
-      title: data.title.trim(),
-      description: data.description.trim(),
-    }, {
-      onSuccess: () => {
-        reset();
+    createTodo(
+      {
+        title: data.title.trim(),
+        description: data.description.trim(),
+      },
+      {
+        onSuccess: () => {
+          reset();
+        },
       }
-    });
+    );
   };
 
   return (
-    <Paper 
-      sx={{ 
-        p: { xs: 2, sm: 3, md: 4 }, 
+    <Paper
+      sx={{
+        p: { xs: 2, sm: 3, md: 4 },
         height: 'fit-content',
         borderRadius: 3,
         boxShadow: 3,
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)'
+        border: '1px solid rgba(255, 255, 255, 0.2)',
       }}
     >
-      <Typography 
-        variant="h4" 
-        gutterBottom 
-        sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
           gap: 1,
           fontWeight: 'bold',
           color: 'primary.main',
-          mb: 3
+          mb: 3,
         }}
       >
         <AddTask />
         Create New Todo
       </Typography>
-      
+
       <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 2 }}>
         <Controller
           name="title"
@@ -73,8 +73,8 @@ const CreateTodoForm: React.FC = () => {
             required: 'Title is required',
             maxLength: {
               value: 200,
-              message: 'Title must be less than 200 characters'
-            }
+              message: 'Title must be less than 200 characters',
+            },
           }}
           render={({ field }) => (
             <TextField
@@ -96,8 +96,8 @@ const CreateTodoForm: React.FC = () => {
           rules={{
             maxLength: {
               value: 1000,
-              message: 'Description must be less than 1000 characters'
-            }
+              message: 'Description must be less than 1000 characters',
+            },
           }}
           render={({ field }) => (
             <TextField
@@ -135,4 +135,4 @@ const CreateTodoForm: React.FC = () => {
   );
 };
 
-export default CreateTodoForm; 
+export default CreateTodoForm;

@@ -1,32 +1,33 @@
-import React, { useState } from 'react';
-import { useTodos, useUpdateTodo, useDeleteTodo } from '../hooks/useTodos';
+import type React from 'react';
+import { useState } from 'react';
 import {
-  Card,
-  CardContent,
-  CardActions,
-  Checkbox,
-  TextField,
-  Button,
-  Typography,
+  Alert,
   Box,
-  IconButton,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Checkbox,
   Chip,
   CircularProgress,
-  Alert,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  TextField,
+  Typography,
 } from '@mui/material';
 import {
-  Edit,
-  Delete,
-  Save,
+  Assignment,
   Cancel,
   CheckCircle,
+  Delete,
+  Edit,
   RadioButtonUnchecked,
-  Assignment,
+  Save,
 } from '@mui/icons-material';
+import { useDeleteTodo, useTodos, useUpdateTodo } from '../hooks/useTodos';
 import type { Todo, UpdateTodoRequest } from '../types/index';
 
 interface TodoItemProps {
@@ -63,9 +64,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
 
   return (
     <>
-      <Card 
-        sx={{ 
-          mb: 3, 
+      <Card
+        sx={{
+          mb: 3,
           opacity: todo.completed ? 0.8 : 1,
           borderLeft: todo.completed ? '4px solid #4caf50' : '4px solid #2196f3',
           borderRadius: 2,
@@ -73,8 +74,8 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
           transition: 'all 0.3s ease',
           '&:hover': {
             boxShadow: 4,
-            transform: 'translateY(-2px)'
-          }
+            transform: 'translateY(-2px)',
+          },
         }}
       >
         <CardContent>
@@ -86,7 +87,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
               checkedIcon={<CheckCircle />}
               sx={{ mt: -1 }}
             />
-            
+
             <Box sx={{ flex: 1 }}>
               {isEditing ? (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -116,7 +117,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                     sx={{
                       textDecoration: todo.completed ? 'line-through' : 'none',
                       color: todo.completed ? 'text.secondary' : 'text.primary',
-                      mb: 1
+                      mb: 1,
                     }}
                   >
                     {todo.title}
@@ -127,7 +128,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                       sx={{
                         textDecoration: todo.completed ? 'line-through' : 'none',
                         color: todo.completed ? 'text.disabled' : 'text.secondary',
-                        mb: 1
+                        mb: 1,
                       }}
                     >
                       {todo.description}
@@ -149,7 +150,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
             </Box>
           </Box>
         </CardContent>
-        
+
         <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
           {isEditing ? (
             <Box sx={{ display: 'flex', gap: 1 }}>
@@ -162,29 +163,16 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
               >
                 Save
               </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<Cancel />}
-                onClick={handleCancel}
-              >
+              <Button size="small" variant="outlined" startIcon={<Cancel />} onClick={handleCancel}>
                 Cancel
               </Button>
             </Box>
           ) : (
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <IconButton
-                size="small"
-                color="primary"
-                onClick={() => setIsEditing(true)}
-              >
+              <IconButton size="small" color="primary" onClick={() => setIsEditing(true)}>
                 <Edit />
               </IconButton>
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => setDeleteDialogOpen(true)}
-              >
+              <IconButton size="small" color="error" onClick={() => setDeleteDialogOpen(true)}>
                 <Delete />
               </IconButton>
             </Box>
@@ -226,16 +214,20 @@ const TodoList: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        py: 8,
-        minHeight: '300px'
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 8,
+          minHeight: '300px',
+        }}
+      >
         <Box sx={{ textAlign: 'center' }}>
           <CircularProgress size={48} sx={{ mb: 3, color: 'primary.main' }} />
-          <Typography variant="h6" color="text.secondary">Loading todos...</Typography>
+          <Typography variant="h6" color="text.secondary">
+            Loading todos...
+          </Typography>
         </Box>
       </Box>
     );
@@ -244,9 +236,7 @@ const TodoList: React.FC = () => {
   if (error) {
     return (
       <Box sx={{ py: 4 }}>
-        <Alert severity="error">
-          Error loading todos: {error.message}
-        </Alert>
+        <Alert severity="error">Error loading todos: {error.message}</Alert>
       </Box>
     );
   }
@@ -255,13 +245,15 @@ const TodoList: React.FC = () => {
 
   if (todos.length === 0) {
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        py: 8,
-        minHeight: '300px'
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          py: 8,
+          minHeight: '300px',
+        }}
+      >
         <Assignment sx={{ fontSize: 80, color: 'text.secondary', mb: 3, opacity: 0.6 }} />
         <Typography variant="h5" color="text.secondary" gutterBottom sx={{ fontWeight: 'bold' }}>
           No todos yet
@@ -276,15 +268,10 @@ const TodoList: React.FC = () => {
   return (
     <Box>
       {todos.map((todo: Todo) => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-        />
+        <TodoItem key={todo.id} todo={todo} onUpdate={handleUpdate} onDelete={handleDelete} />
       ))}
     </Box>
   );
 };
 
-export default TodoList; 
+export default TodoList;
