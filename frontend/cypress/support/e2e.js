@@ -1,5 +1,5 @@
 // ***********************************************************
-// This example support/e2e.ts is processed and
+// This example support/e2e.js is processed and
 // loaded automatically before your test files.
 //
 // This is a great place to put global configuration and
@@ -15,40 +15,6 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands';
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-
-// Add custom commands for authentication
-declare global {
-  namespace Cypress {
-    interface Chainable {
-      /**
-       * Custom command to login a user
-       * @example cy.login('test@example.com', 'password123')
-       */
-      login(email: string, password: string): Chainable<void>;
-
-      /**
-       * Custom command to register a user
-       * @example cy.register('test@example.com', 'password123', 'Test User')
-       */
-      register(email: string, password: string, name: string): Chainable<void>;
-
-      /**
-       * Custom command to create a todo
-       * @example cy.createTodo('Test Todo', 'Test Description')
-       */
-      createTodo(title: string, description?: string): Chainable<void>;
-
-      /**
-       * Custom command to clear all todos
-       * @example cy.clearTodos()
-       */
-      clearTodos(): Chainable<void>;
-    }
-  }
-}
 
 // Global configuration for E2E tests
 before(() => {

@@ -6,10 +6,10 @@ describe('Authentication', () => {
   describe('Navigation', () => {
     it('should navigate between login and register pages', () => {
       cy.visit('/login');
-      cy.contains("Don't have an account?").click();
+      cy.contains('Create a new account').click();
       cy.url().should('include', '/register');
 
-      cy.contains('Already have an account?').click();
+      cy.contains('Already have an account? Sign in').click();
       cy.url().should('include', '/login');
     });
 
