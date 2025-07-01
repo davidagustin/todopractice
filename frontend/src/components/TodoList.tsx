@@ -66,7 +66,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
     <>
       <Card
         sx={{
-          mb: 3,
+          mb: { xs: 2, sm: 3 },
           opacity: todo.completed ? 0.8 : 1,
           borderLeft: todo.completed ? '4px solid #4caf50' : '4px solid #2196f3',
           borderRadius: 2,
@@ -76,21 +76,23 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
             boxShadow: 4,
             transform: 'translateY(-2px)',
           },
+          width: '100%',
+          minWidth: 0,
         }}
       >
         <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { xs: 'stretch', sm: 'flex-start' }, gap: { xs: 1, sm: 2 } }}>
             <Checkbox
               checked={todo.completed}
               onChange={toggleCompleted}
               icon={<RadioButtonUnchecked />}
               checkedIcon={<CheckCircle />}
-              sx={{ mt: -1 }}
+              sx={{ mt: { xs: 0, sm: -1 } }}
             />
 
             <Box sx={{ flex: 1 }}>
               {isEditing ? (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, sm: 2 } }}>
                   <TextField
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -98,6 +100,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                     variant="outlined"
                     size="small"
                     fullWidth
+                    sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
                   />
                   <TextField
                     value={description}
@@ -108,6 +111,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                     multiline
                     rows={2}
                     fullWidth
+                    sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
                   />
                 </Box>
               ) : (
@@ -118,6 +122,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                       textDecoration: todo.completed ? 'line-through' : 'none',
                       color: todo.completed ? 'text.secondary' : 'text.primary',
                       mb: 1,
+                      fontSize: { xs: '1rem', sm: '1.2rem' },
                     }}
                   >
                     {todo.title}
@@ -129,19 +134,21 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
                         textDecoration: todo.completed ? 'line-through' : 'none',
                         color: todo.completed ? 'text.disabled' : 'text.secondary',
                         mb: 1,
+                        fontSize: { xs: '0.95rem', sm: '1rem' },
                       }}
                     >
                       {todo.description}
                     </Typography>
                   )}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, flexWrap: 'wrap' }}>
                     <Chip
                       size="small"
                       label={todo.completed ? 'Completed' : 'Pending'}
                       color={todo.completed ? 'success' : 'primary'}
                       variant="outlined"
+                      sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}
                     />
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}>
                       Created: {new Date(todo.created_at).toLocaleDateString()}
                     </Typography>
                   </Box>
@@ -151,24 +158,25 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
           </Box>
         </CardContent>
 
-        <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+        <CardActions sx={{ justifyContent: 'flex-end', pt: 0, gap: { xs: 1, sm: 2 } }}>
           {isEditing ? (
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 } }}>
               <Button
                 size="small"
                 variant="contained"
                 color="success"
                 startIcon={<Save />}
                 onClick={handleSave}
+                sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, px: { xs: 1, sm: 2 } }}
               >
                 Save
               </Button>
-              <Button size="small" variant="outlined" startIcon={<Cancel />} onClick={handleCancel}>
+              <Button size="small" variant="outlined" startIcon={<Cancel />} onClick={handleCancel} sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, px: { xs: 1, sm: 2 } }}>
                 Cancel
               </Button>
             </Box>
           ) : (
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 } }}>
               <IconButton size="small" color="primary" onClick={() => setIsEditing(true)}>
                 <Edit />
               </IconButton>

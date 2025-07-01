@@ -40,13 +40,16 @@ const CreateTodoForm: React.FC = () => {
   return (
     <Paper
       sx={{
-        p: { xs: 2, sm: 3, md: 4 },
+        p: { xs: 1.5, sm: 2, md: 4 },
         height: 'fit-content',
         borderRadius: 3,
         boxShadow: 3,
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
         border: '1px solid rgba(255, 255, 255, 0.2)',
+        width: '100%',
+        maxWidth: { xs: '100%', sm: 480 },
+        mx: 'auto',
       }}
     >
       <Typography
@@ -59,6 +62,8 @@ const CreateTodoForm: React.FC = () => {
           fontWeight: 'bold',
           color: 'primary.main',
           mb: 3,
+          fontSize: { xs: '1.1rem', sm: '1.5rem' },
+          textAlign: { xs: 'center', sm: 'left' },
         }}
       >
         <AddTask />
@@ -86,6 +91,8 @@ const CreateTodoForm: React.FC = () => {
               error={!!errors.title}
               helperText={errors.title?.message}
               autoFocus
+              inputProps={{ maxLength: 200 }}
+              sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
             />
           )}
         />
@@ -110,12 +117,14 @@ const CreateTodoForm: React.FC = () => {
               rows={3}
               error={!!errors.description}
               helperText={errors.description?.message}
+              inputProps={{ maxLength: 1000 }}
+              sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}
             />
           )}
         />
 
         {error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          <Alert severity="error" sx={{ mt: 2, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
             Error: {error.message}
           </Alert>
         )}
@@ -124,7 +133,7 @@ const CreateTodoForm: React.FC = () => {
           type="submit"
           fullWidth
           variant="contained"
-          sx={{ mt: 3 }}
+          sx={{ mt: 3, fontSize: { xs: '1rem', sm: '1.1rem' }, py: { xs: 1, sm: 1.5 } }}
           disabled={isPending}
           startIcon={isPending ? <CircularProgress size={20} /> : <AddTask />}
         >

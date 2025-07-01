@@ -20,18 +20,27 @@ const Dashboard: React.FC = () => {
           backdropFilter: 'blur(10px)',
         }}
       >
-        <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
-          <ChecklistRtlOutlined sx={{ mr: 2, fontSize: 28 }} />
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+        <Toolbar sx={{ px: { xs: 1, sm: 2, md: 3 }, minHeight: { xs: 56, sm: 64 } }}>
+          <ChecklistRtlOutlined sx={{ mr: { xs: 1, sm: 2 }, fontSize: { xs: 22, sm: 28 } }} />
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{
+              flexGrow: 1,
+              fontWeight: 'bold',
+              fontSize: { xs: '1.1rem', sm: '1.5rem' },
+              whiteSpace: { xs: 'normal', sm: 'nowrap' },
+            }}
+          >
             Todo App
           </Typography>
           {user && (
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+                <Avatar sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 }, bgcolor: 'secondary.main', fontSize: { xs: 16, sm: 20 } }}>
                   {user.name.charAt(0).toUpperCase()}
                 </Avatar>
-                <Box>
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                   <Typography variant="body2" sx={{ color: 'white' }}>
                     {user.name}
                   </Typography>
@@ -47,13 +56,16 @@ const Dashboard: React.FC = () => {
                 variant="outlined"
                 sx={{
                   borderColor: 'rgba(255,255,255,0.3)',
+                  fontSize: { xs: '0.8rem', sm: '1rem' },
+                  px: { xs: 1, sm: 2 },
+                  minWidth: { xs: 32, sm: 64 },
                   '&:hover': {
                     borderColor: 'rgba(255,255,255,0.5)',
                     backgroundColor: 'rgba(255,255,255,0.1)',
                   },
                 }}
               >
-                Logout
+                <Box sx={{ display: { xs: 'none', sm: 'inline' } }}>Logout</Box>
               </Button>
             </Box>
           )}
@@ -61,22 +73,23 @@ const Dashboard: React.FC = () => {
       </AppBar>
 
       {/* Welcome Message */}
-      <Container maxWidth="xl" sx={{ mt: 4, mb: 4, px: { xs: 2, sm: 3 } }}>
+      <Container maxWidth="xl" sx={{ mt: { xs: 2, sm: 4 }, mb: { xs: 2, sm: 4 }, px: { xs: 1, sm: 2, md: 3 } }}>
         {user && (
           <Paper
             sx={{
-              p: { xs: 2, sm: 3 },
-              mb: 4,
+              p: { xs: 1.5, sm: 2, md: 3 },
+              mb: { xs: 2, sm: 4 },
               background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
               borderRadius: 3,
               boxShadow: 3,
+              textAlign: { xs: 'center', sm: 'left' },
             }}
           >
-            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', fontSize: { xs: '1.3rem', sm: '2rem' } }}>
               Welcome back, {user.name}! 👋
             </Typography>
-            <Typography variant="h6" sx={{ opacity: 0.9 }}>
+            <Typography variant="h6" sx={{ opacity: 0.9, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
               Ready to tackle your todos today?
             </Typography>
           </Paper>
@@ -87,8 +100,8 @@ const Dashboard: React.FC = () => {
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', lg: 'row' },
-            gap: { xs: 3, md: 4 },
-            alignItems: 'flex-start',
+            gap: { xs: 2, sm: 3, md: 4 },
+            alignItems: 'stretch',
           }}
         >
           {/* Create Todo Form */}
@@ -96,8 +109,10 @@ const Dashboard: React.FC = () => {
             sx={{
               flex: { xs: '1', lg: '0 0 420px' },
               width: '100%',
+              mb: { xs: 2, lg: 0 },
               position: { lg: 'sticky' },
               top: { lg: 24 },
+              zIndex: { lg: 2 },
             }}
           >
             <CreateTodoForm />
@@ -107,12 +122,13 @@ const Dashboard: React.FC = () => {
           <Box sx={{ flex: 1, width: '100%' }}>
             <Paper
               sx={{
-                p: { xs: 2, sm: 3, md: 4 },
-                minHeight: '500px',
+                p: { xs: 1.5, sm: 2, md: 4 },
+                minHeight: { xs: 320, sm: 400, md: 500 },
                 borderRadius: 3,
                 boxShadow: 2,
                 background: 'rgba(255, 255, 255, 0.95)',
                 backdropFilter: 'blur(10px)',
+                overflowX: 'auto',
               }}
             >
               <Typography
@@ -125,6 +141,7 @@ const Dashboard: React.FC = () => {
                   fontWeight: 'bold',
                   color: 'primary.main',
                   mb: 3,
+                  fontSize: { xs: '1.2rem', sm: '2rem' },
                 }}
               >
                 <ChecklistRtlOutlined />
