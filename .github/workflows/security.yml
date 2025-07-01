@@ -65,7 +65,6 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-results.sarif'
-        category: 'dependency-vulnerability-scan'
 
   # CodeQL analysis for security vulnerabilities
   codeql:
@@ -132,14 +131,12 @@ jobs:
       if: always()
       with:
         sarif_file: 'trivy-container-backend.sarif'
-        category: 'container-scan-backend'
 
     - name: Upload frontend container scan results
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: 'trivy-container-frontend.sarif'
-        category: 'container-scan-frontend'
 
   # Secret scanning
   secret-scan:

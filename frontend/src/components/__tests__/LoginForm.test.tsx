@@ -74,7 +74,7 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
-    const passwordInput = screen.getByDisplayValue('') // Get password input by its empty value
+    const passwordInput = screen.getByTestId('password-input')
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
     await userEvent.type(emailInput, 'test@example.com')
@@ -93,12 +93,14 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
-    const passwordInput = screen.getByDisplayValue('') // Get password input by its empty value
+    const passwordInput = screen.getByTestId('password-input')
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
     await userEvent.type(emailInput, 'invalid-email')
     await userEvent.type(passwordInput, 'password123')
-    await userEvent.click(submitButton)
+    
+    // Button should be disabled with invalid email
+    expect(submitButton).toBeDisabled()
 
     // Should not call login mutation
     expect(mockLogin).not.toHaveBeenCalled()
@@ -108,12 +110,14 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const emailInput = screen.getByLabelText(/email address/i)
-    const passwordInput = screen.getByDisplayValue('') // Get password input by its empty value
+    const passwordInput = screen.getByTestId('password-input')
     const submitButton = screen.getByRole('button', { name: /sign in/i })
 
     await userEvent.type(emailInput, 'test@example.com')
     await userEvent.type(passwordInput, '123')
-    await userEvent.click(submitButton)
+    
+    // Button should be disabled with short password
+    expect(submitButton).toBeDisabled()
 
     // Should not call login mutation
     expect(mockLogin).not.toHaveBeenCalled()
@@ -123,8 +127,10 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: createWrapper() })
     
     const submitButton = screen.getByRole('button', { name: /sign in/i })
-    await userEvent.click(submitButton)
-
+    
+    // The button should be disabled with empty fields
+    expect(submitButton).toBeDisabled()
+    
     // Should not call login mutation
     expect(mockLogin).not.toHaveBeenCalled()
   })

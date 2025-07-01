@@ -248,6 +248,9 @@ const LoginForm: React.FC = () => {
                           autoComplete="current-password"
                           error={!!errors.password}
                           helperText={errors.password?.message}
+                          inputProps={{
+                            'data-testid': 'password-input',
+                          }}
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position="start">

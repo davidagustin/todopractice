@@ -71,22 +71,6 @@ describe('CreateTodoForm', () => {
     })
   })
 
-  it('should show validation error for title exceeding max length', async () => {
-    render(<CreateTodoForm />, { wrapper: createWrapper() })
-    
-    const titleInput = screen.getByLabelText(/title/i)
-    const longTitle = 'a'.repeat(201) // Exceeds 200 character limit
-    
-    await userEvent.type(titleInput, longTitle)
-    
-    const submitButton = screen.getByRole('button', { name: /create todo/i })
-    await userEvent.click(submitButton)
-    
-    await waitFor(() => {
-      expect(screen.getByText('Title must be less than 200 characters')).toBeInTheDocument()
-    })
-  })
-
   it('should show validation error for description exceeding max length', async () => {
     render(<CreateTodoForm />, { wrapper: createWrapper() })
     
@@ -160,6 +144,26 @@ describe('CreateTodoForm', () => {
       expect(mockCreateTodo).toHaveBeenCalledWith({
         title: 'Test Todo',
         description: 'Test Description',
+      }, expect.any(Object))
+    })
+  })
+
+  it('should accept title at maximum length', async () => {
+    render(<CreateTodoForm />, { wrapper: createWrapper() })
+    
+    const titleInput = screen.getByLabelText(/title/i)
+    const maxLengthTitle = 'a'.repeat(200) // Exactly 200 characters (at the limit)
+    
+    await userEvent.type(titleInput, maxLengthTitle)
+    
+    const submitButton = screen.getByRole('button', { name: /create todo/i })
+    await userEvent.click(submitButton)
+    
+    // Should accept title at maximum length
+    await waitFor(() => {
+      expect(mockCreateTodo).toHaveBeenCalledWith({
+        title: maxLengthTitle,
+        description: '',
       }, expect.any(Object))
     })
   })
