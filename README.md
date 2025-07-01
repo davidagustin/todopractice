@@ -628,3 +628,35 @@ npm run lint
 ---
 
 For backend and deployment, see respective READMEs. 
+
+## 🚀 Docker Compose (Recommended for Fullstack)
+
+To run the entire stack (backend, frontend, database) locally:
+
+```bash
+docker-compose up -d
+```
+- Frontend: http://localhost
+- Backend API: http://localhost:8080
+- PostgreSQL: localhost:5432
+
+## 🧪 E2E Testing
+
+- E2E tests are run automatically in CI/CD (see .github/workflows/ci.yml)
+- To run locally:
+  ```bash
+  cd frontend
+  npm run test:e2e:headless
+  ```
+
+## 🛠️ CI/CD
+
+- All tests (backend, frontend, E2E) are run in GitHub Actions on every push/PR
+- Coverage is uploaded to Codecov
+- Linting and build checks are enforced
+- See `.github/workflows/ci.yml` for details
+
+## 🐞 Troubleshooting CI/CD
+- Ensure all environment variables are set for local and CI runs
+- If E2E tests fail, check that all services are healthy and ports are not in use
+- For flaky tests, check for async issues or network delays 

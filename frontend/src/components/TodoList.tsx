@@ -54,7 +54,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete, index }) 
   const [description, setDescription] = useState(todo.description);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const _isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleSave = () => {
     if (title.trim()) {
@@ -352,7 +352,7 @@ const TodoList: React.FC = () => {
   const { data: todos, isLoading, error } = useTodos();
   const updateTodoMutation = useUpdateTodo();
   const deleteTodoMutation = useDeleteTodo();
-  const theme = useTheme();
+  const _theme = useTheme();
 
   const handleUpdate = (id: number, data: UpdateTodoRequest) => {
     updateTodoMutation.mutate({ id, data });
@@ -366,8 +366,8 @@ const TodoList: React.FC = () => {
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {[...Array(3)].map((_, index) => (
-          <Card key={`skeleton-${index}`} sx={{ p: 2, borderRadius: 2 }}>
+        {['skeleton-1', 'skeleton-2', 'skeleton-3'].map((key) => (
+          <Card key={key} sx={{ p: 2, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Skeleton variant="circular" width={24} height={24} />
               <Box sx={{ flex: 1 }}>

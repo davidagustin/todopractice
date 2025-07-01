@@ -37,7 +37,7 @@ interface FormData {
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const _isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const {
     control,

@@ -406,4 +406,19 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 ## 📄 License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License.
+
+## Docker Compose & Fullstack Testing
+
+- To run the backend with PostgreSQL and the frontend together:
+  ```bash
+  docker-compose up -d
+  # Backend will be available at http://localhost:8080
+  # Frontend at http://localhost
+  ```
+- E2E tests are run from the frontend directory and in CI/CD.
+
+## CI/CD
+- All backend tests, linter, and build steps are run in GitHub Actions (see .github/workflows/ci.yml)
+- Integration tests use PostgreSQL (not SQLite) in CI.
+- Coverage is uploaded to Codecov. 
