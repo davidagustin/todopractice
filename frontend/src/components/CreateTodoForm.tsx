@@ -38,8 +38,29 @@ const CreateTodoForm: React.FC = () => {
   };
 
   return (
-    <Paper sx={{ p: 3, height: 'fit-content' }}>
-      <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Paper 
+      sx={{ 
+        p: { xs: 2, sm: 3, md: 4 }, 
+        height: 'fit-content',
+        borderRadius: 3,
+        boxShadow: 3,
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.2)'
+      }}
+    >
+      <Typography 
+        variant="h4" 
+        gutterBottom 
+        sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 1,
+          fontWeight: 'bold',
+          color: 'primary.main',
+          mb: 3
+        }}
+      >
         <AddTask />
         Create New Todo
       </Typography>

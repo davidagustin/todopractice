@@ -65,9 +65,16 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onUpdate, onDelete }) => {
     <>
       <Card 
         sx={{ 
-          mb: 2, 
-          opacity: todo.completed ? 0.7 : 1,
-          borderLeft: todo.completed ? '4px solid #4caf50' : '4px solid #2196f3'
+          mb: 3, 
+          opacity: todo.completed ? 0.8 : 1,
+          borderLeft: todo.completed ? '4px solid #4caf50' : '4px solid #2196f3',
+          borderRadius: 2,
+          boxShadow: todo.completed ? 1 : 2,
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            boxShadow: 4,
+            transform: 'translateY(-2px)'
+          }
         }}
       >
         <CardContent>
@@ -219,10 +226,16 @@ const TodoList: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 8 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        py: 8,
+        minHeight: '300px'
+      }}>
         <Box sx={{ textAlign: 'center' }}>
-          <CircularProgress sx={{ mb: 2 }} />
-          <Typography color="text.secondary">Loading todos...</Typography>
+          <CircularProgress size={48} sx={{ mb: 3, color: 'primary.main' }} />
+          <Typography variant="h6" color="text.secondary">Loading todos...</Typography>
         </Box>
       </Box>
     );
@@ -242,12 +255,18 @@ const TodoList: React.FC = () => {
 
   if (todos.length === 0) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 8 }}>
-        <Assignment sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-        <Typography variant="h6" color="text.secondary" gutterBottom>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        py: 8,
+        minHeight: '300px'
+      }}>
+        <Assignment sx={{ fontSize: 80, color: 'text.secondary', mb: 3, opacity: 0.6 }} />
+        <Typography variant="h5" color="text.secondary" gutterBottom sx={{ fontWeight: 'bold' }}>
           No todos yet
         </Typography>
-        <Typography color="text.secondary">
+        <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
           Create your first todo to get started!
         </Typography>
       </Box>

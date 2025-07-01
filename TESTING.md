@@ -22,6 +22,7 @@ This document provides a complete testing strategy for the Fullstack Todo Applic
 - **Todo Management**: 0/18 tests passing
 - **Issue**: Requires running backend server
 - **Status**: Needs backend integration ⚠️
+- **Note**: E2E tests are configured but require a running backend server for full functionality
 
 ## 🏗️ **Backend Testing Strategy**
 
@@ -276,6 +277,65 @@ npx cypress open
    afterEach(() => {
      // Clean up test data
      cy.request('DELETE', '/api/test/cleanup')
+   })
+   ```
+
+## 🚀 **CI/CD Testing Strategy**
+
+### GitHub Actions Integration
+
+The project includes comprehensive automated testing through GitHub Actions:
+
+#### Automated Test Workflows
+
+1. **CI/CD Pipeline** (`.github/workflows/ci.yml`)
+   - **Backend Tests**: Unit and integration tests
+   - **Frontend Tests**: Component and service tests
+   - **E2E Tests**: Cypress tests with PostgreSQL service
+   - **Security Scanning**: Trivy vulnerability scanner
+   - **Quality Gates**: Final validation
+
+2. **Security Analysis** (`.github/workflows/security.yml`)
+   - **Dependency Scanning**: npm audit, govulncheck
+   - **CodeQL Analysis**: Security vulnerability detection
+   - **Container Scanning**: Docker image security
+   - **Secret Scanning**: TruffleHog integration
+   - **SAST Analysis**: Static application security testing
+
+3. **Performance Testing** (`.github/workflows/performance.yml`)
+   - **Load Testing**: Artillery integration
+   - **Lighthouse**: Performance metrics
+   - **API Performance**: Backend performance testing
+
+#### Test Execution in CI/CD
+
+```yaml
+# Example: Backend testing in CI
+- name: Run tests
+  run: |
+    cd backend
+    go test -v -race -coverprofile=coverage.out ./...
+    go tool cover -html=coverage.out -o coverage.html
+
+# Example: Frontend testing in CI
+- name: Run unit tests
+  run: |
+    cd frontend
+    npm run test:coverage
+
+# Example: E2E testing in CI
+- name: Run E2E tests
+  run: |
+    cd frontend
+    npm run test:e2e:headless
+```
+
+#### Quality Gates
+
+- **Test Coverage**: Minimum 80% coverage required
+- **Security**: No critical/high vulnerabilities
+- **Performance**: Lighthouse score > 90
+- **Code Quality**: All linter checks pass
    })
    ```
 

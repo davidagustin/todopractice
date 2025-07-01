@@ -20,6 +20,7 @@ frontend/.env.local
 frontend/.env.development.local
 frontend/.env.test.local
 frontend/.env.production.local
+frontend/tsconfig.tsbuildinfo
 
 # Backend specific
 backend/server
@@ -44,6 +45,7 @@ go.work
 *.db
 *.sqlite
 *.sqlite3
+init.sql
 
 # Logs
 logs
@@ -199,10 +201,33 @@ clover.xml
 .DS_Store
 Thumbs.db
 
+# TypeScript build info
+*.tsbuildinfo
+
+# Jest coverage
+coverage/
+*.lcov
+
+# Cypress test artifacts
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+init.sql
+
+# Log files
+*.log
+logs/
+
 # Temporary files
+tmp/
+temp/
 *.tmp
 *.temp
-.cache/
 
 # Backup files
 *.bak

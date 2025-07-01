@@ -117,24 +117,34 @@ This ensures all tests pass while maintaining full functionality.
 - **Service Tests**: Test API service functions
 - **Integration Tests**: Test component interactions with services
 
-## 🎨 Styling
+## 🎨 Styling & UI
 
-### Tailwind CSS
+### Material-UI (MUI)
 
-The application uses Tailwind CSS for styling with custom configurations:
+The application uses Material-UI as the primary component library:
 
-- **Utility-first approach**: Rapid UI development
-- **Responsive design**: Mobile-first responsive utilities
-- **Custom components**: Reusable component classes
-- **Dark mode support**: Built-in dark mode utilities
+- **Modern Components**: Pre-built, accessible components
+- **Theme System**: Consistent design tokens and theming
+- **Responsive Design**: Mobile-first responsive components
+- **Glassmorphism Effects**: Modern UI with backdrop blur and transparency
+- **Gradient Backgrounds**: Beautiful gradient themes throughout the app
 
-### Material-UI Integration
+### Tailwind CSS Integration
 
-Material-UI components are used for:
-- **Forms**: Text fields, buttons, checkboxes
-- **Layout**: Containers, grids, spacing
-- **Navigation**: App bars, navigation menus
-- **Feedback**: Alerts, notifications, loading states
+Tailwind CSS is used for utility styling and custom components:
+
+- **Utility Classes**: Rapid UI development with utility-first approach
+- **Custom Components**: Reusable component patterns
+- **Responsive Utilities**: Mobile-first responsive design
+- **Custom Properties**: CSS custom properties for consistent theming
+
+### UI Features
+
+- **Modern Login/Register Forms**: Glassmorphism design with gradient backgrounds
+- **Responsive Dashboard**: Adaptive layout for all screen sizes
+- **Interactive Todo Cards**: Hover effects and smooth transitions
+- **Loading States**: Beautiful loading animations and spinners
+- **Error Handling**: User-friendly error messages and alerts
 
 ## 🔧 Configuration
 
@@ -174,22 +184,27 @@ npm run type-check   # Run TypeScript type checking
 ## 📊 Features
 
 ### Authentication
-- User registration and login
+- User registration and login with modern UI
 - JWT token management
-- Protected routes
+- Protected routes with automatic redirection
 - Automatic token refresh
+- Beautiful glassmorphism login/register forms
 
 ### Todo Management
 - Create, read, update, delete todos
 - Mark todos as complete/incomplete
 - Real-time updates with TanStack Query
 - Optimistic updates for better UX
+- Interactive todo cards with hover effects
 
 ### User Experience
-- Responsive design for all devices
-- Loading states and error handling
+- Responsive design for all devices (mobile-first)
+- Modern glassmorphism UI with gradient backgrounds
+- Loading states with beautiful animations
+- Error handling with user-friendly messages
 - Form validation with React Hook Form
 - Accessible components with ARIA labels
+- Smooth transitions and hover effects
 
 ## 🔍 Code Quality
 

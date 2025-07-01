@@ -22,10 +22,17 @@ const Dashboard: React.FC = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       {/* Header */}
-      <AppBar position="static" elevation={2}>
-        <Toolbar>
-          <ChecklistRtlOutlined sx={{ mr: 2 }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+      <AppBar 
+        position="static" 
+        elevation={3}
+        sx={{
+          background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)',
+          backdropFilter: 'blur(10px)'
+        }}
+      >
+        <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
+          <ChecklistRtlOutlined sx={{ mr: 2, fontSize: 28 }} />
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Todo App
           </Typography>
           {user && (
@@ -64,29 +71,68 @@ const Dashboard: React.FC = () => {
       </AppBar>
 
       {/* Welcome Message */}
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Container maxWidth="xl" sx={{ mt: 4, mb: 4, px: { xs: 2, sm: 3 } }}>
         {user && (
-          <Paper sx={{ p: 2, mb: 3, backgroundColor: 'primary.light', color: 'primary.contrastText' }}>
-            <Typography variant="h5" gutterBottom>
+          <Paper 
+            sx={{ 
+              p: { xs: 2, sm: 3 }, 
+              mb: 4, 
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              borderRadius: 3,
+              boxShadow: 3
+            }}
+          >
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
               Welcome back, {user.name}! 👋
             </Typography>
-            <Typography variant="body1">
+            <Typography variant="h6" sx={{ opacity: 0.9 }}>
               Ready to tackle your todos today?
             </Typography>
           </Paper>
         )}
 
         {/* Main Content */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', lg: 'row' }, 
+          gap: { xs: 3, md: 4 },
+          alignItems: 'flex-start'
+        }}>
           {/* Create Todo Form */}
-          <Box sx={{ flex: { xs: '1', md: '0 0 400px' } }}>
+          <Box sx={{ 
+            flex: { xs: '1', lg: '0 0 420px' },
+            width: '100%',
+            position: { lg: 'sticky' },
+            top: { lg: 24 }
+          }}>
             <CreateTodoForm />
           </Box>
 
           {/* Todo List */}
-          <Box sx={{ flex: 1 }}>
-            <Paper sx={{ p: 3, minHeight: '400px' }}>
-              <Typography variant="h5" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box sx={{ flex: 1, width: '100%' }}>
+            <Paper 
+              sx={{ 
+                p: { xs: 2, sm: 3, md: 4 }, 
+                minHeight: '500px',
+                borderRadius: 3,
+                boxShadow: 2,
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(10px)'
+              }}
+            >
+              <Typography 
+                variant="h4" 
+                gutterBottom 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 1,
+                  fontWeight: 'bold',
+                  color: 'primary.main',
+                  mb: 3
+                }}
+              >
                 <ChecklistRtlOutlined />
                 Your Todos
               </Typography>

@@ -5,9 +5,9 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 ## 🚀 Tech Stack
 
 ### Backend
-- **Go** with Gin web framework
+- **Go 1.24.4** with Gin web framework
 - **GORM** for database ORM
-- **PostgreSQL** database
+- **PostgreSQL 15** database
 - **JWT** authentication
 - **Zap** structured logging
 - **Viper** configuration management
@@ -17,24 +17,29 @@ A modern fullstack todo application built with Test-Driven Development (TDD) pri
 ### Frontend
 - **React 19** with TypeScript
 - **Vite** build tool
-- **Tailwind CSS** for styling
+- **Material-UI (MUI)** for component library
+- **Tailwind CSS** for utility styling
 - **React Hook Form** for form handling
 - **TanStack Query** for server state management
 - **React Router** for client-side routing
 - **Jest & Testing Library** for testing
+- **Cypress** for E2E testing
 
 ## 📋 Features
 
 - ✅ User authentication (register/login)
 - ✅ Create, read, update, delete todos
 - ✅ Mark todos as complete/incomplete
-- ✅ Responsive design
-- ✅ Form validation
-- ✅ Error handling
-- ✅ Loading states
-- ✅ Comprehensive test coverage
+- ✅ Responsive design with Material-UI
+- ✅ Form validation with React Hook Form
+- ✅ Error handling and loading states
 - ✅ JWT-based authentication
 - ✅ Protected routes
+- ✅ Comprehensive test coverage
+- ✅ Modern UI with glassmorphism effects
+- ✅ GitHub Actions CI/CD pipeline
+- ✅ Docker containerization
+- ✅ Security scanning and analysis
 
 ## 🚀 Quick Start with Docker
 
@@ -162,6 +167,16 @@ The frontend uses ESLint and Prettier for code quality:
 - **Best Practices**: React and JavaScript best practices
 - **Accessibility**: Accessibility guidelines
 
+### CI/CD Pipeline
+
+The project includes comprehensive GitHub Actions workflows:
+
+- **CI/CD Pipeline**: Automated testing, building, and deployment
+- **Security Analysis**: Vulnerability scanning and code analysis
+- **Performance Testing**: Load testing and performance monitoring
+- **Docker Builds**: Multi-platform container builds
+- **Quality Gates**: Automated quality checks and validation
+
 ## 🧪 Testing
 
 ### Backend Tests
@@ -209,37 +224,53 @@ npm run test:coverage
 
 ```
 fullstackpractice/
-├── backend/                 # Go backend application
-│   ├── cmd/server/         # Application entry point
-│   │   └── main.go         # Server entry point
-│   ├── internal/           # Internal packages (not importable)
-│   │   ├── auth/           # Authentication handlers and services
-│   │   ├── config/         # Configuration management
-│   │   ├── database/       # Database connection and migrations
-│   │   └── todo/           # Todo business logic
-│   ├── pkg/                # Public packages (importable)
-│   │   ├── middleware/     # HTTP middleware
-│   │   ├── models/         # Data models and DTOs
-│   │   └── utils/          # Utility functions
-│   ├── tests/              # Test files
-│   │   ├── integration/    # Integration tests
-│   │   └── unit/           # Unit tests
-│   ├── config.yaml         # Configuration file
-│   ├── .golangci.yml       # Linter configuration
-│   ├── go.mod              # Go module file
-│   └── go.sum              # Go module checksums
-│   ├── frontend/               # React frontend application
-│   │   ├── src/
-│   │   │   ├── components/    # React components
-│   │   │   ├── contexts/      # React contexts
-│   │   │   ├── hooks/         # Custom hooks
-│   │   │   ├── services/      # API services
-│   │   │   └── types/         # TypeScript types
-│   │   ├── Dockerfile         # Frontend Docker image
-│   │   └── nginx.conf         # Nginx configuration
-│   ├── docker-compose.yml     # Docker orchestration
-│   ├── deploy.sh             # Deployment script
-│   └── README.md             # This file
+├── .github/                    # GitHub Actions workflows
+│   ├── workflows/             # CI/CD pipelines
+│   │   ├── ci.yml            # Main CI/CD pipeline
+│   │   ├── docker-build.yml  # Docker build and push
+│   │   ├── deploy.yml        # Deployment workflow
+│   │   ├── security.yml      # Security analysis
+│   │   └── performance.yml   # Performance testing
+│   └── README.md             # GitHub Actions documentation
+├── backend/                   # Go backend application
+│   ├── cmd/server/           # Application entry point
+│   │   └── main.go           # Server entry point
+│   ├── internal/             # Internal packages (not importable)
+│   │   ├── auth/             # Authentication handlers and services
+│   │   ├── config/           # Configuration management
+│   │   ├── database/         # Database connection and migrations
+│   │   └── todo/             # Todo business logic
+│   ├── pkg/                  # Public packages (importable)
+│   │   ├── middleware/       # HTTP middleware
+│   │   ├── models/           # Data models and DTOs
+│   │   └── utils/            # Utility functions
+│   ├── tests/                # Test files
+│   │   ├── integration/      # Integration tests
+│   │   └── unit/             # Unit tests
+│   ├── config.yaml           # Configuration file
+│   ├── .golangci.yml         # Linter configuration
+│   ├── go.mod                # Go module file
+│   ├── go.sum                # Go module checksums
+│   ├── README.md             # Backend documentation
+│   └── DEVELOPMENT.md        # Development guidelines
+├── frontend/                 # React frontend application
+│   ├── src/
+│   │   ├── components/       # React components
+│   │   ├── contexts/         # React contexts
+│   │   ├── hooks/            # Custom hooks
+│   │   ├── services/         # API services
+│   │   ├── styles/           # CSS styles
+│   │   └── types/            # TypeScript types
+│   ├── cypress/              # E2E tests
+│   ├── Dockerfile            # Frontend Docker image
+│   ├── nginx.conf            # Nginx configuration
+│   ├── README.md             # Frontend documentation
+│   └── CSS_BEST_PRACTICES.md # CSS guidelines
+├── docker-compose.yml        # Docker orchestration
+├── deploy.sh                 # Deployment script
+├── TESTING.md                # Testing documentation
+├── TESTING_STRATEGY.md       # Testing strategy
+└── README.md                 # This file
 ```
 
 ## 🔧 Configuration
@@ -288,6 +319,13 @@ fullstackpractice/
 ### Docker Compose (Recommended)
 The application is containerized and can be deployed using Docker Compose on any Docker-compatible environment.
 
+### GitHub Actions CI/CD
+The project includes automated CI/CD pipelines for:
+- **Automated Testing**: All tests run on every push/PR
+- **Security Scanning**: Vulnerability detection and analysis
+- **Docker Builds**: Multi-platform container images
+- **Deployment**: Automated deployment to staging/production
+
 ### Cloud Deployment Options
 
 1. **Digital Ocean App Platform**
@@ -296,6 +334,7 @@ The application is containerized and can be deployed using Docker Compose on any
 4. **Heroku**
 5. **Railway**
 6. **Render**
+7. **GitHub Actions** (with self-hosted runners)
 
 ### Environment-Specific Configuration
 
@@ -307,6 +346,7 @@ For production deployment, make sure to:
 4. Configure proper CORS origins
 5. Set up monitoring and logging
 6. Configure backup strategies
+7. Set up GitHub Actions secrets for deployment
 
 ## 🤝 Contributing
 
