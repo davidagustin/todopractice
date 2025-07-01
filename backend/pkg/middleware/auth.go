@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-
 	"todoapp-backend/pkg/utils"
+
+	"github.com/gin-gonic/gin"
 )
 
-// AuthMiddleware creates a JWT authentication middleware
+// AuthMiddleware creates a JWT authentication middleware.
 func AuthMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
@@ -18,6 +18,7 @@ func AuthMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc {
 				"error": "Authorization header is required",
 			})
 			c.Abort()
+
 			return
 		}
 
@@ -28,16 +29,19 @@ func AuthMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc {
 				"error": "Authorization header format must be Bearer {token}",
 			})
 			c.Abort()
+
 			return
 		}
 
 		token := parts[1]
+
 		claims, err := jwtUtil.ValidateToken(token)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Invalid or expired token",
 			})
 			c.Abort()
+
 			return
 		}
 
@@ -48,7 +52,7 @@ func AuthMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc {
 	}
 }
 
-// GetUserID extracts user ID from the Gin context
+// GetUserID extracts user ID from the Gin context.
 func GetUserID(c *gin.Context) (uint, bool) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -56,10 +60,11 @@ func GetUserID(c *gin.Context) (uint, bool) {
 	}
 
 	id, ok := userID.(uint)
+
 	return id, ok
 }
 
-// GetUserEmail extracts user email from the Gin context
+// GetUserEmail extracts user email from the Gin context.
 func GetUserEmail(c *gin.Context) (string, bool) {
 	email, exists := c.Get("user_email")
 	if !exists {
@@ -67,5 +72,6 @@ func GetUserEmail(c *gin.Context) (string, bool) {
 	}
 
 	emailStr, ok := email.(string)
+
 	return emailStr, ok
 }

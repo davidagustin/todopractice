@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
 	"todoapp-backend/internal/auth"
 	"todoapp-backend/internal/config"
 	"todoapp-backend/pkg/middleware"
@@ -141,8 +142,13 @@ func TestAuthIntegration_Login(t *testing.T) {
 	registerData, _ := json.Marshal(registerBody)
 	registerReq := httptest.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(registerData))
 	registerReq.Header.Set("Content-Type", "application/json")
+
 	registerW := httptest.NewRecorder()
 	router.ServeHTTP(registerW, registerReq)
+
+	var registerResponse map[string]interface{}
+
+	json.Unmarshal(registerW.Body.Bytes(), &registerResponse)
 
 	tests := []struct {
 		name           string
@@ -221,10 +227,12 @@ func TestAuthIntegration_Profile(t *testing.T) {
 	registerData, _ := json.Marshal(registerBody)
 	registerReq := httptest.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(registerData))
 	registerReq.Header.Set("Content-Type", "application/json")
+
 	registerW := httptest.NewRecorder()
 	router.ServeHTTP(registerW, registerReq)
 
 	var registerResponse map[string]interface{}
+
 	json.Unmarshal(registerW.Body.Bytes(), &registerResponse)
 	token := registerResponse["token"].(string)
 
@@ -256,7 +264,7 @@ func TestAuthIntegration_Profile(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest("GET", "/api/v1/auth/profile", nil)
+			req := httptest.NewRequest("GET", "/api/v1/auth/profile", http.NoBody)
 			if tt.authToken != "" {
 				req.Header.Set("Authorization", "Bearer "+tt.authToken)
 			}

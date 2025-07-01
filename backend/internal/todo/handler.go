@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
-
 	"todoapp-backend/pkg/middleware"
 	"todoapp-backend/pkg/models"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type Handler struct {
@@ -17,7 +17,7 @@ type Handler struct {
 	logger  *zap.Logger
 }
 
-// NewHandler creates a new todo handler
+// NewHandler creates a new todo handler.
 func NewHandler(service *Service, logger *zap.Logger) *Handler {
 	return &Handler{
 		service: service,
@@ -25,7 +25,7 @@ func NewHandler(service *Service, logger *zap.Logger) *Handler {
 	}
 }
 
-// Create handles creating a new todo
+// Create handles creating a new todo.
 func (h *Handler) Create(c *gin.Context) {
 	userID, exists := middleware.GetUserID(c)
 	if !exists {
@@ -33,6 +33,7 @@ func (h *Handler) Create(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Unauthorized",
 		})
+
 		return
 	}
 
@@ -42,6 +43,7 @@ func (h *Handler) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request body",
 		})
+
 		return
 	}
 
@@ -51,6 +53,7 @@ func (h *Handler) Create(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to create todo",
 		})
+
 		return
 	}
 
@@ -61,7 +64,7 @@ func (h *Handler) Create(c *gin.Context) {
 	})
 }
 
-// GetAll handles getting all todos for a user
+// GetAll handles getting all todos for a user.
 func (h *Handler) GetAll(c *gin.Context) {
 	userID, exists := middleware.GetUserID(c)
 	if !exists {
@@ -69,6 +72,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Unauthorized",
 		})
+
 		return
 	}
 
@@ -78,6 +82,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to get todos",
 		})
+
 		return
 	}
 
@@ -86,7 +91,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 	})
 }
 
-// GetByID handles getting a specific todo by ID
+// GetByID handles getting a specific todo by ID.
 func (h *Handler) GetByID(c *gin.Context) {
 	userID, exists := middleware.GetUserID(c)
 	if !exists {
@@ -94,6 +99,7 @@ func (h *Handler) GetByID(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Unauthorized",
 		})
+
 		return
 	}
 
@@ -104,6 +110,7 @@ func (h *Handler) GetByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid todo ID",
 		})
+
 		return
 	}
 
@@ -115,12 +122,14 @@ func (h *Handler) GetByID(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": "Todo not found",
 			})
+
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to get todo",
 		})
+
 		return
 	}
 
@@ -129,7 +138,7 @@ func (h *Handler) GetByID(c *gin.Context) {
 	})
 }
 
-// Update handles updating a todo
+// Update handles updating a todo.
 func (h *Handler) Update(c *gin.Context) {
 	userID, exists := middleware.GetUserID(c)
 	if !exists {
@@ -137,6 +146,7 @@ func (h *Handler) Update(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Unauthorized",
 		})
+
 		return
 	}
 
@@ -147,6 +157,7 @@ func (h *Handler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid todo ID",
 		})
+
 		return
 	}
 
@@ -156,6 +167,7 @@ func (h *Handler) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request body",
 		})
+
 		return
 	}
 
@@ -167,12 +179,14 @@ func (h *Handler) Update(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": "Todo not found",
 			})
+
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to update todo",
 		})
+
 		return
 	}
 
@@ -183,7 +197,7 @@ func (h *Handler) Update(c *gin.Context) {
 	})
 }
 
-// Delete handles deleting a todo
+// Delete handles deleting a todo.
 func (h *Handler) Delete(c *gin.Context) {
 	userID, exists := middleware.GetUserID(c)
 	if !exists {
@@ -191,6 +205,7 @@ func (h *Handler) Delete(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Unauthorized",
 		})
+
 		return
 	}
 
@@ -201,6 +216,7 @@ func (h *Handler) Delete(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid todo ID",
 		})
+
 		return
 	}
 
@@ -212,12 +228,14 @@ func (h *Handler) Delete(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": "Todo not found",
 			})
+
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to delete todo",
 		})
+
 		return
 	}
 
@@ -227,7 +245,7 @@ func (h *Handler) Delete(c *gin.Context) {
 	})
 }
 
-// RegisterRoutes registers todo routes
+// RegisterRoutes registers todo routes.
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
 	todos := router.Group("/todos")
 	todos.Use(authMiddleware)

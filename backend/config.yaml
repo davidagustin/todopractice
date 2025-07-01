@@ -4,8 +4,8 @@ server:
 
 database:
   # For local development, using SQLite (no setup required)
-  driver: "sqlite"
-  dsn: "todoapp.db"
+  driver: "postgres"
+  dsn: "host=postgres port=5432 user=todouser password=todopassword dbname=todoapp sslmode=disable"
   
   # PostgreSQL configuration (for production)
   # host: "localhost"

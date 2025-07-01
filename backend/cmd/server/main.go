@@ -3,15 +3,15 @@ package main
 import (
 	"log"
 
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
-
 	"todoapp-backend/internal/auth"
 	"todoapp-backend/internal/config"
 	"todoapp-backend/internal/database"
 	"todoapp-backend/internal/todo"
 	"todoapp-backend/pkg/middleware"
 	"todoapp-backend/pkg/utils"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -66,6 +66,7 @@ func main() {
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
+
 			return
 		}
 
@@ -80,6 +81,7 @@ func main() {
 				"status": "unhealthy",
 				"error":  "Database connection failed",
 			})
+
 			return
 		}
 

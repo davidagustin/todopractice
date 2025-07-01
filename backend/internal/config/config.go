@@ -34,7 +34,7 @@ type JWTConfig struct {
 	ExpiryHour int    `mapstructure:"expiry_hour"`
 }
 
-// LoadConfig loads configuration from environment variables and config files
+// LoadConfig loads configuration from environment variables and config files.
 func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -75,11 +75,12 @@ func LoadConfig() (*Config, error) {
 	return &config, nil
 }
 
-// GetDatabaseURL returns the database connection URL
+// GetDatabaseURL returns the database connection URL.
 func (c *Config) GetDatabaseURL() string {
 	if c.Database.Driver == "sqlite" {
 		return c.Database.DSN
 	}
+
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		c.Database.Host,
 		c.Database.Port,
@@ -90,7 +91,7 @@ func (c *Config) GetDatabaseURL() string {
 	)
 }
 
-// GetDatabaseDriver returns the database driver
+// GetDatabaseDriver returns the database driver.
 func (c *Config) GetDatabaseDriver() string {
 	return c.Database.Driver
 }

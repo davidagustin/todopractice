@@ -7,12 +7,12 @@ import (
 	"os"
 	"strings"
 
+	"todoapp-backend/pkg/middleware"
+	"todoapp-backend/pkg/models"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
-
-	"todoapp-backend/pkg/middleware"
-	"todoapp-backend/pkg/models"
 )
 
 type Handler struct {
@@ -20,7 +20,7 @@ type Handler struct {
 	logger  *zap.Logger
 }
 
-// NewHandler creates a new auth handler
+// NewHandler creates a new auth handler.
 func NewHandler(service *Service, logger *zap.Logger) *Handler {
 	return &Handler{
 		service: service,
@@ -28,7 +28,7 @@ func NewHandler(service *Service, logger *zap.Logger) *Handler {
 	}
 }
 
-// Register handles user registration
+// Register handles user registration.
 func (h *Handler) Register(c *gin.Context) {
 	var req models.UserRegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -36,6 +36,7 @@ func (h *Handler) Register(c *gin.Context) {
 		// If it's a validation error, return field errors
 		if ve, ok := err.(validator.ValidationErrors); ok {
 			errors := make(map[string]string)
+
 			for _, fe := range ve {
 				switch fe.Field() {
 				case "Email":
@@ -48,12 +49,16 @@ func (h *Handler) Register(c *gin.Context) {
 					errors[fe.Field()] = fe.Error()
 				}
 			}
+
 			c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+
 			return
 		}
+
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request body",
 		})
+
 		return
 	}
 
@@ -68,6 +73,7 @@ func (h *Handler) Register(c *gin.Context) {
 			c.JSON(http.StatusConflict, gin.H{
 				"error": "User already exists",
 			})
+
 			return
 		}
 
@@ -75,9 +81,11 @@ func (h *Handler) Register(c *gin.Context) {
 		if strings.Contains(err.Error(), "validation failed") {
 			// Debug log: print error type and value
 			h.logger.Info("Validation error debug", zap.String("type", fmt.Sprintf("%T", err)), zap.String("value", fmt.Sprintf("%+v", err)))
+
 			var ve validator.ValidationErrors
 			if errors.As(err, &ve) {
 				errors := make(map[string]string)
+
 				for _, fe := range ve {
 					switch fe.Field() {
 					case "Email":
@@ -90,17 +98,21 @@ func (h *Handler) Register(c *gin.Context) {
 						errors[fe.Field()] = fe.Error()
 					}
 				}
+
 				c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+
 				return
 			}
 			// Fallback: return the error string
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Registration failed",
 		})
+
 		return
 	}
 
@@ -112,7 +124,7 @@ func (h *Handler) Register(c *gin.Context) {
 	})
 }
 
-// Login handles user login
+// Login handles user login.
 func (h *Handler) Login(c *gin.Context) {
 	var req models.UserLoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -120,6 +132,7 @@ func (h *Handler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request body",
 		})
+
 		return
 	}
 
@@ -131,6 +144,7 @@ func (h *Handler) Login(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Invalid email or password",
 			})
+
 			return
 		}
 
@@ -139,12 +153,14 @@ func (h *Handler) Login(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
+
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Login failed",
 		})
+
 		return
 	}
 
@@ -156,7 +172,7 @@ func (h *Handler) Login(c *gin.Context) {
 	})
 }
 
-// Profile handles getting user profile
+// Profile handles getting user profile.
 func (h *Handler) Profile(c *gin.Context) {
 	userID, exists := middleware.GetUserID(c)
 	if !exists {
@@ -164,6 +180,7 @@ func (h *Handler) Profile(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Unauthorized",
 		})
+
 		return
 	}
 
@@ -175,12 +192,14 @@ func (h *Handler) Profile(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{
 				"error": "User not found",
 			})
+
 			return
 		}
 
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to get profile",
 		})
+
 		return
 	}
 
@@ -189,7 +208,7 @@ func (h *Handler) Profile(c *gin.Context) {
 	})
 }
 
-// RegisterRoutes registers auth routes
+// RegisterRoutes registers auth routes.
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
 	auth := router.Group("/auth")
 	{
@@ -199,11 +218,12 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.Han
 	}
 }
 
-// TestCleanup clears all test data (only available in test mode)
+// TestCleanup clears all test data (only available in test mode).
 func (h *Handler) TestCleanup(c *gin.Context) {
 	// Only allow in test environment
 	if os.Getenv("ENV") != "test" {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+
 		return
 	}
 
@@ -211,7 +231,7 @@ func (h *Handler) TestCleanup(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Test cleanup endpoint available"})
 }
 
-// Health check endpoint
+// Health check endpoint.
 func (h *Handler) Health(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "healthy"})
 }

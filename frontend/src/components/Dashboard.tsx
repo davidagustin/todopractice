@@ -37,8 +37,8 @@ const Dashboard: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Calculate statistics
-  const totalTodos = todos?.length || 0;
-  const completedTodos = todos?.filter((todo) => todo.completed).length || 0;
+  const totalTodos = todos?.todos?.length || 0;
+  const completedTodos = todos?.todos?.filter((todo) => todo.completed).length || 0;
   const pendingTodos = totalTodos - completedTodos;
   const completionRate = totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : 0;
 

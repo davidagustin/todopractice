@@ -35,23 +35,26 @@ type UserResponse struct {
 	Name  string `json:"name"`
 }
 
-// HashPassword hashes the user's password
+// HashPassword hashes the user's password.
 func (u *User) HashPassword() error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
+
 	u.Password = string(hashedPassword)
+
 	return nil
 }
 
-// CheckPassword compares the provided password with the hashed password
+// CheckPassword compares the provided password with the hashed password.
 func (u *User) CheckPassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+
 	return err == nil
 }
 
-// ToResponse converts User to UserResponse
+// ToResponse converts User to UserResponse.
 func (u *User) ToResponse() UserResponse {
 	return UserResponse{
 		ID:    u.ID,

@@ -3,6 +3,7 @@ package unit
 import (
 	"os"
 	"testing"
+
 	"todoapp-backend/internal/config"
 
 	"github.com/stretchr/testify/assert"
@@ -46,6 +47,7 @@ func TestLoadConfig_EnvironmentVariables(t *testing.T) {
 	os.Setenv("SERVER_PORT", "9000")
 	os.Setenv("DATABASE_HOST", "testhost")
 	os.Setenv("JWT_SECRET", "test-secret")
+
 	defer os.Clearenv()
 
 	cfg, err := config.LoadConfig()

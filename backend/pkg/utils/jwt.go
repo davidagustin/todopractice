@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
-
 	"todoapp-backend/internal/config"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type JWTClaims struct {
@@ -19,14 +19,14 @@ type JWTUtil struct {
 	config *config.Config
 }
 
-// NewJWTUtil creates a new JWT utility instance
+// NewJWTUtil creates a new JWT utility instance.
 func NewJWTUtil(cfg *config.Config) *JWTUtil {
 	return &JWTUtil{
 		config: cfg,
 	}
 }
 
-// GenerateToken generates a new JWT token for the given user
+// GenerateToken generates a new JWT token for the given user.
 func (j *JWTUtil) GenerateToken(userID uint, email string) (string, error) {
 	claims := JWTClaims{
 		UserID: userID,
@@ -39,18 +39,19 @@ func (j *JWTUtil) GenerateToken(userID uint, email string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
 	return token.SignedString([]byte(j.config.JWT.Secret))
 }
 
-// ValidateToken validates a JWT token and returns the claims
+// ValidateToken validates a JWT token and returns the claims.
 func (j *JWTUtil) ValidateToken(tokenString string) (*JWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
+
 		return []byte(j.config.JWT.Secret), nil
 	})
-
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse token: %w", err)
 	}
@@ -63,7 +64,7 @@ func (j *JWTUtil) ValidateToken(tokenString string) (*JWTClaims, error) {
 	return claims, nil
 }
 
-// RefreshToken generates a new token for an existing valid token
+// RefreshToken generates a new token for an existing valid token.
 func (j *JWTUtil) RefreshToken(tokenString string) (string, error) {
 	claims, err := j.ValidateToken(tokenString)
 	if err != nil {

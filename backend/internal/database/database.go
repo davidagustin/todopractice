@@ -3,13 +3,13 @@ package database
 import (
 	"fmt"
 
+	"todoapp-backend/internal/config"
+	"todoapp-backend/pkg/models"
+
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-
-	"todoapp-backend/internal/config"
-	"todoapp-backend/pkg/models"
 )
 
 type Database struct {
@@ -17,9 +17,10 @@ type Database struct {
 	logger *zap.Logger
 }
 
-// NewDatabase creates a new database connection
+// NewDatabase creates a new database connection.
 func NewDatabase(cfg *config.Config, logger *zap.Logger) (*Database, error) {
 	var db *gorm.DB
+
 	var err error
 
 	driver := cfg.GetDatabaseDriver()
@@ -57,7 +58,7 @@ func NewDatabase(cfg *config.Config, logger *zap.Logger) (*Database, error) {
 	}, nil
 }
 
-// NewTestDatabase creates a new in-memory SQLite database for testing
+// NewTestDatabase creates a new in-memory SQLite database for testing.
 func NewTestDatabase(logger *zap.Logger) (*Database, error) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
@@ -70,7 +71,7 @@ func NewTestDatabase(logger *zap.Logger) (*Database, error) {
 	}, nil
 }
 
-// Migrate runs database migrations
+// Migrate runs database migrations.
 func (d *Database) Migrate() error {
 	d.logger.Info("Running database migrations")
 
@@ -83,23 +84,26 @@ func (d *Database) Migrate() error {
 	}
 
 	d.logger.Info("Database migrations completed successfully")
+
 	return nil
 }
 
-// Close closes the database connection
+// Close closes the database connection.
 func (d *Database) Close() error {
 	sqlDB, err := d.DB.DB()
 	if err != nil {
 		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
 	}
+
 	return sqlDB.Close()
 }
 
-// Health checks if the database connection is healthy
+// Health checks if the database connection is healthy.
 func (d *Database) Health() error {
 	sqlDB, err := d.DB.DB()
 	if err != nil {
 		return fmt.Errorf("failed to get underlying sql.DB: %w", err)
 	}
+
 	return sqlDB.Ping()
 }

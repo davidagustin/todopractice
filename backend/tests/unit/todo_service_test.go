@@ -3,6 +3,7 @@ package unit
 import (
 	"errors"
 	"testing"
+
 	"todoapp-backend/internal/todo"
 	"todoapp-backend/pkg/models"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// Helper functions for creating pointers
+// Helper functions for creating pointers.
 func stringPtr(s string) *string {
 	return &s
 }
@@ -19,36 +20,40 @@ func boolPtr(b bool) *bool {
 	return &b
 }
 
-// Mock TodoRepository
-// Satisfies todo.TodoRepository
+// Satisfies todo.TodoRepository.
 type MockTodoRepo struct {
 	mock.Mock
 }
 
 func (m *MockTodoRepo) Create(todo *models.Todo) error {
 	args := m.Called(todo)
+
 	return args.Error(0)
 }
 
 func (m *MockTodoRepo) FindByID(userID, todoID uint) (*models.Todo, error) {
 	args := m.Called(userID, todoID)
 	todo, _ := args.Get(0).(*models.Todo)
+
 	return todo, args.Error(1)
 }
 
 func (m *MockTodoRepo) FindAll(userID uint) ([]models.Todo, error) {
 	args := m.Called(userID)
 	todos, _ := args.Get(0).([]models.Todo)
+
 	return todos, args.Error(1)
 }
 
 func (m *MockTodoRepo) Update(todo *models.Todo, updates map[string]interface{}) error {
 	args := m.Called(todo, updates)
+
 	return args.Error(0)
 }
 
 func (m *MockTodoRepo) Delete(userID, todoID uint) (bool, error) {
 	args := m.Called(userID, todoID)
+
 	return args.Bool(0), args.Error(1)
 }
 

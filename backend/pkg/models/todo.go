@@ -39,7 +39,7 @@ type TodoResponse struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-// ToResponse converts Todo to TodoResponse
+// ToResponse converts Todo to TodoResponse.
 func (t *Todo) ToResponse() TodoResponse {
 	return TodoResponse{
 		ID:          t.ID,

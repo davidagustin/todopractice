@@ -2,6 +2,7 @@ package unit
 
 import (
 	"testing"
+
 	"todoapp-backend/internal/auth"
 	"todoapp-backend/pkg/models"
 	"todoapp-backend/pkg/utils"
@@ -10,8 +11,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// Mock UserRepository
-// Satisfies auth.UserRepository
+// Satisfies auth.UserRepository.
 type MockUserRepo struct {
 	mock.Mock
 }
@@ -19,37 +19,43 @@ type MockUserRepo struct {
 func (m *MockUserRepo) FindByEmail(email string) (*models.User, error) {
 	args := m.Called(email)
 	user, _ := args.Get(0).(*models.User)
+
 	return user, args.Error(1)
 }
 
 func (m *MockUserRepo) Create(user *models.User) error {
 	args := m.Called(user)
+
 	return args.Error(0)
 }
 
 func (m *MockUserRepo) FindByID(id uint) (*models.User, error) {
 	args := m.Called(id)
 	user, _ := args.Get(0).(*models.User)
+
 	return user, args.Error(1)
 }
 
-// Mock JWT utility
+// Mock JWT utility.
 type MockJWTUtil struct {
 	mock.Mock
 }
 
 func (m *MockJWTUtil) GenerateToken(userID uint, email string) (string, error) {
 	args := m.Called(userID, email)
+
 	return args.String(0), args.Error(1)
 }
 
 func (m *MockJWTUtil) ValidateToken(tokenString string) (*utils.JWTClaims, error) {
 	args := m.Called(tokenString)
+
 	return args.Get(0).(*utils.JWTClaims), args.Error(1)
 }
 
 func (m *MockJWTUtil) RefreshToken(tokenString string) (string, error) {
 	args := m.Called(tokenString)
+
 	return args.String(0), args.Error(1)
 }
 
