@@ -22,18 +22,20 @@ import (
 )
 
 func setupTestDB(t *testing.T) *gorm.DB {
+	t.Helper()
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	require.NoError(t, err)
 
-	// Run migrations
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.User{}, &models.Todo{})
 	require.NoError(t, err)
 
 	return db
 }
 
 func setupTestRouter(t *testing.T) *gin.Engine {
+	t.Helper()
 	db := setupTestDB(t)
+
 	cfg := &config.Config{
 		JWT: config.JWTConfig{
 			Secret:     "test-secret-key",
@@ -41,7 +43,7 @@ func setupTestRouter(t *testing.T) *gin.Engine {
 		},
 	}
 
-	logger, _ := zap.NewDevelopment()
+	logger := zap.NewNop()
 	jwtUtil := utils.NewJWTUtil(cfg)
 	userRepo := auth.NewGORMUserRepository(db)
 	authService := auth.NewService(userRepo, jwtUtil)
@@ -51,12 +53,41 @@ func setupTestRouter(t *testing.T) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Recovery())
 
-	// Setup routes
 	api := router.Group("/api/v1")
 	authMiddleware := middleware.AuthMiddleware(jwtUtil)
 	authHandler.RegisterRoutes(api, authMiddleware)
 
 	return router
+}
+
+func runAuthTest(t *testing.T, router *gin.Engine, endpoint string, tests []struct {
+	name           string
+	requestBody    map[string]interface{}
+	expectedStatus int
+	expectedError  bool
+},
+) {
+	t.Helper()
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			body, _ := json.Marshal(tt.requestBody)
+			req := httptest.NewRequest("POST", endpoint, bytes.NewBuffer(body))
+			req.Header.Set("Content-Type", "application/json")
+
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, req)
+
+			assert.Equal(t, tt.expectedStatus, w.Code)
+
+			if !tt.expectedError {
+				var response map[string]interface{}
+				err := json.Unmarshal(w.Body.Bytes(), &response)
+				assert.NoError(t, err)
+				assert.Contains(t, response, "token")
+				assert.Contains(t, response, "user")
+			}
+		})
+	}
 }
 
 func TestAuthIntegration_Register(t *testing.T) {
@@ -108,26 +139,7 @@ func TestAuthIntegration_Register(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			body, _ := json.Marshal(tt.requestBody)
-			req := httptest.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(body))
-			req.Header.Set("Content-Type", "application/json")
-
-			w := httptest.NewRecorder()
-			router.ServeHTTP(w, req)
-
-			assert.Equal(t, tt.expectedStatus, w.Code)
-
-			if !tt.expectedError {
-				var response map[string]interface{}
-				err := json.Unmarshal(w.Body.Bytes(), &response)
-				assert.NoError(t, err)
-				assert.Contains(t, response, "token")
-				assert.Contains(t, response, "user")
-			}
-		})
-	}
+	runAuthTest(t, router, "/api/v1/auth/register", tests)
 }
 
 func TestAuthIntegration_Login(t *testing.T) {
@@ -148,7 +160,8 @@ func TestAuthIntegration_Login(t *testing.T) {
 
 	var registerResponse map[string]interface{}
 
-	json.Unmarshal(registerW.Body.Bytes(), &registerResponse)
+	err := json.Unmarshal(registerW.Body.Bytes(), &registerResponse)
+	assert.NoError(t, err)
 
 	tests := []struct {
 		name           string
@@ -193,26 +206,7 @@ func TestAuthIntegration_Login(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			body, _ := json.Marshal(tt.requestBody)
-			req := httptest.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(body))
-			req.Header.Set("Content-Type", "application/json")
-
-			w := httptest.NewRecorder()
-			router.ServeHTTP(w, req)
-
-			assert.Equal(t, tt.expectedStatus, w.Code)
-
-			if !tt.expectedError {
-				var response map[string]interface{}
-				err := json.Unmarshal(w.Body.Bytes(), &response)
-				assert.NoError(t, err)
-				assert.Contains(t, response, "token")
-				assert.Contains(t, response, "user")
-			}
-		})
-	}
+	runAuthTest(t, router, "/api/v1/auth/login", tests)
 }
 
 func TestAuthIntegration_Profile(t *testing.T) {
@@ -233,7 +227,8 @@ func TestAuthIntegration_Profile(t *testing.T) {
 
 	var registerResponse map[string]interface{}
 
-	json.Unmarshal(registerW.Body.Bytes(), &registerResponse)
+	err := json.Unmarshal(registerW.Body.Bytes(), &registerResponse)
+	assert.NoError(t, err)
 	token := registerResponse["token"].(string)
 
 	tests := []struct {

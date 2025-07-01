@@ -162,8 +162,8 @@ func (h *Handler) Update(c *gin.Context) {
 	}
 
 	var req models.TodoUpdateRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		h.logger.Error("Failed to bind update todo request", zap.Error(err))
+	if bindErr := c.ShouldBindJSON(&req); bindErr != nil {
+		h.logger.Error("Failed to bind update todo request", zap.Error(bindErr))
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid request body",
 		})
@@ -249,11 +249,9 @@ func (h *Handler) Delete(c *gin.Context) {
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
 	todos := router.Group("/todos")
 	todos.Use(authMiddleware)
-	{
-		todos.POST("", h.Create)
-		todos.GET("", h.GetAll)
-		todos.GET("/:id", h.GetByID)
-		todos.PUT("/:id", h.Update)
-		todos.DELETE("/:id", h.Delete)
-	}
+	todos.POST("", h.Create)
+	todos.GET("", h.GetAll)
+	todos.GET("/:id", h.GetByID)
+	todos.PUT("/:id", h.Update)
+	todos.DELETE("/:id", h.Delete)
 }

@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"errors"
+
 	"todoapp-backend/pkg/models"
 
 	"gorm.io/gorm"
@@ -27,7 +29,7 @@ func (r *GORMUserRepository) FindByEmail(email string) (*models.User, error) {
 
 	err := r.db.Where("email = ?", email).First(&user).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrUserNotFound
 		}
 
@@ -43,7 +45,7 @@ func (r *GORMUserRepository) FindByID(id uint) (*models.User, error) {
 
 	err := r.db.First(&user, id).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ErrUserNotFound
 		}
 

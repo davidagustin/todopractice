@@ -159,7 +159,9 @@ func TestAuthService_Login(t *testing.T) {
 				// Create a user with properly hashed password
 				user := &models.User{ID: 1, Email: "test@example.com", Name: "Test User"}
 				user.Password = "password123"
-				user.HashPassword()
+				if err := user.HashPassword(); err != nil {
+					t.Fatalf("Failed to hash password: %v", err)
+				}
 				repo.On("FindByEmail", "test@example.com").Return(user, nil)
 				jwtUtil.On("GenerateToken", uint(1), "test@example.com").Return("mock-token", nil)
 			},

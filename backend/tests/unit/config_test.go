@@ -17,7 +17,12 @@ func TestLoadConfig_Defaults(t *testing.T) {
 	// Change to backend directory to ensure config.yaml is found
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
-	defer os.Chdir(originalDir)
+	defer func() {
+		chdirErr := os.Chdir(originalDir)
+		if chdirErr != nil {
+			t.Fatalf("Failed to change back to original directory: %v", chdirErr)
+		}
+	}()
 
 	backendDir := "../../"
 	err = os.Chdir(backendDir)
@@ -30,8 +35,11 @@ func TestLoadConfig_Defaults(t *testing.T) {
 	// Test default values (from config.yaml)
 	assert.Equal(t, "8080", cfg.Server.Port)
 	assert.Equal(t, "0.0.0.0", cfg.Server.Host)
-	assert.Equal(t, "sqlite", cfg.Database.Driver)
-	assert.Equal(t, "todoapp.db", cfg.Database.DSN)
+	assert.Equal(t, "postgres", cfg.Database.Driver)
+	assert.Equal(t,
+		"host=postgres port=5432 user=todouser password=todopassword dbname=todoapp sslmode=disable",
+		cfg.Database.DSN,
+	)
 	assert.Equal(t, "localhost", cfg.Database.Host)
 	assert.Equal(t, "5432", cfg.Database.Port)
 	assert.Equal(t, "todouser", cfg.Database.User)

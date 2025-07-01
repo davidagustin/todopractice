@@ -20,7 +20,7 @@ func boolPtr(b bool) *bool {
 	return &b
 }
 
-// Satisfies todo.TodoRepository.
+// Satisfies todo.Repository.
 type MockTodoRepo struct {
 	mock.Mock
 }

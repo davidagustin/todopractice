@@ -7,7 +7,6 @@ import (
 	"todoapp-backend/pkg/models"
 
 	"github.com/go-playground/validator/v10"
-	"gorm.io/gorm"
 )
 
 var (
@@ -16,7 +15,7 @@ var (
 )
 
 // (for testability and decoupling from GORM).
-type TodoRepository interface {
+type Repository interface {
 	Create(todo *models.Todo) error
 	FindByID(userID, todoID uint) (*models.Todo, error)
 	FindAll(userID uint) ([]models.Todo, error)
@@ -25,12 +24,12 @@ type TodoRepository interface {
 }
 
 type Service struct {
-	repo     TodoRepository
+	repo     Repository
 	validate *validator.Validate
 }
 
 // NewService creates a new todo service.
-func NewService(repo TodoRepository) *Service {
+func NewService(repo Repository) *Service {
 	return &Service{
 		repo:     repo,
 		validate: validator.New(),
@@ -82,8 +81,8 @@ func (s *Service) GetAll(userID uint) ([]models.TodoResponse, error) {
 	}
 
 	responses := make([]models.TodoResponse, len(todos))
-	for i, todo := range todos {
-		responses[i] = todo.ToResponse()
+	for i := range todos {
+		responses[i] = todos[i].ToResponse()
 	}
 
 	return responses, nil
@@ -140,60 +139,4 @@ func (s *Service) Delete(userID, todoID uint) error {
 	}
 
 	return nil
-}
-
-// GORM-backed implementation.
-type gormTodoRepo struct {
-	db *gorm.DB
-}
-
-func NewGormTodoRepo(db *gorm.DB) TodoRepository {
-	return &gormTodoRepo{db: db}
-}
-
-func (r *gormTodoRepo) Create(todo *models.Todo) error {
-	return r.db.Create(todo).Error
-}
-
-func (r *gormTodoRepo) FindByID(userID, todoID uint) (*models.Todo, error) {
-	var todo models.Todo
-
-	err := r.db.Where("id = ? AND user_id = ?", todoID, userID).First(&todo).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ErrTodoNotFound
-		}
-
-		return nil, err
-	}
-
-	return &todo, nil
-}
-
-func (r *gormTodoRepo) FindAll(userID uint) ([]models.Todo, error) {
-	var todos []models.Todo
-
-	err := r.db.Where("user_id = ?", userID).Order("created_at DESC").Find(&todos).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return todos, nil
-}
-
-func (r *gormTodoRepo) Update(todo *models.Todo, updates map[string]interface{}) error {
-	return r.db.Model(todo).Updates(updates).Error
-}
-
-func (r *gormTodoRepo) Delete(userID, todoID uint) (bool, error) {
-	result := r.db.Where("id = ? AND user_id = ?", todoID, userID).Delete(&models.Todo{})
-	if result.Error != nil {
-		return false, result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return false, nil
-	}
-
-	return true, nil
 }

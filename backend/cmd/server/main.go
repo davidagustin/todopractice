@@ -14,13 +14,47 @@ import (
 	"go.uber.org/zap"
 )
 
+func corsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
+func healthCheckHandler(db *database.Database, logger *zap.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if err := db.Health(); err != nil {
+			logger.Error("Database health check failed", zap.Error(err))
+			c.JSON(500, gin.H{
+				"status": "unhealthy",
+				"error":  "Database connection failed",
+			})
+			return
+		}
+		c.JSON(200, gin.H{"status": "healthy"})
+	}
+}
+
 func main() {
 	// Initialize logger
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to initialize logger: %v", err)
 	}
-	defer logger.Sync()
+	defer func() {
+		syncErr := logger.Sync()
+		if syncErr != nil {
+			log.Printf("Failed to sync logger: %v", syncErr)
+		}
+	}()
 
 	// Load configuration
 	cfg, err := config.LoadConfig()
@@ -45,7 +79,7 @@ func main() {
 
 	// Initialize repositories
 	userRepo := auth.NewGORMUserRepository(db.DB)
-	todoRepo := todo.NewGORMTodoRepository(db.DB)
+	todoRepo := todo.NewGormTodoRepo(db.DB)
 
 	// Initialize services
 	authService := auth.NewService(userRepo, jwtUtil)
@@ -59,36 +93,10 @@ func main() {
 	router := gin.Default()
 
 	// Add CORS middleware
-	router.Use(func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-
-			return
-		}
-
-		c.Next()
-	})
+	router.Use(corsMiddleware())
 
 	// Health check endpoint
-	router.GET("/health", func(c *gin.Context) {
-		if err := db.Health(); err != nil {
-			logger.Error("Database health check failed", zap.Error(err))
-			c.JSON(500, gin.H{
-				"status": "unhealthy",
-				"error":  "Database connection failed",
-			})
-
-			return
-		}
-
-		c.JSON(200, gin.H{
-			"status": "healthy",
-		})
-	})
+	router.GET("/health", healthCheckHandler(db, logger))
 
 	// API routes
 	api := router.Group("/api/v1")

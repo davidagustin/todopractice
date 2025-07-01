@@ -28,36 +28,43 @@ func NewHandler(service *Service, logger *zap.Logger) *Handler {
 	}
 }
 
+func (h *Handler) handleValidationErrors(c *gin.Context, err error) bool {
+	var ve validator.ValidationErrors
+	if errors.As(err, &ve) {
+		errors := make(map[string]string)
+
+		for _, fe := range ve {
+			switch fe.Field() {
+			case "Email":
+				errors["email"] = "Invalid email format"
+			case "Password":
+				errors["password"] = "Password must be at least 6 characters"
+			case "Name":
+				errors["name"] = "Name is required"
+			default:
+				errors[fe.Field()] = fe.Error()
+			}
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
+
+		return true
+	}
+
+	return false
+}
+
 // Register handles user registration.
 func (h *Handler) Register(c *gin.Context) {
 	var req models.UserRegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		h.logger.Error("Failed to bind registration request", zap.Error(err))
-		// If it's a validation error, return field errors
-		if ve, ok := err.(validator.ValidationErrors); ok {
-			errors := make(map[string]string)
 
-			for _, fe := range ve {
-				switch fe.Field() {
-				case "Email":
-					errors["email"] = "Invalid email format"
-				case "Password":
-					errors["password"] = "Password must be at least 6 characters"
-				case "Name":
-					errors["name"] = "Name is required"
-				default:
-					errors[fe.Field()] = fe.Error()
-				}
-			}
-
-			c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
-
+		if h.handleValidationErrors(c, err) {
 			return
 		}
 
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid request body",
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 
 		return
 	}
@@ -70,58 +77,37 @@ func (h *Handler) Register(c *gin.Context) {
 		h.logger.Info("Error message", zap.String("error_message", err.Error()))
 
 		if errors.Is(err, ErrUserAlreadyExists) {
-			c.JSON(http.StatusConflict, gin.H{
-				"error": "User already exists",
-			})
+			c.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
 
 			return
 		}
 
-		// Check if it's a validation error from the service
 		if strings.Contains(err.Error(), "validation failed") {
-			// Debug log: print error type and value
-			h.logger.Info("Validation error debug", zap.String("type", fmt.Sprintf("%T", err)), zap.String("value", fmt.Sprintf("%+v", err)))
+			h.logger.Info(
+				"Validation error debug",
+				zap.String("type", fmt.Sprintf("%T", err)),
+				zap.String("value", fmt.Sprintf("%+v", err)),
+			)
 
-			var ve validator.ValidationErrors
-			if errors.As(err, &ve) {
-				errors := make(map[string]string)
-
-				for _, fe := range ve {
-					switch fe.Field() {
-					case "Email":
-						errors["email"] = "Invalid email format"
-					case "Password":
-						errors["password"] = "Password must be at least 6 characters"
-					case "Name":
-						errors["name"] = "Name is required"
-					default:
-						errors[fe.Field()] = fe.Error()
-					}
-				}
-
-				c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
-
+			if h.handleValidationErrors(c, err) {
 				return
 			}
-			// Fallback: return the error string
+
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Registration failed",
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Registration failed"})
 
 		return
 	}
 
 	h.logger.Info("User registered successfully", zap.Uint("user_id", user.ID))
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User registered successfully",
-		"user":    user,
-		"token":   token,
-	})
+	c.JSON(
+		http.StatusCreated,
+		gin.H{"message": "User registered successfully", "user": user, "token": token},
+	)
 }
 
 // Login handles user login.
@@ -211,11 +197,9 @@ func (h *Handler) Profile(c *gin.Context) {
 // RegisterRoutes registers auth routes.
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup, authMiddleware gin.HandlerFunc) {
 	auth := router.Group("/auth")
-	{
-		auth.POST("/register", h.Register)
-		auth.POST("/login", h.Login)
-		auth.GET("/profile", authMiddleware, h.Profile)
-	}
+	auth.POST("/register", h.Register)
+	auth.POST("/login", h.Login)
+	auth.GET("/profile", authMiddleware, h.Profile)
 }
 
 // TestCleanup clears all test data (only available in test mode).

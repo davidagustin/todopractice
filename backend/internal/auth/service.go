@@ -71,12 +71,12 @@ func (s *Service) Register(req models.UserRegisterRequest) (*models.UserResponse
 		Password: req.Password,
 		Name:     req.Name,
 	}
-	if err := user.HashPassword(); err != nil {
-		return nil, "", fmt.Errorf("failed to hash password: %w", err)
+	if hashErr := user.HashPassword(); hashErr != nil {
+		return nil, "", fmt.Errorf("failed to hash password: %w", hashErr)
 	}
 
-	if err := s.repo.Create(user); err != nil {
-		return nil, "", fmt.Errorf("failed to create user: %w", err)
+	if createErr := s.repo.Create(user); createErr != nil {
+		return nil, "", fmt.Errorf("failed to create user: %w", createErr)
 	}
 
 	token, err := s.jwtUtil.GenerateToken(user.ID, user.Email)
