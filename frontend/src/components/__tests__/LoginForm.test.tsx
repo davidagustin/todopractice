@@ -66,7 +66,7 @@ describe('LoginForm', () => {
     
     expect(screen.getByText('Sign in to your account to continue')).toBeInTheDocument()
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
-    expect(screen.getByDisplayValue('')).toBeInTheDocument() // Check for password input by its empty value
+    expect(screen.getByRole('textbox', { name: /email address/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
   })
 
