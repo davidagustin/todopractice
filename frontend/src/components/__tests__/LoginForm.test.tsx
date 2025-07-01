@@ -119,4 +119,63 @@ describe('LoginForm', () => {
     // Should not call login mutation
     expect(mockLogin).not.toHaveBeenCalled()
   })
+
+  it('should show loading state when form is submitting', () => {
+    // Mock the useLogin hook to return loading state
+    jest.doMock('../../hooks/useAuth', () => ({
+      useLogin: () => ({
+        mutate: mockLogin,
+        isPending: true,
+        error: null,
+      }),
+    }))
+
+    render(<LoginForm />, { wrapper: createWrapper() })
+    
+    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    expect(submitButton).toBeDisabled()
+    expect(submitButton).toHaveTextContent(/signing in/i)
+  })
+
+  it('should show error message when login fails', () => {
+    // Mock the useLogin hook to return error state
+    jest.doMock('../../hooks/useAuth', () => ({
+      useLogin: () => ({
+        mutate: mockLogin,
+        isPending: false,
+        error: new Error('Login failed'),
+      }),
+    }))
+
+    render(<LoginForm />, { wrapper: createWrapper() })
+    
+    expect(screen.getByText(/login failed/i)).toBeInTheDocument()
+  })
+
+  it('should prevent form submission with empty fields', async () => {
+    render(<LoginForm />, { wrapper: createWrapper() })
+    
+    const submitButton = screen.getByRole('button', { name: /sign in/i })
+    await userEvent.click(submitButton)
+
+    // Should not call login mutation
+    expect(mockLogin).not.toHaveBeenCalled()
+  })
+
+  it('should handle form reset', async () => {
+    render(<LoginForm />, { wrapper: createWrapper() })
+    
+    const emailInput = screen.getByLabelText(/email address/i)
+    const passwordInput = screen.getByLabelText(/password/i)
+
+    await userEvent.type(emailInput, 'test@example.com')
+    await userEvent.type(passwordInput, 'password123')
+
+    // Reset form
+    await userEvent.type(emailInput, '')
+    await userEvent.type(passwordInput, '')
+
+    expect(emailInput).toHaveValue('')
+    expect(passwordInput).toHaveValue('')
+  })
 }) 
