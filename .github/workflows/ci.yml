@@ -71,20 +71,20 @@ jobs:
         timeout 30s bash -c 'until pg_isready -h localhost -p 5432 -U todouser; do sleep 2; echo "Waiting for PostgreSQL..."; done'
         echo "PostgreSQL is ready!"
 
-    - name: Start backend
+    - name: Test backend health
       run: |
         cd backend
-        echo "Starting backend server..."
-        ./server &
+        echo "Starting backend server for health check..."
+        timeout 30s ./server &
         BACKEND_PID=$!
         echo "Backend PID: $BACKEND_PID"
         
         echo "Waiting for backend to be ready..."
-        timeout 60s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; echo "Still waiting for backend..."; done'
-        echo "Backend is ready!"
+        timeout 30s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; echo "Still waiting for backend..."; done'
+        echo "Backend health check passed!"
         
-        # Keep backend running
-        wait $BACKEND_PID &
+        # Kill the test server
+        kill $BACKEND_PID 2>/dev/null || true
 
     - name: Verify coverage file exists
       run: |
@@ -219,7 +219,7 @@ jobs:
         timeout 30s bash -c 'until pg_isready -h localhost -p 5432 -U todouser; do sleep 2; echo "Waiting for PostgreSQL..."; done'
         echo "PostgreSQL is ready!"
 
-    - name: Start backend
+    - name: Start backend and frontend
       run: |
         cd backend
         echo "Starting backend server..."
@@ -227,32 +227,38 @@ jobs:
         BACKEND_PID=$!
         echo "Backend PID: $BACKEND_PID"
         
-        echo "Waiting for backend to be ready..."
-        timeout 60s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; echo "Still waiting for backend..."; done'
-        echo "Backend is ready!"
-        
-        # Keep backend running
-        wait $BACKEND_PID &
-
-    - name: Start frontend
-      run: |
-        cd frontend
+        cd ../frontend
         echo "Starting frontend development server..."
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend PID: $FRONTEND_PID"
         
+        echo "Waiting for backend to be ready..."
+        timeout 60s bash -c 'until curl -f http://localhost:8080/health; do sleep 2; echo "Still waiting for backend..."; done'
+        echo "Backend is ready!"
+        
         echo "Waiting for frontend to be ready..."
         timeout 60s bash -c 'until curl -f http://localhost:5173; do sleep 2; echo "Still waiting for frontend..."; done'
         echo "Frontend is ready!"
         
-        # Keep frontend running
-        wait $FRONTEND_PID &
+        # Store PIDs for cleanup
+        echo $BACKEND_PID > backend.pid
+        echo $FRONTEND_PID > frontend.pid
 
     - name: Run E2E tests
       run: |
         cd frontend
         npm run test:e2e:ci
+
+    - name: Cleanup servers
+      if: always()
+      run: |
+        if [ -f backend.pid ]; then
+          kill $(cat backend.pid) 2>/dev/null || true
+        fi
+        if [ -f frontend.pid ]; then
+          kill $(cat frontend.pid) 2>/dev/null || true
+        fi
 
     - name: Upload screenshots on failure
       uses: actions/upload-artifact@v4
