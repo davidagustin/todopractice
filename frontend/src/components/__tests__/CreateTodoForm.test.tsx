@@ -1,7 +1,7 @@
 /** @jsxImportSource react */
 import React from 'react'
 import type { ReactNode } from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
@@ -79,17 +79,15 @@ describe('CreateTodoForm', () => {
     
     await userEvent.type(titleInput, 'Valid Title')
     
-    // Instead of typing 1001 characters, let's test the validation logic directly
-    // by simulating a form submission with a long description
-    const submitButton = screen.getByRole('button', { name: /create todo/i })
+    // Use fireEvent to directly set the value and bypass maxlength restriction
+    const longDescription = 'a'.repeat(1001)
+    fireEvent.change(descriptionInput, { target: { value: longDescription } })
     
-    // Type a reasonable amount and then test the validation
-    await userEvent.type(descriptionInput, 'a'.repeat(500))
+    const submitButton = screen.getByRole('button', { name: /create todo/i })
     await userEvent.click(submitButton)
     
-    // The form should still be valid with 500 characters
     await waitFor(() => {
-      expect(mockCreateTodo).toHaveBeenCalled()
+      expect(screen.getByText('Description must be less than 1000 characters')).toBeInTheDocument()
     })
   })
 
@@ -100,7 +98,9 @@ describe('CreateTodoForm', () => {
     const descriptionInput = screen.getByLabelText(/description/i)
     const submitButton = screen.getByRole('button', { name: /create todo/i })
 
+    await userEvent.clear(titleInput)
     await userEvent.type(titleInput, 'Test Todo')
+    await userEvent.clear(descriptionInput)
     await userEvent.type(descriptionInput, 'Test Description')
     await userEvent.click(submitButton)
 
@@ -118,6 +118,7 @@ describe('CreateTodoForm', () => {
     const titleInput = screen.getByLabelText(/title/i)
     const submitButton = screen.getByRole('button', { name: /create todo/i })
 
+    await userEvent.clear(titleInput)
     await userEvent.type(titleInput, 'Test Todo')
     await userEvent.click(submitButton)
 
@@ -136,7 +137,9 @@ describe('CreateTodoForm', () => {
     const descriptionInput = screen.getByLabelText(/description/i)
     const submitButton = screen.getByRole('button', { name: /create todo/i })
 
+    await userEvent.clear(titleInput)
     await userEvent.type(titleInput, '  Test Todo  ')
+    await userEvent.clear(descriptionInput)
     await userEvent.type(descriptionInput, '  Test Description  ')
     await userEvent.click(submitButton)
 
@@ -154,6 +157,7 @@ describe('CreateTodoForm', () => {
     const titleInput = screen.getByLabelText(/title/i)
     const maxLengthTitle = 'a'.repeat(200) // Exactly 200 characters (at the limit)
     
+    await userEvent.clear(titleInput)
     await userEvent.type(titleInput, maxLengthTitle)
     
     const submitButton = screen.getByRole('button', { name: /create todo/i })

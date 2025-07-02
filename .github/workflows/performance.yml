@@ -101,6 +101,7 @@ jobs:
         path: |
           load-test-results/
         retention-days: 30
+        if-no-files-found: warn
 
   # Lighthouse performance testing
   lighthouse:
@@ -217,6 +218,7 @@ jobs:
         name: api-performance-results
         path: api-performance-results/
         retention-days: 30
+        if-no-files-found: warn
 
   # Performance summary
   performance-summary:

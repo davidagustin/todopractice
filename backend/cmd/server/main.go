@@ -22,6 +22,7 @@ func corsMiddleware() gin.HandlerFunc {
 
 		if c.Request.Method == "OPTIONS" {
 			c.AbortWithStatus(204)
+
 			return
 		}
 
@@ -37,8 +38,10 @@ func healthCheckHandler(db *database.Database, logger *zap.Logger) gin.HandlerFu
 				"status": "unhealthy",
 				"error":  "Database connection failed",
 			})
+
 			return
 		}
+
 		c.JSON(200, gin.H{"status": "healthy"})
 	}
 }
@@ -49,6 +52,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize logger: %v", err)
 	}
+
 	defer func() {
 		syncErr := logger.Sync()
 		if syncErr != nil {
@@ -67,6 +71,7 @@ func main() {
 	if err != nil {
 		logger.Fatal("Failed to initialize database", zap.Error(err))
 	}
+
 	defer db.Close()
 
 	// Run migrations
