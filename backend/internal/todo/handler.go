@@ -77,6 +77,7 @@ func (h *Handler) GetAll(c *gin.Context) {
 	}
 
 	todos, err := h.service.GetAll(userID)
+
 	if err != nil {
 		h.logger.Error("Failed to get todos", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -105,6 +106,7 @@ func (h *Handler) GetByID(c *gin.Context) {
 
 	todoIDStr := c.Param("id")
 	todoID, err := strconv.ParseUint(todoIDStr, 10, 32)
+
 	if err != nil {
 		h.logger.Error("Invalid todo ID", zap.String("id", todoIDStr))
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -172,6 +174,7 @@ func (h *Handler) Update(c *gin.Context) {
 	}
 
 	todo, err := h.service.Update(userID, uint(todoID), req)
+
 	if err != nil {
 		h.logger.Error("Failed to update todo", zap.Error(err))
 
@@ -221,6 +224,7 @@ func (h *Handler) Delete(c *gin.Context) {
 	}
 
 	err = h.service.Delete(userID, uint(todoID))
+
 	if err != nil {
 		h.logger.Error("Failed to delete todo", zap.Error(err))
 
