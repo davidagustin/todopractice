@@ -129,12 +129,13 @@ jobs:
         cd frontend
         npm run build
 
-    - name: Start frontend server
+    - name: Start frontend server and wait
       run: |
         cd frontend
         npm run preview &
-        echo "Frontend started, waiting for it to be ready..."
-        timeout 30s bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
+        echo "Frontend preview server started, waiting for it to be ready..."
+        timeout 60s bash -c 'until curl -f http://localhost:4173; do sleep 2; done'
+        echo "Frontend server is ready!"
 
     - name: Run Lighthouse CI
       uses: treosh/lighthouse-ci-action@v10

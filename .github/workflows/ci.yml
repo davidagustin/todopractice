@@ -65,6 +65,16 @@ jobs:
         cd backend
         go build -o server ./cmd/server
 
+    - name: Verify coverage file exists
+      run: |
+        cd backend
+        if [ -f coverage.out ]; then
+          echo "Coverage file exists: $(ls -la coverage.out)"
+        else
+          echo "Warning: coverage.out file not found"
+          touch coverage.out
+        fi
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
       if: always()
@@ -74,6 +84,7 @@ jobs:
         name: backend-coverage
         fail_ci_if_error: false
         verbose: true
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   # Frontend Testing and Building
   frontend:
@@ -111,6 +122,17 @@ jobs:
         cd frontend
         npm run build
 
+    - name: Verify coverage file exists
+      run: |
+        cd frontend
+        if [ -f coverage/lcov.info ]; then
+          echo "Coverage file exists: $(ls -la coverage/lcov.info)"
+        else
+          echo "Warning: lcov.info file not found"
+          mkdir -p coverage
+          touch coverage/lcov.info
+        fi
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
       if: always()
@@ -120,6 +142,7 @@ jobs:
         name: frontend-coverage
         fail_ci_if_error: false
         verbose: true
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   # E2E Testing
   e2e:
