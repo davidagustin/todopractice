@@ -221,6 +221,14 @@ jobs:
         echo "Waiting for PostgreSQL to be ready..."
         timeout 30s bash -c 'until pg_isready -h localhost -p 5432 -U todouser; do sleep 2; echo "Waiting for PostgreSQL..."; done'
         echo "PostgreSQL is ready!"
+        
+        echo "Creating todoapp database..."
+        PGPASSWORD=todopassword psql -h localhost -p 5432 -U todouser -d todoapp_test -c "CREATE DATABASE todoapp;" || echo "Database todoapp already exists or creation failed"
+
+    - name: Create Cypress directories
+      run: |
+        cd frontend
+        mkdir -p cypress/videos cypress/screenshots
 
     - name: Start backend and frontend
       run: |
@@ -256,12 +264,19 @@ jobs:
     - name: Cleanup servers
       if: always()
       run: |
+        echo "Cleaning up servers..."
         if [ -f backend.pid ]; then
+          echo "Killing backend process $(cat backend.pid)"
           kill $(cat backend.pid) 2>/dev/null || true
         fi
         if [ -f frontend.pid ]; then
+          echo "Killing frontend process $(cat frontend.pid)"
           kill $(cat frontend.pid) 2>/dev/null || true
         fi
+        
+        # Also kill any remaining processes
+        pkill -f "server" 2>/dev/null || true
+        pkill -f "vite" 2>/dev/null || true
 
     - name: Upload screenshots on failure
       uses: actions/upload-artifact@v4
