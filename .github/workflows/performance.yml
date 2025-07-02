@@ -144,6 +144,14 @@ jobs:
         uploadArtifacts: true
         temporaryPublicStorage: true
 
+    - name: Run Lighthouse fallback (if action fails)
+      if: failure()
+      run: |
+        cd frontend
+        npm install -g lighthouse
+        lighthouse http://localhost:4173 --output=json --output-path=./lighthouse-report.json --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage"
+        echo "Lighthouse fallback completed"
+
   # API performance testing
   api-performance:
     name: API Performance Test
