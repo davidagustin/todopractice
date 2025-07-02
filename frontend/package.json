@@ -18,7 +18,9 @@
     "test:ui": "vitest --ui",
     "preview": "vite preview",
     "e2e": "cypress run",
-    "e2e:open": "cypress open"
+    "e2e:open": "cypress open",
+    "test:e2e:headless": "cypress run --headless",
+    "test:e2e:ci": "cypress run --headless --config video=true,screenshotOnRunFailure=true"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
