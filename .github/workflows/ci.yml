@@ -70,6 +70,9 @@ jobs:
         echo "Waiting for PostgreSQL to be ready..."
         timeout 30s bash -c 'until pg_isready -h localhost -p 5432 -U todouser; do sleep 2; echo "Waiting for PostgreSQL..."; done'
         echo "PostgreSQL is ready!"
+        
+        echo "Creating todoapp database..."
+        PGPASSWORD=todopassword psql -h localhost -p 5432 -U todouser -d todoapp_test -c "CREATE DATABASE todoapp;" || echo "Database todoapp already exists or creation failed"
 
     - name: Test backend health
       run: |
