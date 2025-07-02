@@ -14,6 +14,12 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	statusNoContent = 204
+	statusOK        = 200
+	statusServerErr = 500
+)
+
 func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*")
@@ -21,7 +27,7 @@ func corsMiddleware() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept, Authorization")
 
 		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
+			c.AbortWithStatus(statusNoContent)
 
 			return
 		}
@@ -34,7 +40,7 @@ func healthCheckHandler(db *database.Database, logger *zap.Logger) gin.HandlerFu
 	return func(c *gin.Context) {
 		if err := db.Health(); err != nil {
 			logger.Error("Database health check failed", zap.Error(err))
-			c.JSON(500, gin.H{
+			c.JSON(statusServerErr, gin.H{
 				"status": "unhealthy",
 				"error":  "Database connection failed",
 			})
@@ -42,7 +48,7 @@ func healthCheckHandler(db *database.Database, logger *zap.Logger) gin.HandlerFu
 			return
 		}
 
-		c.JSON(200, gin.H{"status": "healthy"})
+		c.JSON(statusOK, gin.H{"status": "healthy"})
 	}
 }
 

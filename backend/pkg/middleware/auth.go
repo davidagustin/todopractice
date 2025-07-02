@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const bearerTokenParts = 2
+
 // AuthMiddleware creates a JWT authentication middleware.
 func AuthMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -23,7 +25,7 @@ func AuthMiddleware(jwtUtil *utils.JWTUtil) gin.HandlerFunc {
 		}
 
 		// Check if the header starts with "Bearer "
-		parts := strings.SplitN(authHeader, " ", 2)
+		parts := strings.SplitN(authHeader, " ", bearerTokenParts)
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Authorization header format must be Bearer {token}",

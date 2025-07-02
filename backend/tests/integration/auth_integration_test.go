@@ -23,6 +23,7 @@ import (
 
 func setupTestDB(t *testing.T) *gorm.DB {
 	t.Helper()
+
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	require.NoError(t, err)
 
@@ -68,6 +69,7 @@ func runAuthTest(t *testing.T, router *gin.Engine, endpoint string, tests []stru
 },
 ) {
 	t.Helper()
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			body, _ := json.Marshal(tt.requestBody)
@@ -229,6 +231,7 @@ func TestAuthIntegration_Profile(t *testing.T) {
 
 	err := json.Unmarshal(registerW.Body.Bytes(), &registerResponse)
 	assert.NoError(t, err)
+
 	token := registerResponse["token"].(string)
 
 	tests := []struct {

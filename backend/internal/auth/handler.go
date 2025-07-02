@@ -54,6 +54,35 @@ func (h *Handler) handleValidationErrors(c *gin.Context, err error) bool {
 	return false
 }
 
+func (h *Handler) handleRegisterError(c *gin.Context, err error) {
+	h.logger.Error("Registration failed", zap.Error(err))
+	h.logger.Info("Error message", zap.String("error_message", err.Error()))
+
+	if errors.Is(err, ErrUserAlreadyExists) {
+		c.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
+
+		return
+	}
+
+	if strings.Contains(err.Error(), "validation failed") {
+		h.logger.Info(
+			"Validation error debug",
+			zap.String("type", fmt.Sprintf("%T", err)),
+			zap.String("value", fmt.Sprintf("%+v", err)),
+		)
+
+		if h.handleValidationErrors(c, err) {
+			return
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		return
+	}
+
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "Registration failed"})
+}
+
 // Register handles user registration.
 func (h *Handler) Register(c *gin.Context) {
 	var req models.UserRegisterRequest
@@ -73,32 +102,7 @@ func (h *Handler) Register(c *gin.Context) {
 
 	user, token, err := h.service.Register(req)
 	if err != nil {
-		h.logger.Error("Registration failed", zap.Error(err))
-		h.logger.Info("Error message", zap.String("error_message", err.Error()))
-
-		if errors.Is(err, ErrUserAlreadyExists) {
-			c.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
-
-			return
-		}
-
-		if strings.Contains(err.Error(), "validation failed") {
-			h.logger.Info(
-				"Validation error debug",
-				zap.String("type", fmt.Sprintf("%T", err)),
-				zap.String("value", fmt.Sprintf("%+v", err)),
-			)
-
-			if h.handleValidationErrors(c, err) {
-				return
-			}
-
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-			return
-		}
-
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Registration failed"})
+		h.handleRegisterError(c, err)
 
 		return
 	}

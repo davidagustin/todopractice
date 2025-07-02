@@ -12,6 +12,11 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	maxIdleConns = 10
+	maxOpenConns = 100
+)
+
 type Database struct {
 	DB     *gorm.DB
 	logger *zap.Logger
@@ -48,8 +53,8 @@ func NewDatabase(cfg *config.Config, logger *zap.Logger) (*Database, error) {
 			return nil, fmt.Errorf("failed to get underlying sql.DB: %w", err)
 		}
 
-		sqlDB.SetMaxIdleConns(10)
-		sqlDB.SetMaxOpenConns(100)
+		sqlDB.SetMaxIdleConns(maxIdleConns)
+		sqlDB.SetMaxOpenConns(maxOpenConns)
 	}
 
 	return &Database{

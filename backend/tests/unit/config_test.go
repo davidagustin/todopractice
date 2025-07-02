@@ -17,6 +17,7 @@ func TestLoadConfig_Defaults(t *testing.T) {
 	// Change to backend directory to ensure config.yaml is found
 	originalDir, err := os.Getwd()
 	require.NoError(t, err)
+
 	defer func() {
 		chdirErr := os.Chdir(originalDir)
 		if chdirErr != nil {

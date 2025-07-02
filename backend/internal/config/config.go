@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const defaultJWTExpiryHour = 24
+
 type Config struct {
 	Server   ServerConfig   `mapstructure:"server"`
 	Database DatabaseConfig `mapstructure:"database"`
@@ -54,7 +56,7 @@ func LoadConfig() (*Config, error) {
 	viper.SetDefault("database.dbname", "todoapp")
 	viper.SetDefault("database.sslmode", "disable")
 	viper.SetDefault("jwt.secret", "your-secret-key")
-	viper.SetDefault("jwt.expiry_hour", 24)
+	viper.SetDefault("jwt.expiry_hour", defaultJWTExpiryHour)
 
 	// Enable environment variable support
 	viper.AutomaticEnv()

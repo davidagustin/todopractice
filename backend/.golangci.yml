@@ -6,12 +6,13 @@ run:
 
 output:
   format: colored-line-number
-  print-issued-lines: true
-  print-linter-name: true
+  formats:
+    colored-line-number:
+      print-issued-lines: true
+      print-linter-name: true
 
 linters-settings:
   govet:
-    check-shadowing: true
   gocyclo:
     min-complexity: 15
   dupl:
@@ -53,7 +54,6 @@ linters:
     - errcheck
     - errorlint
     - exhaustive
-    - exportloopref
     - funlen
     - gochecknoinits
     - gochecknoglobals
@@ -65,7 +65,7 @@ linters:
     - gofmt
     - gofumpt
     - goimports
-    - gomnd
+    - mnd
     - gomoddirectives
     - gomodguard
     - goprintffuncname
@@ -102,7 +102,7 @@ issues:
   exclude-rules:
     - path: _test\.go
       linters:
-        - gomnd
+        - mnd
         - funlen
         - gochecknoglobals
     - path: cmd/
