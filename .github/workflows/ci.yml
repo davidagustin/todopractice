@@ -84,7 +84,6 @@ jobs:
         name: backend-coverage
         fail_ci_if_error: false
         verbose: true
-        token: ${{ secrets.CODECOV_TOKEN }}
 
   # Frontend Testing and Building
   frontend:
@@ -142,7 +141,6 @@ jobs:
         name: frontend-coverage
         fail_ci_if_error: false
         verbose: true
-        token: ${{ secrets.CODECOV_TOKEN }}
 
   # E2E Testing
   e2e:
